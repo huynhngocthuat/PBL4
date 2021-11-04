@@ -1,0 +1,28 @@
+:root {
+    --blue-color: #1b5de3;
+    --ocean-blue-color: #464EB8; 
+    --dark-color: #181a1c;
+    --dark-grey-color: #27292d;
+    --grey-color: #999999;
+  }
+  
+  /* width */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #27292d;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
