@@ -1,4 +1,4 @@
-package com.edu.bkdn.model;
+package com.edu.bkdn.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class messageDto {
+public class MessageDto {
     @NotEmpty
     private long messageId;
     @NotEmpty
