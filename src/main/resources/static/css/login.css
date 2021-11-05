@@ -8,7 +8,6 @@
     padding: 15px;
     background-color: #f0f0f0;
     font-family: 'Roboto', sans-serif;
-    /* background-image: url(../images/dut.jpg); */
     background:linear-gradient( rgba(0, 0, 0, 0.5) 100%, rgba(0, 0, 0, 0.5)100%), url(../images/dut.jpg);
     background-position: center center;
     background-size: cover;
@@ -67,7 +66,7 @@
     outline: 0;
     border-bottom: solid 1px #d6d6d6;
     font-size: 18px;
-    color: var(-dark-grey-color);
+    color: var(--dark-grey-color);
 }
 
 .login-form .form-group-input:focus {
@@ -75,7 +74,6 @@
 }
 .login-form .form-group-input::placeholder {
     color: var(--grey-color);
-    /* font-weight: 300; */
 }
 .login-form .form-group i {
     color: #262f44;
@@ -119,7 +117,7 @@
 .login-wrapper .login-container .login-logo {
     width: 400px;
     height: 500px;
-    background-color: var(-ocean-blue-color);
+    background-color: var(--ocean-blue-color);
     border-radius: 0px 4px 4px 0px;
     display: flex;
     justify-content: center;

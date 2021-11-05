@@ -6,9 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-<!--    <link rel="stylesheet" type="text/css" href="/resource/static/css/reset.css">-->
-<!--    <link rel="stylesheet" type="text/css" href="/resource/static/css/base.css">-->
-<!--    <link rel="stylesheet" type="text/css" href="/resource/static/css/login.css">-->
+
     <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/reset.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/base.css}"/>
@@ -24,17 +22,17 @@
                 <div class="login-form">
                     <h4 class="login-form-title">Log In</h4>
                     <div class="form-group">
-                        <label for="exampleInputEmail1" class="form-group-label">
-                            Username
+                        <label for="exampleInputPhone" class="form-group-label">
+                            Phone number
                         </label>
-                        <input type="text" class="form-group-input" placeholder="Input username" name="username" id="exampleInputEmail1"
+                        <input type="text" class="form-group-input" placeholder="Input phone number" name="phoneNumber" id="exampleInputPhone"
                             aria-describedby="emailHelp" />
                     </div>
                     <div class="form-group">
-                        <label for="exampleInputPassword1" class="form-group-label">
+                        <label for="exampleInputPassword" class="form-group-label">
                             Password
                         </label>
-                        <input type="password" class="form-group-input" placeholder="Input password" name="password" id="exampleInputPassword1"></input>
+                        <input type="password" class="form-group-input" placeholder="Input password" name="password" id="exampleInputPassword"></input>
                     </div>
                     <div class="login-wrapper-error">
                         Username or password is incorrect
@@ -44,9 +42,9 @@
                     </button>
                 </div>
             </form>
-<!--            <div class="login-logo">-->
-<!--                <img src="../static/images/LOGO - LOGIN.png" alt="PBL4">-->
-<!--            </div>-->
+            <div class="login-logo">
+                <img src="/images/LOGO - LOGIN.png" alt="PBL4">
+            </div>
         </div>
     </div>
 </body>
