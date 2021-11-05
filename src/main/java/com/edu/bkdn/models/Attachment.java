@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
@@ -12,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "attachment")
-public class Attachment extends BaseEntity {
+public class Attachment extends BaseEntity implements Serializable {
 
     @Column(columnDefinition = "nvarchar(200)")
     private String thumbUrl;
