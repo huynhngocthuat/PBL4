@@ -1,4 +1,4 @@
-package com.edu.bkdn.model;
+package com.edu.bkdn.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,27 +6,22 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class userDto {
+public class ConversationDto {
     @NotEmpty
-    private long userId;
+    private long conversationId;
     @NotEmpty
-    private String email;
+    private String title;
     @NotEmpty
-    private String phone;
+    private int creatorId;
     @NotEmpty
-    private String password;
-    @NotEmpty
-    private String firstName;
-    @NotEmpty
-    private String surname;
-    @NotEmpty
-    private Boolean isActive;
+    private int channelId;
     @NotEmpty
     private Date createAt;
     @NotEmpty
     private Date updateAt;
+    @NotEmpty
+    private Date deleteAt;
 }

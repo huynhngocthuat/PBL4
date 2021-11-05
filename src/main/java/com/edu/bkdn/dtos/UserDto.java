@@ -1,4 +1,4 @@
-package com.edu.bkdn.model;
+package com.edu.bkdn.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,17 +10,23 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class attachmentDto {
+public class UserDto {
     @NotEmpty
-    private long attachmentId;
+    private long userId;
     @NotEmpty
-    private String thumbUrl;
+    private String email;
     @NotEmpty
-    private String fileUrl;
+    private String phone;
+    @NotEmpty
+    private String password;
+    @NotEmpty
+    private String firstName;
+    @NotEmpty
+    private String surname;
+    @NotEmpty
+    private Boolean isActive;
     @NotEmpty
     private Date createAt;
     @NotEmpty
     private Date updateAt;
-    @NotEmpty
-    private String messageId;
 }
