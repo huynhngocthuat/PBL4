@@ -14,9 +14,6 @@ import java.io.Serializable;
 @Table(name = "user_contact")
 public class UserContact extends BaseEntity implements Serializable {
 
-    @Column(columnDefinition = "nvarchar(100) not null")
-    private String userName;
-
     @ManyToOne
     @JoinColumn(name = "id_user")
     private User user;
