@@ -18,10 +18,10 @@ public class BaseEntity {
     private Date createdAt;
 
     @Temporal(TemporalType.DATE)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Date updatedAt;
 
     @Temporal(TemporalType.DATE)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Date deletedAt;
 }

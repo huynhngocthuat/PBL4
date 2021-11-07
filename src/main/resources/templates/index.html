@@ -7,14 +7,12 @@
 <body>
 <h1>Hello Huynh Ngoc Thuat</h1>
 <li th:each="user : ${users}">
-    [[${user.userId}]] <br>
+    [[${user.id}]] <br>
     [[${user.phone}]] <br>
     [[${user.email}]] <br>
     [[${user.surname}]] <br>
     [[${user.firstName}]] <br>
     [[${user.isActive}]] <br>
-    [[${user.createAt}]] <br>
-    [[${user.updateAt}]] <br>
     [[${user.password}]] <br> <br>
 </li>
 </body>
