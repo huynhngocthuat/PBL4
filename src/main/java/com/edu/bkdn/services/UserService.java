@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -19,8 +20,8 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User findByPhone(String username) {
-        return userRepository.findByPhone(username);
+    public Optional<User> findUserByPhone(String phoneNumber) {
+        return userRepository.findUserByPhone(phoneNumber);
     }
 
 }

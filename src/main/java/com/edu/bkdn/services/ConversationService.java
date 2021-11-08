@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class ConversationService {
     @Autowired
@@ -13,5 +15,9 @@ public class ConversationService {
 
     public List<Conversation> findAll(){
         return conversationRepository.findAll();
+    }
+
+    public Optional<Conversation> findConversationById(Long id) {
+        return conversationRepository.findById(id);
     }
 }
