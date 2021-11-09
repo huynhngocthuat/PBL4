@@ -10,11 +10,11 @@ import java.util.Optional;
 public interface ContactRepository extends JpaRepository<Contact, Long> {
 
     @Query(
-            value = "SELECT c.* FROM contact c" +
-                    "INNER JOIN user_contact uc ON c.id =  uc.id_contact" +
-                    "INNER JOIN user u ON u.id = uc.id_user" +
+            value = "SELECT c.* FROM contact c " +
+                    "INNER JOIN user_contact uc ON c.id =  uc.id_contact " +
+                    "INNER JOIN user u ON u.id = uc.id_user " +
                     "WHERE u.id = ?1",
             nativeQuery = true
     )
-    List<Contact> getContactsByUserId(long userId);
+    List<Contact> getContactsByUserId(Long userId);
 }

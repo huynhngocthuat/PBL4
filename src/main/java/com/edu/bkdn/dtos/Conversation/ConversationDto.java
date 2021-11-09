@@ -1,27 +1,28 @@
-package com.edu.bkdn.dtos;
+package com.edu.bkdn.dtos.Conversation;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
+import java.sql.Timestamp;
 import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ConversationDto {
     @NotEmpty
-    private long conversationId;
+    private Long conversationId;
     @NotEmpty
     private String title;
     @NotEmpty
-    private int creatorId;
+    private Long creatorId;
     @NotEmpty
-    private int channelId;
+    private Long channelId;
     @NotEmpty
-    private Date createAt;
+    private Timestamp createAt;
     @NotEmpty
-    private Date updateAt;
+    private Timestamp updateAt;
     @NotEmpty
-    private Date deleteAt;
+    private Timestamp deleteAt;
 }

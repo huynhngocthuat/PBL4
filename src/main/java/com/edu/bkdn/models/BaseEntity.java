@@ -1,6 +1,7 @@
 package com.edu.bkdn.models;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,20 +9,16 @@ import java.util.Date;
 @MappedSuperclass
 @Getter
 @Setter
-public class BaseEntity {
+public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Temporal(TemporalType.DATE)
-    @Column(nullable = false)
-    private Date createdAt;
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private java.sql.Timestamp createdAt;
 
-    @Temporal(TemporalType.DATE)
-    @Column(nullable = true)
-    private Date updatedAt;
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private java.sql.Timestamp updatedAt;
 
-    @Temporal(TemporalType.DATE)
-    @Column(nullable = true)
-    private Date deletedAt;
+    private java.sql.Timestamp deletedAt;
 }

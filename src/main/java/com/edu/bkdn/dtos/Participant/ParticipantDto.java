@@ -1,24 +1,27 @@
-package com.edu.bkdn.dtos;
+package com.edu.bkdn.dtos.Participant;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Validated
 public class ParticipantDto {
     @NotEmpty
-    private long participantId;
+    private Long participantId;
     @NotEmpty
-    private Date createAt;
+    private Timestamp createAt;
     @NotEmpty
-    private Date updateAt;
+    private Timestamp updateAt;
     @NotEmpty
-    private long userId;
+    private Long userId;
     @NotEmpty
-    private long conversationId;
+    private Long conversationId;
 }
