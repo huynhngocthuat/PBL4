@@ -1,7 +1,7 @@
 package com.edu.bkdn.config;
 
-import com.edu.bkdn.services.UserDetailServiceImp;
 import com.edu.bkdn.services.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,11 +23,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    UserDetailServiceImp userDetailServiceImp;
+    private UserService userService;
+    @Autowired
+    private CustomizeAuthenticationSuccessHandler customizeAuthenticationSuccessHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailServiceImp).passwordEncoder(getBCryptPasswordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(getBCryptPasswordEncoder());
+    }
+
+    @Override
+    public void configure(WebSecurity web){
+        web
+                .ignoring()
+                .antMatchers("/resources/**", "/static/**",
+                        "/css/**", "/js/**", "/images/**","/template/**");
     }
 
     @Override
@@ -35,26 +45,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //Cross Site Request Forgery
         http.csrf().disable();
         //permit all
-        http.authorizeRequests().antMatchers("/login").permitAll();
-        //permit client
-        http.authorizeRequests().antMatchers("/**").access("hasRole('ROLE_CLIENT')");
+        http
+                .authorizeRequests()
+                .antMatchers("/resources/**").permitAll()
+                .antMatchers("/**").access("hasRole('ROLE_CLIENT')")
+                .anyRequest().authenticated();
+
+        http
+                .formLogin()
+                .loginProcessingUrl("/j_spring_security_check")
+                .loginPage("/login").permitAll()
+                .defaultSuccessUrl("/hello")
+                .usernameParameter("phoneNumber")
+                .passwordParameter("password")
+                .failureUrl("/login?error=true");
 
         http.authorizeRequests().and().exceptionHandling().accessDeniedPage("/");
-
-        http.authorizeRequests().and().formLogin()
-                .loginProcessingUrl("/j_spring_security_check")
-                .loginPage("/login")
-                .defaultSuccessUrl("/")
-                .failureUrl("/login?error=true")
-                .usernameParameter("phoneNumber")
-                .passwordParameter("password");
     }
 
-    @Override
-    public void configure(WebSecurity web){
-        web
-            .ignoring()
-            .antMatchers("/resources/**", "/static/**",
-                    "/css/**", "/js/**", "/images/**","/template/**");
-    }
 }

@@ -12,7 +12,7 @@ import java.security.Principal;
 import java.util.Optional;
 
 @Controller
-public class homeController {
+public class HomeController {
     @Autowired
     private UserService userService;
 

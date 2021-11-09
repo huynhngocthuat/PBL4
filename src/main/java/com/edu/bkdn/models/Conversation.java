@@ -19,10 +19,10 @@ public class Conversation extends BaseEntity implements Serializable {
     private String title;
 
     @Column(nullable = false)
-    private int creatorId;
+    private long creatorId;
 
     @Column(nullable = false)
-    private int channelId;
+    private long channelId;
 
     @OneToMany(mappedBy = "conversation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Message> messages;
