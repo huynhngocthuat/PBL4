@@ -37,6 +37,9 @@ public class UserService implements UserDetailsService{
         return userRepository.findAll();
     }
 
+    public Optional<User> findUserByPhone(String phoneNumber) {
+        return userRepository.findUserByPhone(phoneNumber);
+    }
     public void createUser(CreateUserDto createUserDto) throws DuplicateException {
         Optional<User> foundUser = this.userRepository.findUserByPhone(createUserDto.getPhone());
         // Check for duplicate user

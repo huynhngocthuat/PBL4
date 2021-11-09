@@ -16,6 +16,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 
 @Controller
@@ -36,8 +38,7 @@ public class ChatController {
         user = userService.findUserByPhone(chatMessage.getSender()).get();
 
         // Set realtime
-        long miliSeconds = System.currentTimeMillis();
-        Date date = new Date(miliSeconds);
+        Timestamp date = Timestamp.from(Instant.now());
 
         // Tạo và thêm giá trị vào entity
         Message entity = new Message();
