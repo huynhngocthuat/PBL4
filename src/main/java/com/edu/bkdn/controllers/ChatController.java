@@ -1,12 +1,13 @@
 package com.edu.bkdn.controllers;
 
-import com.edu.bkdn.dtos.ChatMessage;
 
+import com.edu.bkdn.dtos.ChatMessage;
 import com.edu.bkdn.models.Conversation;
 import com.edu.bkdn.models.Message;
 import com.edu.bkdn.models.User;
 import com.edu.bkdn.services.MessageService;
 import com.edu.bkdn.services.UserService;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -27,7 +28,6 @@ public class ChatController {
     SimpMessagingTemplate simpMessagingTemplate;
 
     @MessageMapping("/send")
-    @SendTo("/topic/public")
     public void sendMessage(@Payload ChatMessage chatMessage) {
         // Set Conversation and User
         Conversation conversation = new Conversation();
@@ -47,7 +47,8 @@ public class ChatController {
         entity.setCreatedAt(date);
         messageService.save(entity);
 
-        simpMessagingTemplate.convertAndSend("/topic/public/"+ chatMessage.getIdConversation(), entity);
+        Gson gson = new Gson();
+        simpMessagingTemplate.convertAndSend("/topic/public/"+ chatMessage.getIdConversation(), gson.toJson(entity));
 
     }
 }
