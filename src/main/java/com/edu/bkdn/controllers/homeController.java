@@ -23,4 +23,8 @@ public class homeController {
         modelMap.addAttribute("name", user.get().getSurname() + user.get().getFirstName());
         return "index.html";
     }
+    @GetMapping("/hello")
+    public String hello(){
+        return "hello.html";
+    }
 }

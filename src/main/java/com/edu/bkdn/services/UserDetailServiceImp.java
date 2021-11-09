@@ -27,7 +27,7 @@ public class UserDetailServiceImp implements UserDetailsService {
         }
         //Client
         List<GrantedAuthority> grant = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority("CLIENT");
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_CLIENT");
         grant.add(authority);
         UserDetails userDetails = (UserDetails) new User(user.get().getPhone(), user.get().getPassword(), grant);
 
