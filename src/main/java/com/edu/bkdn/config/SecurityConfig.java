@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //permit all
         http.authorizeRequests().antMatchers("/login").permitAll();
         //permit client
-        http.authorizeRequests().antMatchers("/**").access("hasRole('CLIENT')");
+        http.authorizeRequests().antMatchers("/**").access("hasRole('ROLE_CLIENT')");
 
         http.authorizeRequests().and().exceptionHandling().accessDeniedPage("/");
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserDetailServiceImp implements UserDetailsService {
@@ -18,17 +19,17 @@ public class UserDetailServiceImp implements UserDetailsService {
     private UserService userService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        com.edu.bkdn.models.User user = userService.findByPhone(username);
+    public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
+        Optional<com.edu.bkdn.models.User> user = userService.findUserByPhone(phoneNumber);
         if (user == null) {
-            System.out.println("User not found! " + username);
-            throw new UsernameNotFoundException("User " + username + " was not found in the database");
+            System.out.println("User not found! " + phoneNumber);
+            throw new UsernameNotFoundException("User " + phoneNumber + " was not found in the database");
         }
         //Client
         List<GrantedAuthority> grant = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority("CLIENT");
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_CLIENT");
         grant.add(authority);
-        UserDetails userDetails = (UserDetails) new User(user.getPhone(), user.getPassword(), grant);
+        UserDetails userDetails = (UserDetails) new User(user.get().getPhone(), user.get().getPassword(), grant);
 
         return userDetails;
     }
