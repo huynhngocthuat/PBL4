@@ -1,6 +1,7 @@
 package com.edu.bkdn.config;
 
 import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
+import com.edu.bkdn.utils.httpResponse.exceptions.EmptyListException;
 import com.edu.bkdn.utils.httpResponse.exceptions.NotFoundException;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,13 @@ public class ExceptionHandlerModule {
     @ExceptionHandler(value = { DuplicateException.class })
     @ResponseBody
     public String handleDuplicateException(DuplicateException error, HttpServletResponse httpServletResponse) {
+        httpServletResponse.setStatus(error.getStatus());
+        return new Gson().toJson(error);
+    }
+
+    @ExceptionHandler(value = { EmptyListException.class })
+    @ResponseBody
+    public String handleEmptyListException(EmptyListException error, HttpServletResponse httpServletResponse) {
         httpServletResponse.setStatus(error.getStatus());
         return new Gson().toJson(error);
     }
