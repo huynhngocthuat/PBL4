@@ -14,7 +14,7 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     @Query(
             value = "SELECT c.* from conversation c " +
                     "INNER JOIN participant p on c.id = p.id_conversation " +
-                    "WHERE c.id = ?1 " +
+                    "WHERE p.id_user = ?1 " +
                     "GROUP BY c.id;",
             nativeQuery = true
     )
