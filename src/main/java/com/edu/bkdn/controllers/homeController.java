@@ -24,12 +24,11 @@ public class homeController {
         return "index";
     }
 
-    @GetMapping("/hello")
+    @GetMapping("/home")
     public String hello(ModelMap modelMap, Authentication authentication){
-        String userName = "";
-        userName = ((ApplicationUser)authentication.getPrincipal()).getUser().getEmail();
-        System.out.println("Username: " + userName);
-        modelMap.addAttribute("helloUser", userName);
-        return "hello";
+        String phoneNumber = "";
+        phoneNumber = ((ApplicationUser)authentication.getPrincipal()).getUser().getPhone();
+        modelMap.addAttribute("homeNumber", phoneNumber);
+        return "home";
     }
 }
