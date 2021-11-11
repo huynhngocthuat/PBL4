@@ -24,7 +24,7 @@ public class ConversationController {
     @Autowired
     private ConversationService conversationService;
 
-    @GetMapping("conversations")
+    @GetMapping("/conversations")
     @ResponseBody
     public List<GetConversationDto> getUsersConversationList(Authentication authentication) throws EmptyListException {
         long userId = -1L;
