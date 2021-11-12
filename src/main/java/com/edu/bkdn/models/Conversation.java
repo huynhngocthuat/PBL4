@@ -1,11 +1,10 @@
 package com.edu.bkdn.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -25,7 +24,12 @@ public class Conversation extends BaseEntity implements Serializable {
     private long channelId;
 
     @OneToMany(mappedBy = "conversation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Message> messages;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private List<Message> messages = new ArrayList<>();
+
     @OneToMany(mappedBy = "conversation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Participant> participants;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private List<Participant> participants = new ArrayList<>();
 }

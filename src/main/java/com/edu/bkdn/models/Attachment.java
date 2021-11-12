@@ -1,8 +1,6 @@
 package com.edu.bkdn.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,5 +20,7 @@ public class Attachment extends BaseEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "id_message")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Message message;
 }
