@@ -1,11 +1,10 @@
 package com.edu.bkdn.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -34,9 +33,15 @@ public class User extends BaseEntity implements Serializable {
 
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Message> messages;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private List<Message> messages = new ArrayList<>();
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Participant> participants;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private List<Participant> participants = new ArrayList<>();
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<UserContact> userContacts;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private List<UserContact> userContacts = new ArrayList<>();
 }

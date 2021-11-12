@@ -1,8 +1,6 @@
 package com.edu.bkdn.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -19,8 +17,12 @@ public class Participant extends BaseEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private User user;
     @ManyToOne
     @JoinColumn(name = "id_conversation")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Conversation conversation;
 }

@@ -1,8 +1,6 @@
 package com.edu.bkdn.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,8 +14,12 @@ public class UserContact extends BaseEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private User user;
     @ManyToOne
     @JoinColumn(name = "id_contact")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Contact contact;
 }

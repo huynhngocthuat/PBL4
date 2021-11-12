@@ -1,16 +1,19 @@
 package com.edu.bkdn.dtos.Message;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.edu.bkdn.dtos.User.GetUserDto;
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.*;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Validated
+@Getter
+@Setter
 public class GetMessageDto {
 
     @NotNull
@@ -18,17 +21,17 @@ public class GetMessageDto {
     private String message;
 
     @NotNull
-    private Long senderId;
+    private GetUserDto user;
 
     @NotNull
     private Long conversationId;
 
     @NotNull
-    private Timestamp createAt;
+    private String createdAt;
 
     @NotNull
-    private Timestamp updateAt;
+    private String updatedAt;
 
     @NotNull
-    private Date deletedAt;
+    private String deletedAt;
 }

@@ -1,11 +1,10 @@
 package com.edu.bkdn.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -25,5 +24,7 @@ public class Contact extends BaseEntity implements Serializable {
     private String surname;
 
     @OneToMany(mappedBy = "contact", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<UserContact> userContacts;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private List<UserContact> userContacts = new ArrayList<>();
 }

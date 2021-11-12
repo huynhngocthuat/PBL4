@@ -32,7 +32,8 @@ public class ConversationService {
         if(foundConversations.isEmpty()){
             throw new EmptyListException("User: " + userId + " has no conversation!!!");
         }
-        return ObjectMapperUtils.mapAll(foundConversations, GetConversationDto.class);
+        List<GetConversationDto> a = ObjectMapperUtils.mapAll(foundConversations, GetConversationDto.class);
+        return a;
     }
 
     public Optional<Conversation> findConversationById(Long id) {
