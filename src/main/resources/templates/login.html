@@ -22,7 +22,7 @@
                 <div class="login-form">
                     <h4 class="login-form-title">Log In</h4>
                     <div class="form-group">
-                        <label for="exampleInputPhone" class="form-group-label">
+                        <label for="exampleInputPhone" class="form-group-label" >
                             Phone number
                         </label>
                         <input type="text" class="form-group-input" placeholder="Input phone number" name="phoneNumber" id="exampleInputPhone"
@@ -32,11 +32,14 @@
                         <label for="exampleInputPassword" class="form-group-label">
                             Password
                         </label>
-                        <input type="password" class="form-group-input" placeholder="Input password" name="password" id="exampleInputPassword"></input>
+                        <input type="password" class="form-group-input" placeholder="Input password" name="password" id="exampleInputPassword" />
                     </div>
-                    <div class="login-wrapper-error">
-                        Username or password is incorrect
+                    <div th:if="${param.error != null}">
+                        <div class="login-wrapper-error">
+                            Username or password is incorrect
+                        </div>
                     </div>
+
                     <button class="login-form-btn" type="submit" >
                         Login
                     </button>
@@ -48,5 +51,4 @@
         </div>
     </div>
 </body>
-
 </html>
