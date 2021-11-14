@@ -16,7 +16,7 @@ public class User extends BaseEntity implements Serializable {
     @Column(columnDefinition = "nvarchar(100) not null")
     private String email;
 
-    @Column(columnDefinition = "nvarchar(100) not null")
+    @Column(columnDefinition = "nvarchar(15) not null")
     private String phone;
 
     @Column(columnDefinition = "nvarchar(100) not null")

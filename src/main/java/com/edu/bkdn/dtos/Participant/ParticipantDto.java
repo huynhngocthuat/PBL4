@@ -16,9 +16,9 @@ public class ParticipantDto {
     @NotEmpty
     private Long participantId;
     @NotEmpty
-    private Timestamp createAt;
+    private Timestamp createdAt;
     @NotEmpty
-    private Timestamp updateAt;
+    private Timestamp updatedAt;
     @NotEmpty
     private Long userId;
     @NotEmpty

@@ -2,36 +2,30 @@ package com.edu.bkdn.dtos.Conversation;
 
 import com.edu.bkdn.dtos.Message.GetLastMessageDto;
 import com.edu.bkdn.dtos.Participant.GetParticipantDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
-@Validated
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Validated
 public class GetConversationDto {
 
-    @NotNull
-    @Positive
+    @NotEmpty
     private Long id;
 
     @NotNull
     private String title;
 
-    @NotNull
-    @Positive
+    @NotEmpty
     private Long creatorId;
 
-    @NotNull
-    @Positive
+    @NotEmpty
     private String channelId;
 
     private String urlAvatar;

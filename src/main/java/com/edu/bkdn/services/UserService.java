@@ -32,6 +32,9 @@ public class UserService implements UserDetailsService{
         user.orElseThrow(() -> new UsernameNotFoundException("User '" + username + "' doesnt exist"));
         return new ApplicationUser(user.get());
     }
+    public Optional<User> findUserById(Long userId){
+        return this.userRepository.findUserById(userId);
+    }
 
     public List<User> findAll(){
         return userRepository.findAll();

@@ -17,4 +17,6 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
             nativeQuery = true
     )
     List<Contact> getContactsByUserId(Long userId);
+
+    Optional<Contact> findContactByPhone(String phoneNumber);
 }

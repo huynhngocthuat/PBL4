@@ -17,11 +17,20 @@ public class Contact extends BaseEntity implements Serializable {
     @Column(columnDefinition = "nvarchar(100) not null")
     private String email;
 
+    @Column(columnDefinition = "nvarchar(15) not null")
+    private String phone;
+
     @Column(columnDefinition = "nvarchar(100) not null")
     private String firstName;
 
     @Column(columnDefinition = "nvarchar(100) not null")
     private String surname;
+
+    @Column(nullable = false)
+    private Boolean isActive;
+
+    @Column(columnDefinition = "nvarchar(255) default 'https://dummyimage.com/600x600/000/fff&text=User'")
+    private String urlAvatar = "https://dummyimage.com/600x600/000/fff&text=User";
 
     @OneToMany(mappedBy = "contact", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude

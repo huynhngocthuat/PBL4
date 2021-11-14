@@ -1,30 +1,35 @@
 package com.edu.bkdn.dtos.Contact;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 
-@Validated
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Validated
 public class GetContactDto {
-    @NotNull
-    @Positive
+    @NotEmpty
     private Long id;
 
-    @NotNull
+    @NotEmpty
+    @Email(message = "Email should be valid")
     private String email;
 
-    @NotNull
+    @NotBlank
+    @Size(min=10, max=11)
+    @Pattern(regexp="(^$|[0-9]{10})")
+    private String phone;
+
+    @NotEmpty
     private String firstName;
 
-    @NotNull
+    @NotEmpty
     private String surname;
+
+    private Boolean isActive;
+
+    @NotNull
+    private String urlAvatar;
 }

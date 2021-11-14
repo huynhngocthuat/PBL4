@@ -1,12 +1,15 @@
 package com.edu.bkdn.controllers;
 
+import com.edu.bkdn.dtos.Contact.GetContactDto;
 import com.edu.bkdn.dtos.Conversation.GetConversationDto;
 import com.edu.bkdn.dtos.Conversation.UpdateConversationDto;
 import com.edu.bkdn.dtos.Message.GetMessageDto;
 import com.edu.bkdn.dtos.Participant.CreateParticipantDto;
+import com.edu.bkdn.dtos.User.GetUserDto;
 import com.edu.bkdn.models.ApplicationUser;
 import com.edu.bkdn.services.ConversationService;
 import com.edu.bkdn.services.MessageService;
+import com.edu.bkdn.services.ParticipantService;
 import com.edu.bkdn.utils.httpResponse.NoContentResponse;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
@@ -27,6 +30,8 @@ public class ConversationController {
     private ConversationService conversationService;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private ParticipantService participantService;
 
     @SneakyThrows
     @GetMapping("")
@@ -42,9 +47,21 @@ public class ConversationController {
     @SneakyThrows
     @GetMapping("/{id}")
     @ResponseBody
-    public List<GetMessageDto> getConversationsMessageList(@PathVariable("id") Long id,
+    public List<GetMessageDto> getConversationsMessageList(@PathVariable("id") Long conversationId,
                                                            Authentication authentication){
-        return this.messageService.getAllMessageByConversationId(id);
+        return this.messageService.getAllMessageByConversationId(conversationId);
+    }
+
+    @SneakyThrows
+    @GetMapping("/{id}/outsider")
+    @ResponseBody
+    public List<GetContactDto> getConversationOutsiders(@PathVariable("id") Long conversationId,
+                                                        Authentication authentication){
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
+        }
+        return this.conversationService.getAllConversationOutsider(conversationId, userId);
     }
 
     @SneakyThrows
@@ -91,7 +108,7 @@ public class ConversationController {
     @ResponseBody
     public String addParticipantToConversation(@PathVariable("id") Long conversationId,
                                                @Valid @RequestBody List<CreateParticipantDto> createParticipantDtos){
-        this.conversationService.addParticipantToConversation(conversationId, createParticipantDtos);
+        this.participantService.addParticipantToConversation(conversationId, createParticipantDtos);
         return new Gson().toJson(new NoContentResponse());
     }
 
@@ -100,6 +117,19 @@ public class ConversationController {
     @ResponseBody
     public String deleteConversation(@PathVariable("id") Long conversationId){
         this.conversationService.deleteConversation(conversationId);
+        return new Gson().toJson(new NoContentResponse());
+    }
+
+    @SneakyThrows
+    @DeleteMapping("/{id}/leave")
+    @ResponseBody
+    public String leaveConversation(@PathVariable("id") Long conversationId,
+                                    Authentication authentication){
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
+        }
+        this.conversationService.leaveConversation(conversationId, userId);
         return new Gson().toJson(new NoContentResponse());
     }
 }
