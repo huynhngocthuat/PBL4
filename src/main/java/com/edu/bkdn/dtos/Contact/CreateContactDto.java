@@ -1,36 +1,34 @@
-package com.edu.bkdn.dtos.User;
+package com.edu.bkdn.dtos.Contact;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotEmpty;
-import java.sql.Timestamp;
+import javax.validation.constraints.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
-public class UserDto {
+public class CreateContactDto {
     @NotEmpty
-    private Long id;
-    @NotEmpty
+    @Email(message = "Email should be valid")
     private String email;
-    @NotEmpty
+
+    @NotBlank
+    @Size(min=10, max=11)
+    @Pattern(regexp="(^$|[0-9]{10})")
     private String phone;
-    @NotEmpty
-    private String password;
+
     @NotEmpty
     private String firstName;
+
     @NotEmpty
     private String surname;
-    @NotEmpty
+
     private Boolean isActive;
 
+    @NotNull
     private String urlAvatar;
-    @NotEmpty
-    private Timestamp createdAt;
-    @NotEmpty
-    private Timestamp updatedAt;
 }

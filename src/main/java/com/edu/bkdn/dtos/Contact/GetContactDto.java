@@ -1,20 +1,20 @@
-package com.edu.bkdn.dtos.User;
+package com.edu.bkdn.dtos.Contact;
 
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.*;
-
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
-public class CreateUserDto {
+public class GetContactDto {
+    @NotEmpty
+    private Long id;
 
-    @NotBlank
-    @Email(message = "Email is invalid")
+    @NotEmpty
+    @Email(message = "Email should be valid")
     private String email;
 
     @NotBlank
@@ -22,17 +22,14 @@ public class CreateUserDto {
     @Pattern(regexp="(^$|[0-9]{10})")
     private String phone;
 
-    @NotBlank
-    @Length(min = 6, max = 30, message = "Password length must be more than 6 digits")
-    private String password;
-
-    @NotBlank
+    @NotEmpty
     private String firstName;
 
-    @NotBlank
+    @NotEmpty
     private String surname;
 
     private Boolean isActive;
 
+    @NotNull
     private String urlAvatar;
 }

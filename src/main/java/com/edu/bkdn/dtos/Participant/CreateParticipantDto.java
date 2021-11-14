@@ -1,9 +1,9 @@
-package com.edu.bkdn.dtos.Message;
+package com.edu.bkdn.dtos.Participant;
 
+import com.edu.bkdn.models.ParticipantType;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -11,9 +11,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
-public class GetMessageDto {
-
-    private String message;
+public class CreateParticipantDto {
 
     @NotEmpty
     private Long userId;
@@ -22,10 +20,5 @@ public class GetMessageDto {
     private Long conversationId;
 
     @NotNull
-    private String createdAt;
-
-    @NotNull
-    private String updatedAt;
-
-    private String deletedAt;
+    private ParticipantType participantType;
 }

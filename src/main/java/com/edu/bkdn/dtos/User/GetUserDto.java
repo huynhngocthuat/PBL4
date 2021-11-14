@@ -1,27 +1,34 @@
 package com.edu.bkdn.dtos.User;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.*;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Validated
 public class GetUserDto {
     @NotEmpty
     private Long id;
+
     @NotEmpty
+    @Email
     private String email;
-    @NotEmpty
+
+    @NotBlank
+    @Size(min=10, max=11)
+    @Pattern(regexp="(^$|[0-9]{10})")
     private String phone;
-    @NotEmpty
+
+    @NotBlank
     private String firstName;
-    @NotEmpty
+
+    @NotBlank
     private String surname;
-    @NotEmpty
+
     private Boolean isActive;
+
+    private String urlAvatar;
 }

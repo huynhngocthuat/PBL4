@@ -1,26 +1,27 @@
 package com.edu.bkdn.dtos.Participant;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.edu.bkdn.models.ParticipantType;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-@Validated
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Validated
 public class GetParticipantDto {
 
-    @NotNull
+    @NotEmpty
     private Long id;
 
-    @NotNull
+    @NotEmpty
     private Long userId;
 
-    @NotNull
+    @NotEmpty
     private Long conversationId;
+
+    @NotNull
+    private ParticipantType participantType;
 }

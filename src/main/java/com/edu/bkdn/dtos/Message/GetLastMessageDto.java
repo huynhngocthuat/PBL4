@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
-public class GetMessageDto {
+public class GetLastMessageDto {
 
     private String message;
 
@@ -23,9 +23,4 @@ public class GetMessageDto {
 
     @NotNull
     private String createdAt;
-
-    @NotNull
-    private String updatedAt;
-
-    private String deletedAt;
 }

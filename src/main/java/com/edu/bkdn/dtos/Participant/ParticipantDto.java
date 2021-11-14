@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -17,9 +16,9 @@ public class ParticipantDto {
     @NotEmpty
     private Long participantId;
     @NotEmpty
-    private Timestamp createAt;
+    private Timestamp createdAt;
     @NotEmpty
-    private Timestamp updateAt;
+    private Timestamp updatedAt;
     @NotEmpty
     private Long userId;
     @NotEmpty

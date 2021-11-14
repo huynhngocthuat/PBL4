@@ -1,9 +1,11 @@
 package com.edu.bkdn.config;
 
+import com.edu.bkdn.dtos.Contact.CreateContactDto;
+import com.edu.bkdn.dtos.Participant.CreateParticipantDto;
 import com.edu.bkdn.dtos.User.CreateUserDto;
+import com.edu.bkdn.services.ContactService;
 import com.edu.bkdn.services.UserService;
 import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +20,8 @@ public class EntryUser {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ContactService contactService;
 
     @Bean
     @PostConstruct
@@ -28,7 +32,8 @@ public class EntryUser {
                 "123456",
                 "Huong Le",
                 "Nguyen",
-                false
+                false,
+                ""
         );
         CreateUserDto entryApplicationUser2 = new CreateUserDto(
                 "huynhthuat852@gmail.com",
@@ -36,7 +41,8 @@ public class EntryUser {
                 "123456",
                 "Huynh Ngoc",
                 "Thuat",
-                false
+                false,
+                ""
         );
         CreateUserDto entryApplicationUser3 = new CreateUserDto(
                 "tanty@gmail.com",
@@ -44,7 +50,17 @@ public class EntryUser {
                 "123456",
                 "Doan Tan",
                 "Ty",
-                false
+                false,
+                ""
+        );
+        CreateUserDto entryApplicationUser4 = new CreateUserDto(
+                "hoangdat@gmail.com",
+                "0987654322",
+                "123456",
+                "Dinh Hoang",
+                "Dat",
+                false,
+                ""
         );
 
         try{
@@ -52,9 +68,55 @@ public class EntryUser {
             this.userService.createUser(entryApplicationUser1);
             this.userService.createUser(entryApplicationUser2);
             this.userService.createUser(entryApplicationUser3);
+            this.userService.createUser(entryApplicationUser4);
+        }
+        catch(Exception | DuplicateException dupError){
+            log.error(dupError.getMessage());
+        }
+
+        CreateContactDto entryContact1 = new CreateContactDto(
+                "nguyenvsleesin@gmail.com",
+                "0934908500",
+                "Huong Le",
+                "Nguyen",
+                false,
+                ""
+        );
+        CreateContactDto entryContact2 = new CreateContactDto(
+                "huynhthuat852@gmail.com",
+                "0869693721",
+                "Huynh Ngoc",
+                "Thuat",
+                false,
+                ""
+        );
+        CreateContactDto entryContact3 = new CreateContactDto(
+                "tanty@gmail.com",
+                "0987654321",
+                "Doan Tan",
+                "Ty",
+                false,
+                ""
+        );
+        CreateContactDto entryContact4 = new CreateContactDto(
+                "hoangdat@gmail.com",
+                "0987654322",
+                "Dinh Hoang",
+                "Dat",
+                false,
+                ""
+        );
+
+        try{
+            log.info("Creating entry contacts");
+            this.contactService.createContact(entryContact1);
+            this.contactService.createContact(entryContact2);
+            this.contactService.createContact(entryContact3);
+            this.contactService.createContact(entryContact4);
         }
         catch(Exception | DuplicateException dupError){
             log.error(dupError.getMessage());
         }
     }
+
 }
