@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -28,8 +27,10 @@ public class UserDto {
     private String surname;
     @NotEmpty
     private Boolean isActive;
+
+    private String urlAvatar;
     @NotEmpty
-    private Timestamp createAt;
+    private Timestamp createdAt;
     @NotEmpty
-    private Timestamp updateAt;
+    private Timestamp updatedAt;
 }

@@ -2,10 +2,7 @@ package com.edu.bkdn.models;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
@@ -25,4 +22,8 @@ public class Participant extends BaseEntity implements Serializable {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Conversation conversation;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private ParticipantType participantType;
 }

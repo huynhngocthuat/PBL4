@@ -3,7 +3,6 @@ package com.edu.bkdn.config;
 import com.edu.bkdn.dtos.User.CreateUserDto;
 import com.edu.bkdn.services.UserService;
 import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +27,8 @@ public class EntryUser {
                 "123456",
                 "Huong Le",
                 "Nguyen",
-                false
+                false,
+                ""
         );
         CreateUserDto entryApplicationUser2 = new CreateUserDto(
                 "huynhthuat852@gmail.com",
@@ -36,7 +36,8 @@ public class EntryUser {
                 "123456",
                 "Huynh Ngoc",
                 "Thuat",
-                false
+                false,
+                ""
         );
         CreateUserDto entryApplicationUser3 = new CreateUserDto(
                 "tanty@gmail.com",
@@ -44,7 +45,8 @@ public class EntryUser {
                 "123456",
                 "Doan Tan",
                 "Ty",
-                false
+                false,
+                ""
         );
 
         try{

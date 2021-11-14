@@ -1,9 +1,7 @@
 package com.edu.bkdn.dtos.Conversation;
 
-import com.edu.bkdn.dtos.Message.GetMessageDto;
+import com.edu.bkdn.dtos.Message.GetLastMessageDto;
 import com.edu.bkdn.dtos.Participant.GetParticipantDto;
-import com.edu.bkdn.models.Message;
-import com.edu.bkdn.models.Participant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,9 +32,12 @@ public class GetConversationDto {
 
     @NotNull
     @Positive
-    private Long channelId;
+    private String channelId;
 
-    private List<GetMessageDto> messages;
+    private String urlAvatar;
+
+    @NotNull
+    private GetLastMessageDto lastMessage;
 
     private List<GetParticipantDto> participants;
 }

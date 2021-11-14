@@ -31,6 +31,8 @@ public class User extends BaseEntity implements Serializable {
     @Column(nullable = false)
     private Boolean isActive;
 
+    @Column(columnDefinition = "nvarchar(255) default 'https://dummyimage.com/600x600/000/fff&text=User'")
+    private String urlAvatar = "https://dummyimage.com/600x600/000/fff&text=User";
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude

@@ -24,4 +24,6 @@ public class GetUserDto {
     private String surname;
     @NotEmpty
     private Boolean isActive;
+
+    private String urlAvatar;
 }

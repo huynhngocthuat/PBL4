@@ -43,4 +43,6 @@ public class CreateUserDto {
 
     @NotNull
     private Boolean isActive;
+
+    private String urlAvatar;
 }

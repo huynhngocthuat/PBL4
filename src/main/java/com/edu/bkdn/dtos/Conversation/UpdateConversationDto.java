@@ -1,6 +1,5 @@
-package com.edu.bkdn.dtos.Participant;
+package com.edu.bkdn.dtos.Conversation;
 
-import com.edu.bkdn.models.ParticipantType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,23 +7,25 @@ import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Validated
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetParticipantDto {
+public class UpdateConversationDto {
 
     @NotNull
-    private Long id;
+    private String title;
 
     @NotNull
-    private Long userId;
+    @Positive
+    private Long creatorId;
 
     @NotNull
-    private Long conversationId;
+    @Positive
+    private String channelId;
 
-    @NotNull
-    private ParticipantType participantType;
+    private String urlAvatar;
 }

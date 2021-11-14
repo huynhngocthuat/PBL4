@@ -9,12 +9,12 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Validated
 @Getter
 @Setter
-public class GetMessageDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class GetLastMessageDto {
 
     @NotNull
     @NotBlank
@@ -28,10 +28,4 @@ public class GetMessageDto {
 
     @NotNull
     private String createdAt;
-
-    @NotNull
-    private String updatedAt;
-
-    @NotNull
-    private String deletedAt;
 }
