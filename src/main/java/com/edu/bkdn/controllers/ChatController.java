@@ -1,23 +1,18 @@
 package com.edu.bkdn.controllers;
 
 
-import com.edu.bkdn.dtos.ChatMessage;
-import com.edu.bkdn.models.Conversation;
-import com.edu.bkdn.models.Message;
-import com.edu.bkdn.models.User;
+import com.edu.bkdn.dtos.Message.CreateMessageDto;
 import com.edu.bkdn.services.MessageService;
 import com.edu.bkdn.services.UserService;
 import com.google.gson.Gson;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.Instant;
 
 
 @Controller
@@ -29,28 +24,15 @@ public class ChatController {
     @Autowired
     SimpMessagingTemplate simpMessagingTemplate;
 
+    @SneakyThrows
     @MessageMapping("/send")
-    public void sendMessage(@Payload ChatMessage chatMessage) {
-        System.out.println(chatMessage);
-        // Set Conversation and User
-//        Conversation conversation = new Conversation();
-//        conversation.setId(Long.parseLong(chatMessage.getIdConversation()));
-//        User user = new User();
-//        user = userService.findUserByPhone(chatMessage.getSender()).get();
+    public void sendMessage(@Payload CreateMessageDto createMessageDto) {
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        createMessageDto.setCreatedAt(currentTime);
 
-        // Set realtime
-        Timestamp date = Timestamp.from(Instant.now());
-
-        // Tạo và thêm giá trị vào entity
-//        Message entity = new Message();
-//        entity.setMessage(chatMessage.getContent());
-//        entity.setConversation(conversation);
-//        entity.setUser(user);
-//        entity.setCreatedAt(date);
-//        messageService.save(entity);
-//
+        messageService.createMessage(createMessageDto);
         Gson gson = new Gson();
-        simpMessagingTemplate.convertAndSend("/topic/public/"+ chatMessage.getIdConversation(), gson.toJson(chatMessage));
+        simpMessagingTemplate.convertAndSend("/topic/public/"+ createMessageDto.getConversationId(), gson.toJson(createMessageDto));
 
     }
 }

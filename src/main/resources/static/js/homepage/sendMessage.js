@@ -6,8 +6,8 @@ function connect(idConversation) {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function () {
         // onConnected func
-        stompClient.subscribe('/topic/public/' + idConversation, function (chatMessage) {
-            var message = JSON.parse(chatMessage.body); // Đối tượng Json
+        stompClient.subscribe('/topic/public/' + idConversation, function (createMessageDto) {
+            var message = JSON.parse(createMessageDto.body); // Đối tượng Json
             loadMessage(message, "Huynh Ngoc Thuat", "https://images.unsplash.com/photo-1508243771214-6e95d137426b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80")
         });
     }, onError);
@@ -26,14 +26,15 @@ function enterSend(e) {
 function send() {
     let messageInput = document.querySelector("#input-message");
     let messageContent = messageInput.value.trim();
-    let idConversation = messageInput.getAttribute("idConversation");
+    let conversationId = messageInput.getAttribute("idConversation");
     if (messageContent && stompClient) {
-        var chatMessage = {
+        var createMessageDto = {
             userId: dataLogin.getID(),
             content: messageInput.value,
-            idConversation: idConversation,
+            conversationId: conversationId,
+            createdAt : null,
         };
-        stompClient.send("/app/send", {}, JSON.stringify(chatMessage));
+        stompClient.send("/app/send", {}, JSON.stringify(createMessageDto));
         messageInput.value = '';
     }
 }
