@@ -1,4 +1,4 @@
-package com.edu.bkdn.dtos;
+package com.edu.bkdn.dtos.Message;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,12 +6,14 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
-public class ChatMessage {
+public class CreateMessageDto {
 
     @NotEmpty
     private Long userId;
@@ -20,6 +22,9 @@ public class ChatMessage {
     private String content;
 
     @NotEmpty
-    private String idConversation;
+    private Long conversationId;
+
+    @NotNull
+    private Timestamp createdAt;
 
 }
