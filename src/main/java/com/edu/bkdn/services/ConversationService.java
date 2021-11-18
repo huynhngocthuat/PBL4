@@ -91,12 +91,12 @@ public class ConversationService {
                 }
             }
         }
-        Collections.sort(getConversationDtos, new Comparator<GetConversationDto>() {
-            @Override
-            public int compare(GetConversationDto o1, GetConversationDto o2) {
-                return o2.getLastMessage().getCreatedAt().compareTo(o1.getLastMessage().getCreatedAt());
-            }
-        });
+//        Collections.sort(getConversationDtos, new Comparator<GetConversationDto>() {
+//            @Override
+//            public int compare(GetConversationDto o1, GetConversationDto o2) {
+//                return o2.getLastMessage().getCreatedAt().compareTo(o1.getLastMessage().getCreatedAt());
+//            }
+//        });
         return getConversationDtos;
     }
 

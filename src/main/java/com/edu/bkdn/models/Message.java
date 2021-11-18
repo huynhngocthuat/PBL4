@@ -15,7 +15,7 @@ import java.util.List;
 public class Message extends BaseEntity implements Serializable {
 
     @Column(columnDefinition = "nvarchar(200) not null")
-    private String message;
+    private String content;
 
     @ManyToOne
     @JoinColumn(name = "id_sender")

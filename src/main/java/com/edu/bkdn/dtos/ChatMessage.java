@@ -12,10 +12,14 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 @Validated
 public class ChatMessage {
+
     @NotEmpty
-    private String sender;
+    private Long userId;
+
     @NotEmpty
     private String content;
+
     @NotEmpty
     private String idConversation;
+
 }
