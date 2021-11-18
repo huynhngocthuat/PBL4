@@ -8,7 +8,7 @@
     <title>Homepage</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/reset.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/base.css}"/>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/homepage.css}"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -20,6 +20,16 @@
             referrerpolicy="no-referrer"
     />
     <script src="/js/config.js"></script>
+    <script src="/js/moment.min.js"></script>
+    <script src="/js/moment-with-locales.js"></script>
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js">
+    </script>
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js">
+    </script>
+
+
 </head>
 <body>
 <div class="app">
@@ -51,12 +61,15 @@
         </div>
     </div>
     <div class="main">
-        <div class="main-top">
+        <div class="main-intro">
+            <p>PBL4: BKZALO</p>
+        </div>
+        <div class="main-top" id="main-top">
             <div class="main-top__avatar">
-                <img src="https://source.unsplash.com/random" alt="" class="" />
+                <img src="" alt="Avatar" class="" />
             </div>
             <div class="main-top__name">
-                <p>Snake</p>
+                <p></p>
             </div>
             <div class="main-top__action">
                 <i class="fas fa-phone-alt"></i>
@@ -69,19 +82,33 @@
         </div>
         <div class="main-chat">
             <div class="input-chat">
-                <input
-                        type="text"
-                        placeholder="Message here"
-                        name="input-message"
-                        id="input-message"
-                />
+                <input type="text" placeholder="Message here" name="input-message" id="input-message" />
                 <i class="fas fa-plus-square" onClick="handleReceivedMessage()"></i>
-                <i class="fas fa-paper-plane" onClick="handleSendMessage()"></i>
+                <i class="fas fa-paper-plane" onClick="send()" onkeyup="enterSend(e)"></i>
             </div>
         </div>
     </div>
     <div class="right-bar"></div>
 </div>
 </body>
-<script src="/js/home.js"></script>
+<script th:inline="javascript">
+
+    var idUserLogin = /*[[${idUserLogin}]]*/ "Test";
+
+    const dataLogin = (function () {
+        /*<![CDATA[*/
+        const idUser = /*[[${idUserLogin}]]*/ "idUser";
+        /*]]>*/
+        return {
+            getID() {
+                return idUser;
+            }
+        }
+
+    })();
+
+</script>
+<script src="/js/homepage/home.js"></script>
+<script src="/js/homepage/message.js"></script>
+<script src="/js/homepage/sendMessage.js"></script>
 </html>

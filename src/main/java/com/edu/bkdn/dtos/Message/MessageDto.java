@@ -17,7 +17,7 @@ public class MessageDto {
     @NotEmpty
     private Long messageId;
     @NotEmpty
-    private String message;
+    private String content;
     @NotEmpty
     private Timestamp createdAt;
     @NotEmpty

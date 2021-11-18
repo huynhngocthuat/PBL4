@@ -31,25 +31,26 @@ public class ChatController {
 
     @MessageMapping("/send")
     public void sendMessage(@Payload ChatMessage chatMessage) {
+        System.out.println(chatMessage);
         // Set Conversation and User
-        Conversation conversation = new Conversation();
-        conversation.setId(Long.parseLong(chatMessage.getIdConversation()));
-        User user = new User();
-        user = userService.findUserByPhone(chatMessage.getSender()).get();
+//        Conversation conversation = new Conversation();
+//        conversation.setId(Long.parseLong(chatMessage.getIdConversation()));
+//        User user = new User();
+//        user = userService.findUserByPhone(chatMessage.getSender()).get();
 
         // Set realtime
         Timestamp date = Timestamp.from(Instant.now());
 
         // Tạo và thêm giá trị vào entity
-        Message entity = new Message();
-        entity.setMessage(chatMessage.getContent());
-        entity.setConversation(conversation);
-        entity.setUser(user);
-        entity.setCreatedAt(date);
-        messageService.save(entity);
-
+//        Message entity = new Message();
+//        entity.setMessage(chatMessage.getContent());
+//        entity.setConversation(conversation);
+//        entity.setUser(user);
+//        entity.setCreatedAt(date);
+//        messageService.save(entity);
+//
         Gson gson = new Gson();
-        simpMessagingTemplate.convertAndSend("/topic/public/"+ chatMessage.getIdConversation(), gson.toJson(entity));
+        simpMessagingTemplate.convertAndSend("/topic/public/"+ chatMessage.getIdConversation(), gson.toJson(chatMessage));
 
     }
 }

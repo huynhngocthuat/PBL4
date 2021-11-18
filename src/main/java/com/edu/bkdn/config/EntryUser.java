@@ -45,8 +45,8 @@ public class EntryUser {
                 ""
         );
         CreateUserDto entryApplicationUser3 = new CreateUserDto(
-                "tanty@gmail.com",
-                "0987654321",
+                "doantanty92@gmail.com",
+                "0969643417",
                 "123456",
                 "Doan Tan",
                 "Ty",
@@ -91,8 +91,8 @@ public class EntryUser {
                 ""
         );
         CreateContactDto entryContact3 = new CreateContactDto(
-                "tanty@gmail.com",
-                "0987654321",
+                "doantanty92@gmail.com",
+                "0969643417",
                 "Doan Tan",
                 "Ty",
                 false,
