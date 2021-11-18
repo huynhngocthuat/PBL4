@@ -6,6 +6,7 @@ import com.edu.bkdn.dtos.Message.GetMessageDto;
 import com.edu.bkdn.dtos.UserContact.CreateUserContactDto;
 import com.edu.bkdn.models.Message;
 import com.edu.bkdn.models.UserContact;
+import com.edu.bkdn.utils.HelperUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
@@ -66,13 +67,6 @@ public class WebConfig implements WebMvcConfigurer {
             }
         };
 
-//        PropertyMap<Conversation, GetConversationDto> conversationDtoPropertyMap = new PropertyMap<Conversation, GetConversationDto>() {
-//            @Override
-//            protected void configure() {
-//                int lastIndex = source.getMessages().size() - 1;
-//                map().setLastMessage(source.getMessages().get(lastIndex));
-//            }
-//        };
         modelMapper.addMappings(userContactMap);
         modelMapper.addMappings(lastMessageDtoPropertyMap);
         modelMapper.addMappings(messageDtoPropertyMap);

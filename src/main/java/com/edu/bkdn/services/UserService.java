@@ -4,6 +4,7 @@ import com.edu.bkdn.dtos.User.CreateUserDto;
 import com.edu.bkdn.models.ApplicationUser;
 import com.edu.bkdn.models.User;
 import com.edu.bkdn.repositories.UserRepository;
+import com.edu.bkdn.utils.HelperUtil;
 import com.edu.bkdn.utils.ObjectMapperUtils;
 import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
 import lombok.AllArgsConstructor;

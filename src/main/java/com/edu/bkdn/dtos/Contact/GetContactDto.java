@@ -26,7 +26,7 @@ public class GetContactDto {
     private String firstName;
 
     @NotEmpty
-    private String surname;
+    private String lastName;
 
     private Boolean isActive;
 

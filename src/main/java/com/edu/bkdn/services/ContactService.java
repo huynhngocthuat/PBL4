@@ -4,6 +4,7 @@ import com.edu.bkdn.dtos.Contact.CreateContactDto;
 import com.edu.bkdn.dtos.Contact.GetContactDto;
 import com.edu.bkdn.models.Contact;
 import com.edu.bkdn.repositories.ContactRepository;
+import com.edu.bkdn.utils.HelperUtil;
 import com.edu.bkdn.utils.ObjectMapperUtils;
 import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
 import com.edu.bkdn.utils.httpResponse.exceptions.EmptyListException;
@@ -29,7 +30,7 @@ public class ContactService {
         List<Contact> foundContacts = this.contactRepository.getContactsByUserId(userId);
         // If user have no conversation
         if(foundContacts.isEmpty()){
-            throw new EmptyListException("User: " + userId + " has no conversation!!!");
+            throw new EmptyListException("User: " + userId + " has no contact!!!");
         }
         return ObjectMapperUtils.mapAll(foundContacts, GetContactDto.class);
     }
