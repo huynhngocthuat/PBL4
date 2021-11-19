@@ -19,14 +19,7 @@ public class homeController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("")
-    public String index(ModelMap modelMap){
-        List<User> list = userService.findAll();
-        modelMap.addAttribute("users", list);
-        return "index";
-    }
-
-    @GetMapping("/home")
+    @GetMapping({"/home", ""})
     public String hello(ModelMap modelMap, Authentication authentication){
         Long id =  ((ApplicationUser)authentication.getPrincipal()).getUser().getId();
         Gson gson = new Gson() ;
