@@ -46,16 +46,15 @@ public class MessageService {
         return ObjectMapperUtils.mapAll(foundConversation.get().getMessages(), GetMessageDto.class);
     }
 
-<<<<<<< HEAD
-    public void createMessage(CreateMessageDto createMessageDto) throws NotFoundException{
+    public void createMessage(CreateMessageDto createMessageDto) throws NotFoundException {
         // Check existed user
         Optional<User> foundUser = this.userRepository.findUserById(createMessageDto.getUserId());
-        if(!foundUser.isPresent()){
+        if (!foundUser.isPresent()) {
             throw new UsernameNotFoundException("User with ID: " + createMessageDto.getUserId() + " does not existed!!!");
         }
         // Check existed conversation
         Optional<Conversation> foundConversation = this.conversationRepository.findById(createMessageDto.getConversationId());
-        if(!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null){
+        if (!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null) {
             throw new NotFoundException("Conversation with ID: " + createMessageDto.getConversationId() + " does not existed!!!");
         }
 
@@ -66,7 +65,7 @@ public class MessageService {
         newMessage.setContent(createMessageDto.getContent());
 
         messageRepository.save(newMessage);
-=======
+    }
     public List<GetMessageDto> getAllMessageByUserAndConversationAndDeletedAtIsNull(Long conversationId, Long userId){
         return ObjectMapperUtils.mapAll(
                         this.messageRepository.findAllByConversationAndUserAndDeletedAtIsNull(conversationId, userId),
@@ -76,6 +75,5 @@ public class MessageService {
     public GetLastMessageDto getLastMessageDtoFromListMessage(List<Message> messages){
         Message lastMessage = Collections.max(messages, Comparator.comparing(Message::getCreatedAt));
         return ObjectMapperUtils.map(lastMessage, GetLastMessageDto.class);
->>>>>>> hotfix/WCA-20-CRUD-conversation
     }
 }
