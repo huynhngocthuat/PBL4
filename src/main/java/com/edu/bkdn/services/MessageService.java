@@ -1,7 +1,9 @@
 package com.edu.bkdn.services;
 
 import com.edu.bkdn.dtos.Message.CreateMessageDto;
+import com.edu.bkdn.dtos.Message.GetLastMessageDto;
 import com.edu.bkdn.dtos.Message.GetMessageDto;
+import com.edu.bkdn.models.BaseEntity;
 import com.edu.bkdn.models.Conversation;
 import com.edu.bkdn.models.Message;
 import com.edu.bkdn.models.User;
@@ -14,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Service
 public class MessageService {
@@ -41,10 +43,10 @@ public class MessageService {
         if(!foundConversation.isPresent()){
             throw new NotFoundException("Conversation with ID: " + conversationId + " does not existed");
         }
-
         return ObjectMapperUtils.mapAll(foundConversation.get().getMessages(), GetMessageDto.class);
     }
 
+<<<<<<< HEAD
     public void createMessage(CreateMessageDto createMessageDto) throws NotFoundException{
         // Check existed user
         Optional<User> foundUser = this.userRepository.findUserById(createMessageDto.getUserId());
@@ -64,5 +66,16 @@ public class MessageService {
         newMessage.setContent(createMessageDto.getContent());
 
         messageRepository.save(newMessage);
+=======
+    public List<GetMessageDto> getAllMessageByUserAndConversationAndDeletedAtIsNull(Long conversationId, Long userId){
+        return ObjectMapperUtils.mapAll(
+                        this.messageRepository.findAllByConversationAndUserAndDeletedAtIsNull(conversationId, userId),
+                        GetMessageDto.class);
+    }
+
+    public GetLastMessageDto getLastMessageDtoFromListMessage(List<Message> messages){
+        Message lastMessage = Collections.max(messages, Comparator.comparing(Message::getCreatedAt));
+        return ObjectMapperUtils.map(lastMessage, GetLastMessageDto.class);
+>>>>>>> hotfix/WCA-20-CRUD-conversation
     }
 }

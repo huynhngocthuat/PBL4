@@ -30,7 +30,6 @@ public class GetConversationDto {
 
     private String urlAvatar;
 
-    @NotNull
     private GetLastMessageDto lastMessage;
 
     private List<GetParticipantDto> participants;

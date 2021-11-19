@@ -30,7 +30,7 @@ public class CreateUserDto {
     private String firstName;
 
     @NotBlank
-    private String surname;
+    private String lastName;
 
     private Boolean isActive;
 

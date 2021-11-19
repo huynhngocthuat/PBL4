@@ -14,10 +14,16 @@ import javax.validation.constraints.NotNull;
 public class GetParticipantDto {
 
     @NotEmpty
-    private Long id;
+    private Long userId;
 
     @NotEmpty
-    private Long userId;
+    private String userFirstName;
+
+    @NotEmpty
+    private String userLastName;
+
+    @NotNull
+    private String userUrlAvatar;
 
     @NotEmpty
     private Long conversationId;

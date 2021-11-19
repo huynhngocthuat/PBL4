@@ -24,7 +24,7 @@ public class UserDto {
     @NotEmpty
     private String firstName;
     @NotEmpty
-    private String surname;
+    private String lastName;
     @NotEmpty
     private Boolean isActive;
 

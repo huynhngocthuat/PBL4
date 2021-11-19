@@ -27,6 +27,11 @@ public class ParticipantService {
     @Autowired
     private ContactService contactService;
 
+    public Participant save(Participant participant){
+        return this.participantRepository.save(participant);
+    }
+
+
     public List<Participant> findAll(){
         return participantRepository.findAll();
     }

@@ -26,7 +26,7 @@ public class GetUserDto {
     private String firstName;
 
     @NotBlank
-    private String surname;
+    private String lastName;
 
     private Boolean isActive;
 

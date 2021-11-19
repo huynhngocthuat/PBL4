@@ -24,7 +24,7 @@ public class Contact extends BaseEntity implements Serializable {
     private String firstName;
 
     @Column(columnDefinition = "nvarchar(100) not null")
-    private String surname;
+    private String lastName;
 
     @Column(nullable = false)
     private Boolean isActive;
