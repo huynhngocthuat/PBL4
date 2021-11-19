@@ -1,12 +1,17 @@
 package com.edu.bkdn.services;
 
+import com.edu.bkdn.dtos.Message.GetMessageDto;
 import com.edu.bkdn.dtos.User.CreateUserDto;
+import com.edu.bkdn.dtos.User.GetUserDto;
+import com.edu.bkdn.dtos.User.UpdateUserDto;
 import com.edu.bkdn.models.ApplicationUser;
+import com.edu.bkdn.models.Conversation;
 import com.edu.bkdn.models.User;
 import com.edu.bkdn.repositories.UserRepository;
 import com.edu.bkdn.utils.HelperUtil;
 import com.edu.bkdn.utils.ObjectMapperUtils;
 import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
+import com.edu.bkdn.utils.httpResponse.exceptions.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,6 +49,7 @@ public class UserService implements UserDetailsService{
     public Optional<User> findUserByPhone(String phoneNumber) {
         return userRepository.findUserByPhone(phoneNumber);
     }
+
     public void createUser(CreateUserDto createUserDto) throws DuplicateException {
         Optional<User> foundUser = this.userRepository.findUserByPhone(createUserDto.getPhone());
         // Check for duplicate user
@@ -56,5 +62,27 @@ public class UserService implements UserDetailsService{
         // Encrypt user's password before saving to database
         newUser.setPassword(bCryptPasswordEncoder.encode(createUserDto.getPassword()));
         this.userRepository.save(newUser);
+    }
+
+    public void updateUser(Long id, UpdateUserDto updateUserDto) throws NotFoundException, DuplicateException{
+        Optional<User> foundUser = this.userRepository.findById(id);
+        foundUser.orElseThrow(() -> new NotFoundException("Not found user Id"));
+
+        Optional<User> foundUserByPhone = findUserByPhone(updateUserDto.getPhone());
+        if (foundUserByPhone.isPresent() && foundUserByPhone.get().getId() != foundUser.get().getId()) {
+            throw new DuplicateException("Phone number is already existed");
+        }
+
+        foundUser.get().setEmail(updateUserDto.getEmail());
+        foundUser.get().setFirstName(updateUserDto.getFirstName());
+        foundUser.get().setSurname(updateUserDto.getSurname());
+        foundUser.get().setUrlAvatar(updateUserDto.getUrlAvatar());
+        foundUser.get().setPhone(updateUserDto.getPhone());
+
+        this.userRepository.save(foundUser.get());
+    }
+
+    public List<GetUserDto> getAllUser(){
+        return ObjectMapperUtils.mapAll(userRepository.findAll(), GetUserDto.class);
     }
 }

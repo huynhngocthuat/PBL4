@@ -3,8 +3,10 @@ package com.edu.bkdn.config;
 
 import com.edu.bkdn.dtos.Message.GetLastMessageDto;
 import com.edu.bkdn.dtos.Message.GetMessageDto;
+import com.edu.bkdn.dtos.User.GetUserDto;
 import com.edu.bkdn.dtos.UserContact.CreateUserContactDto;
 import com.edu.bkdn.models.Message;
+import com.edu.bkdn.models.User;
 import com.edu.bkdn.models.UserContact;
 import com.edu.bkdn.utils.HelperUtil;
 import org.modelmapper.ModelMapper;
@@ -67,6 +69,14 @@ public class WebConfig implements WebMvcConfigurer {
             }
         };
 
+
+//        PropertyMap<Conversation, GetConversationDto> conversationDtoPropertyMap = new PropertyMap<Conversation, GetConversationDto>() {
+//            @Override
+//            protected void configure() {
+//                int lastIndex = source.getMessages().size() - 1;
+//                map().setLastMessage(source.getMessages().get(lastIndex));
+//            }
+//        };
         modelMapper.addMappings(userContactMap);
         modelMapper.addMappings(lastMessageDtoPropertyMap);
         modelMapper.addMappings(messageDtoPropertyMap);
