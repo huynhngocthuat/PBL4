@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -50,7 +51,8 @@ public class UserService implements UserDetailsService{
         return userRepository.findUserByPhone(phoneNumber);
     }
 
-    public void createUser(CreateUserDto createUserDto) throws DuplicateException {
+    public void createUser(CreateUserDto createUserDto) throws DuplicateException
+    {
         Optional<User> foundUser = this.userRepository.findUserByPhone(createUserDto.getPhone());
         // Check for duplicate user
         // Throw error if user(phone number) already exist
@@ -61,10 +63,16 @@ public class UserService implements UserDetailsService{
         User newUser = ObjectMapperUtils.map(createUserDto, User.class);
         // Encrypt user's password before saving to database
         newUser.setPassword(bCryptPasswordEncoder.encode(createUserDto.getPassword()));
+
+        newUser.setIsActive(false);
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        newUser.setCreatedAt(currentTime);
+        newUser.setUpdatedAt(currentTime);
         this.userRepository.save(newUser);
     }
 
-    public void updateUser(Long id, UpdateUserDto updateUserDto) throws NotFoundException, DuplicateException{
+    public void updateUser(Long id, UpdateUserDto updateUserDto) throws NotFoundException, DuplicateException
+    {
         Optional<User> foundUser = this.userRepository.findById(id);
         foundUser.orElseThrow(() -> new NotFoundException("Not found user Id"));
 
@@ -75,14 +83,24 @@ public class UserService implements UserDetailsService{
 
         foundUser.get().setEmail(updateUserDto.getEmail());
         foundUser.get().setFirstName(updateUserDto.getFirstName());
-        foundUser.get().setSurname(updateUserDto.getSurname());
+        foundUser.get().setLastName(updateUserDto.getLastName());
         foundUser.get().setUrlAvatar(updateUserDto.getUrlAvatar());
         foundUser.get().setPhone(updateUserDto.getPhone());
 
         this.userRepository.save(foundUser.get());
     }
 
-    public List<GetUserDto> getAllUser(){
+    public List<GetUserDto> getAllUser()
+    {
         return ObjectMapperUtils.mapAll(userRepository.findAll(), GetUserDto.class);
+    }
+
+    public void updateActive(Long id, boolean active) throws NotFoundException
+    {
+        Optional<User> foundUser = this.userRepository.findById(id);
+        foundUser.orElseThrow(() -> new NotFoundException("Not found user Id"));
+
+        foundUser.get().setIsActive(active);
+        this.userRepository.save(foundUser.get());
     }
 }

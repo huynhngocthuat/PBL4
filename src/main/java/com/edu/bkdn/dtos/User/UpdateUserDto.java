@@ -18,6 +18,6 @@ public class UpdateUserDto {
     @NotEmpty
     private String firstName;
     @NotEmpty
-    private String surname;
+    private String lastName;
     private String urlAvatar;
 }

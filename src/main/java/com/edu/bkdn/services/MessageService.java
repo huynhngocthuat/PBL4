@@ -38,7 +38,9 @@ public class MessageService {
         return messageRepository.save(s);
     }
 
-    public List<GetMessageDto> getAllMessageByConversationId(long conversationId) throws NotFoundException {
+    public List<GetMessageDto> getAllMessageByConversationId(long conversationId) throws NotFoundException
+
+    {
         Optional<Conversation> foundConversation = this.conversationService.findConversationById(conversationId);
         if(!foundConversation.isPresent()){
             throw new NotFoundException("Conversation with ID: " + conversationId + " does not existed");
@@ -46,7 +48,8 @@ public class MessageService {
         return ObjectMapperUtils.mapAll(foundConversation.get().getMessages(), GetMessageDto.class);
     }
 
-    public void createMessage(CreateMessageDto createMessageDto) throws NotFoundException {
+    public void createMessage(CreateMessageDto createMessageDto) throws NotFoundException
+    {
         // Check existed user
         Optional<User> foundUser = this.userRepository.findUserById(createMessageDto.getUserId());
         if (!foundUser.isPresent()) {
@@ -66,13 +69,15 @@ public class MessageService {
 
         messageRepository.save(newMessage);
     }
-    public List<GetMessageDto> getAllMessageByUserAndConversationAndDeletedAtIsNull(Long conversationId, Long userId){
+    public List<GetMessageDto> getAllMessageByUserAndConversationAndDeletedAtIsNull(Long conversationId, Long userId)
+    {
         return ObjectMapperUtils.mapAll(
                         this.messageRepository.findAllByConversationAndUserAndDeletedAtIsNull(conversationId, userId),
                         GetMessageDto.class);
     }
 
-    public GetLastMessageDto getLastMessageDtoFromListMessage(List<Message> messages){
+    public GetLastMessageDto getLastMessageDtoFromListMessage(List<Message> messages)
+    {
         Message lastMessage = Collections.max(messages, Comparator.comparing(Message::getCreatedAt));
         return ObjectMapperUtils.map(lastMessage, GetLastMessageDto.class);
     }
