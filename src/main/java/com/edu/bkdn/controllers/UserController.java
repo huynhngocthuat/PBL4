@@ -4,7 +4,9 @@ import com.edu.bkdn.dtos.Contact.CreateContactDto;
 import com.edu.bkdn.dtos.User.CreateUserDto;
 import com.edu.bkdn.dtos.User.GetUserDto;
 import com.edu.bkdn.dtos.User.UpdateUserDto;
+import com.edu.bkdn.dtos.UserContact.CreateUserContactDto;
 import com.edu.bkdn.services.ContactService;
+import com.edu.bkdn.services.UserContactService;
 import com.edu.bkdn.services.UserService;
 import com.edu.bkdn.utils.httpResponse.NoContentResponse;
 import com.google.gson.Gson;
@@ -28,6 +30,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private ContactService contactService;
+    @Autowired
+    private UserContactService userContactService;
 
     @GetMapping("/signup")
     public String add(Model model) {
@@ -42,11 +46,15 @@ public class UserController {
         if (result.hasErrors()) {
             return new ModelAndView("signup");
         }
-
+        //Add new user
         userService.createUser(createUserDto);
+        //Add new contact
         CreateContactDto createContactDto = new CreateContactDto();
         BeanUtils.copyProperties(createUserDto, createContactDto);
         contactService.createContact(createContactDto);
+        //Add new user-contact
+        GetUserDto getUserDto = userService.getUserDtoByPhoneNumber(createUserDto.getPhone());
+        userContactService.createUserContactRegister(getUserDto.getId());
 
 //        model.addAttribute("message", "User successfully created!");
         return new ModelAndView("login");

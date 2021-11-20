@@ -5,6 +5,7 @@ import com.edu.bkdn.dtos.User.CreateUserDto;
 import com.edu.bkdn.dtos.User.GetUserDto;
 import com.edu.bkdn.dtos.User.UpdateUserDto;
 import com.edu.bkdn.models.ApplicationUser;
+import com.edu.bkdn.models.Contact;
 import com.edu.bkdn.models.Conversation;
 import com.edu.bkdn.models.User;
 import com.edu.bkdn.repositories.UserRepository;
@@ -49,6 +50,16 @@ public class UserService implements UserDetailsService{
 
     public Optional<User> findUserByPhone(String phoneNumber) {
         return userRepository.findUserByPhone(phoneNumber);
+    }
+
+    public GetUserDto getUserDtoByPhoneNumber(String phoneNumber) throws NotFoundException{
+        Optional<User> foundUser = userRepository.findUserByPhone(phoneNumber);
+        if(!foundUser.isPresent()){
+            throw new NotFoundException("User '" + phoneNumber + "' doesnt exist");
+        }
+
+        GetUserDto getUserDto = ObjectMapperUtils.map(foundUser.get(), GetUserDto.class);
+        return getUserDto;
     }
 
     public void createUser(CreateUserDto createUserDto) throws DuplicateException
