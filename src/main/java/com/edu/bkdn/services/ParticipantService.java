@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,16 +22,17 @@ public class ParticipantService {
     @Autowired
     private ParticipantRepository participantRepository;
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
     @Autowired
-    private ConversationRepository conversationRepository;
+    private ConversationService conversationService;
     @Autowired
     private ContactService contactService;
+    @Autowired
+    private MessageService messageService;
 
     public Participant save(Participant participant){
         return this.participantRepository.save(participant);
     }
-
 
     public List<Participant> findAll(){
         return participantRepository.findAll();
@@ -44,14 +46,14 @@ public class ParticipantService {
         return this.participantRepository.findParticipantByUserIdAndConversationIdAndDeletedAtIsNull(conversationId, userId);
     }
 
-    public void createParticipant(CreateParticipantDto createParticipantDto) throws DuplicateException, NotFoundException {
+    public void createParticipant(CreateParticipantDto createParticipantDto) throws NotFoundException {
         // Check existed user
-        Optional<User> foundUser = this.userRepository.findUserById(createParticipantDto.getUserId());
+        Optional<User> foundUser = this.userService.findUserById(createParticipantDto.getUserId());
         if(!foundUser.isPresent()){
             throw new UsernameNotFoundException("User with ID: " + createParticipantDto.getUserId() + " does not existed!!!");
         }
         // Check existed conversation
-        Optional<Conversation> foundConversation = this.conversationRepository.findById(createParticipantDto.getConversationId());
+        Optional<Conversation> foundConversation = this.conversationService.findById(createParticipantDto.getConversationId());
         if(!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null){
             throw new NotFoundException("Conversation with ID: " + createParticipantDto.getConversationId() + " does not existed!!!");
         }
@@ -70,17 +72,26 @@ public class ParticipantService {
     }
 
 
-    public void addParticipantToConversation(Long conversationId, List<CreateParticipantDto> createParticipantDtos) throws NotFoundException, DuplicateException {
+    public void addParticipantToConversation(String adderPhone, Long conversationId, List<CreateParticipantDto> createParticipantDtos) throws NotFoundException, DuplicateException {
         if(!createParticipantDtos.isEmpty()){
-            Optional<Conversation> foundConversation = this.conversationRepository.findById(conversationId);
-            if(!foundConversation.isPresent()){
+            Optional<Conversation> foundConversation = this.conversationService.findById(conversationId);
+            if(!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null){
                 throw new NotFoundException("Conversation with ID: " + conversationId + " does not existed");
             }
+            User foundUser = this.checkUserExistenceByPhone(adderPhone);
 
             for(CreateParticipantDto createParticipantDto : createParticipantDtos){
                 createParticipantDto.setConversationId(conversationId);
                 createParticipantDto.setParticipantType(ParticipantType.GROUP);
-                createParticipant(createParticipantDto);
+                this.createParticipant(createParticipantDto);
+                Optional<User> participant = this.userService.findUserById(createParticipantDto.getUserId());
+                Message newMessage = new Message(
+                        foundUser.getLastName() + " just added " + participant.get().getLastName() + ".",
+                        foundUser,
+                        foundConversation.get(),
+                        null
+                );
+                this.messageService.save(newMessage);
             }
         }
     }
@@ -89,5 +100,21 @@ public class ParticipantService {
         if(participant != null){
             this.participantRepository.delete(participant);
         }
+    }
+
+    private Conversation checkConversationExistenceById(long conversationId) throws NotFoundException {
+        Optional<Conversation> foundConversation = this.conversationService.findById(conversationId);
+        if(!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null){
+            throw new NotFoundException("Conversation with ID: " + conversationId + " does not existed!");
+        }
+        return foundConversation.get();
+    }
+
+    private User checkUserExistenceByPhone(String userPhone) throws NotFoundException {
+        Optional<User> user = this.userService.findUserByPhone(userPhone);
+        if(userPhone.equals("") || !user.isPresent()){
+            throw new NotFoundException("User with phone number: "+userPhone+" does not existed!");
+        }
+        return user.get();
     }
 }

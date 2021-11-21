@@ -14,6 +14,10 @@ import java.sql.Timestamp;
 @Validated
 public class GetMessageDto {
 
+    @NotEmpty
+    private Long id;
+
+    @NotNull
     private String content;
 
     @NotEmpty
@@ -23,7 +27,7 @@ public class GetMessageDto {
     private Long conversationId;
 
     @NotNull
-    private Timestamp createdAt;
+    private String createdAt;
 
     @NotNull
     private String updatedAt;

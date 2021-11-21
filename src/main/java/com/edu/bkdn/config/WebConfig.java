@@ -48,8 +48,8 @@ public class WebConfig implements WebMvcConfigurer {
         PropertyMap<UserContact, CreateUserContactDto> userContactMap = new PropertyMap<UserContact, CreateUserContactDto>() {
             @Override
             protected void configure() {
-                map().setUserId(source.getUser().getId());
-                map().setContactId(source.getContact().getId());
+                map().setUserPhone(source.getUser().getPhone());
+                map().setContactPhone(source.getContact().getPhone());
             }
         };
 

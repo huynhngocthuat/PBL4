@@ -32,4 +32,9 @@ public class GetContactDto {
 
     @NotNull
     private String urlAvatar;
+
+    private Boolean isAccepted;
+
+    @NotNull
+    private Long requestSenderId;
 }

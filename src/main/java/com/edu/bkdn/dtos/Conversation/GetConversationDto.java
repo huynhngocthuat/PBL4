@@ -33,4 +33,6 @@ public class GetConversationDto {
     private GetLastMessageDto lastMessage;
 
     private List<GetParticipantDto> participants;
+
+    private String updatedAt;
 }
