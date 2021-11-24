@@ -381,7 +381,7 @@ body {
 
 .main-content .message-group {
     width: 100%;
-    padding-top: 0px;
+    margin-bottom: 10px;
 }
 
 .main-content .your-chat {
@@ -425,6 +425,7 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    object-fit: cover;
 }
 
 .message-main {

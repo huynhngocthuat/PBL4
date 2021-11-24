@@ -1,14 +1,15 @@
 let allConversation;
-
+let allUserInConversation;
 function start() {
     fetchConversation();
     moment.locale("vi");
+    console.log(dataLogin.getID())
 }
 start();
 
 function fetchConversation() {
     fetchMethod("/conversations").then((data) => {
-        // allConversation = data;
+        console.log(data)
         allConversation = data.sort(function (a, b) {
             let dateA = moment(a.lastMessage.createdAt);
             let dateB = moment(b.lastMessage.createdAt);
@@ -20,7 +21,7 @@ function fetchConversation() {
 }
 
 function renderConversation() {
-    var listContacts = document.querySelector("#list-contacts");
+    let listContacts = document.querySelector("#list-contacts");
 
     allConversation.map(function (data) {
         if (data.lastMessage !== null) {
@@ -29,7 +30,7 @@ function renderConversation() {
             );
             var timeAgo = moment(time, "MMMM Do YYYY, h:mm:ss a").fromNow(true);
         }
-        contactDiv = document.createElement("div");
+        let contactDiv = document.createElement("div");
         contactDiv.setAttribute("class", "contact");
         contactDiv.setAttribute("contactID", `${data.id}`);
         contactDiv.setAttribute("onclick", `showListMessage(${data.id})`);
@@ -55,21 +56,25 @@ function renderConversation() {
 }
 
 async function showListMessage(idConversation) {
+    console.log(idConversation)
+    console.log(2222)
     // HiddenIntro
     hiddenIntro(true);
     // Remove active contact
-    var activeContact = document.querySelector(".active-contact");
+    let activeContact = document.querySelector(".active-contact");
     if (activeContact !== null) {
         activeContact.classList.remove("active-contact");
     }
     // Add active contact
-    var eventTarget = document.querySelector(`[contactID="${idConversation}"`);
+    let eventTarget = document.querySelector(`[contactID="${idConversation}"`);
     eventTarget.classList.add("active-contact");
 
     // Set info Chat
     let conversationById = allConversation.find(
         (data) => data.id === idConversation
     );
+    allUserInConversation = conversationById.participants;
+    console.log(allUserInConversation)
     setInfoChat(
         conversationById.idConversation,
         conversationById.urlAvatar,
@@ -81,7 +86,7 @@ async function showListMessage(idConversation) {
     chatBox.innerHTML = "";
     let messages = await fetchMethod(`/conversations/${idConversation}`);
     messages.map(function (message) {
-        loadMessage(message, conversationById.title, conversationById.urlAvatar);
+        loadMessage(message);
     });
     disconnect();
     connect(idConversation);
