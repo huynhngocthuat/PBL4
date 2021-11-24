@@ -9,13 +9,13 @@ import com.edu.bkdn.repositories.ContactRepository;
 import com.edu.bkdn.repositories.UserContactRepository;
 import com.edu.bkdn.repositories.UserRepository;
 import com.edu.bkdn.utils.HelperUtil;
-import com.edu.bkdn.utils.ObjectMapperUtils;
+import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
 import com.edu.bkdn.utils.httpResponse.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.sql.Timestamp;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 @Service
 public class UserContactService {
@@ -23,29 +23,70 @@ public class UserContactService {
     @Autowired
     private UserContactRepository userContactRepository;
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
     @Autowired
-    private ContactRepository contactRepository;
+    private ContactService contactService;
 
-    public void createUserContact(CreateUserContactDto createUserContactDto){
+    public void save(UserContact userContact){
+        this.userContactRepository.save(userContact);
+    }
+
+    public Optional<UserContact> findById(long userContactId){
+        return this.userContactRepository.findById(userContactId);
+    }
+
+    public Optional<UserContact> findByUserIdAndContactId(long userId, long contactId){
+        return this.userContactRepository.findUserContactByUserEqualsAndContactEquals(userId, contactId);
+    }
+
+    public void createUserContact(CreateUserContactDto createUserContactDto) throws DuplicateException, NotFoundException {
+        User foundUser = this.checkUserExistenceByPhone(createUserContactDto.getUserPhone());
+        Contact foundContact = this.checkContactExistenceByPhone(createUserContactDto.getContactPhone());
+
         Optional<UserContact> foundUserContact =
-                HelperUtil.correctSingleTimestamp(
-                this.userContactRepository
-                        .findUserContactByUserEqualsAndContactEquals(
-                                createUserContactDto.getContactId(),
-                                createUserContactDto.getUserId()
-                        ));
+                this.findByUserIdAndContactId(
+                                foundUser.getId(),
+                                foundContact.getId()
+                        );
         if(foundUserContact.isPresent()){
-
+            throw new DuplicateException("Duplicate user contact, user phone: " + createUserContactDto.getUserPhone()
+            + ", contact phone: " + createUserContactDto.getContactPhone());
         }
+
+        this.userContactRepository.save(new UserContact(
+                foundUser,
+                foundContact,
+                foundUser.getId(),
+                createUserContactDto.isAccepted()
+                ));
+    }
+
+    public void delete(UserContact userContact){
+        this.userContactRepository.delete(userContact);
+    }
+
+    private User checkUserExistenceByPhone(String userPhone) throws NotFoundException {
+        Optional<User> user = this.userService.findUserByPhone(userPhone);
+        if(userPhone.equals("") || !user.isPresent()){
+            throw new NotFoundException("User with phone number: "+userPhone+" does not existed!");
+        }
+        return user.get();
+    }
+
+    private Contact checkContactExistenceByPhone(String contactPhone) throws NotFoundException {
+        Optional<Contact> contact = this.contactService.findByPhone(contactPhone);
+        if(contactPhone.equals("") || !contact.isPresent()){
+            throw new NotFoundException("Contact with phone number: "+contactPhone+" does not existed!");
+        }
+        return contact.get();
     }
 
     public void createUserContactRegister(Long userId) throws NotFoundException
     {
         //Throw not found
-        Optional<User> foundUser = this.userRepository.findById(userId);
+        Optional<User> foundUser = this.userService.findUserById(userId);
         foundUser.orElseThrow(() -> new NotFoundException("Not found user Id"));
-        Optional<Contact> foundContact = this.contactRepository.findById(userId);
+        Optional<Contact> foundContact = this.contactService.findById(userId);
         foundContact.orElseThrow(() -> new NotFoundException("Not found contact Id"));
 
         //Set data

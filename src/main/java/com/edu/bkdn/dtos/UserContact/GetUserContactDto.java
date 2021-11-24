@@ -16,6 +16,8 @@ public class GetUserContactDto {
     @NotNull
     private Long userId;
     @NotEmpty
+    private Long userPhone;
+    @NotEmpty
     private String userFirstName;
     @NotEmpty
     private String userLastName;
@@ -24,10 +26,13 @@ public class GetUserContactDto {
     @NotNull
     private Long contactId;
     @NotEmpty
+    private Long contactPhone;
+    @NotEmpty
     private String contactFirstName;
     @NotEmpty
     private String contactLastName;
     @NotEmpty
     private String contactUrlAvatar;
-
+    @NotNull
+    private boolean isAccepted;
 }

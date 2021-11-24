@@ -39,19 +39,21 @@ public class ConversationService {
         return this.conversationRepository.findAll();
     }
 
-    public List<GetConversationDto> findAllUsersConversations(Long userId) throws EmptyListException {
+    public Optional<Conversation> findById(long conversationId){
+        return this.conversationRepository.findById(conversationId);
+    }
+
+    public List<GetConversationDto> findAllUsersConversations(String userPhone) throws EmptyListException, NotFoundException {
         // Check if user exist or not
-        if(userId == -1L){
-            throw new UsernameNotFoundException("User id not found!");
-        }
+        User foundUser = this.checkUserExistenceByPhone(userPhone);
         // Find conversations by user ID
-        List<Conversation> foundConversations = this.conversationRepository.findAllConversationByUserId(userId)
+        List<Conversation> foundConversations = this.conversationRepository.findAllConversationByUserId(foundUser.getId())
                 .stream()
                 .filter(conversation -> conversation.getDeletedAt() == null)
                 .collect(Collectors.toList());
         // If user have no conversation
         if(foundConversations.isEmpty()){
-            throw new EmptyListException("User: " + userId + " has no conversation!!!");
+            throw new EmptyListException("User: " + foundUser.getId() + " has no conversation!!!");
         }
         List<GetConversationDto> getConversationDtos = ObjectMapperUtils.mapAll(foundConversations, GetConversationDto.class);
         for(int i = 0; i < foundConversations.size(); i++){
@@ -60,11 +62,13 @@ public class ConversationService {
                 // If conversation between 2 people => get the name and urlAvatar of the other user
                 Optional<Participant> otherParticipant = foundConversations.get(i).getParticipants()
                                 .stream()
-                                .filter(participant -> participant.getUser().getId() != userId)
+                                .filter(participant -> participant.getUser().getId() != foundUser.getId())
                                 .findFirst();
                 String title = otherParticipant.get().getUser().getFirstName() + " " + otherParticipant.get().getUser().getLastName();
                 getConversationDtos.get(i).setTitle(title);
                 getConversationDtos.get(i).setUrlAvatar(otherParticipant.get().getUser().getUrlAvatar());
+                getConversationDtos.get(i).getParticipants().get(0).setUserUrlAvatar("");
+                getConversationDtos.get(i).getParticipants().get(1).setUserUrlAvatar("");
             }
             else if(foundConversations.get(i).getParticipants().size() > 2){
                 // If conversation of a group and title is empty => set title = names
@@ -77,8 +81,10 @@ public class ConversationService {
                 }
             }
             // Set the last message
-            if(foundConversations.get(i).getMessages().size() > 1){
-                getConversationDtos.get(i).setLastMessage(this.messageService.getLastMessageDtoFromListMessage(foundConversations.get(i).getMessages()));
+            if(foundConversations.get(i).getMessages().size() > 0){
+                GetLastMessageDto lassMessage = this.messageService.getLastMessageDtoFromListMessage(foundConversations.get(i).getMessages());
+                getConversationDtos.get(i).setLastMessage(lassMessage);
+                getConversationDtos.get(i).setUpdatedAt(lassMessage.getCreatedAt());
             }
             else{
                 getConversationDtos.get(i).setLastMessage(null);
@@ -118,13 +124,14 @@ public class ConversationService {
 
     public void updateConversation(Long conversationId, UpdateConversationDto updateConversationDto) throws NotFoundException {
         Optional<Conversation> foundConversation = this.conversationRepository.findById(conversationId);
-        if(!foundConversation.isPresent()){
+        if(!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null){
             throw new NotFoundException("Conversation with ID: " + conversationId + " does not existed");
         }
         foundConversation.get().setTitle(updateConversationDto.getTitle());
         foundConversation.get().setCreatorId(updateConversationDto.getCreatorId());
         foundConversation.get().setChannelId(updateConversationDto.getChannelId());
         foundConversation.get().setUrlAvatar(updateConversationDto.getUrlAvatar());
+        foundConversation.get().setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         this.conversationRepository.save(foundConversation.get());
     }
 
@@ -141,13 +148,13 @@ public class ConversationService {
         return savedConversationId;
     }
 
-    public List<GetContactDto> getAllConversationOutsider(Long conversationId, Long userId) throws NotFoundException, EmptyListException {
-        Optional<Conversation> foundConversation = this.conversationRepository.findById(conversationId);
-        if(!foundConversation.isPresent()){
-            throw new NotFoundException("Conversation with ID: " + conversationId + " does not existed!");
-        }
+    public List<GetContactDto> getAllConversationOutsider(Long conversationId, String userPhone) throws NotFoundException, EmptyListException {
+        // Check exist or not
+        User user = this.checkUserExistenceByPhone(userPhone);
+        Conversation conversation = checkConversationExistenceById(conversationId);
+
         // Get list of user in conversation
-        List<User> conversationParticipants = foundConversation.get().getParticipants()
+        List<User> conversationParticipants = conversation.getParticipants()
                 .stream()
                 .map(Participant::getUser)
                 .collect(Collectors.toList());
@@ -156,7 +163,7 @@ public class ConversationService {
                 .map(User::getId)
                 .collect(Collectors.toList());
         // Get list of contact that not in current conversation
-        List<GetContactDto> conversationOutsiders = this.contactService.getContactsByUserId(userId)
+        List<GetContactDto> conversationOutsiders = this.contactService.getContactsByUserPhoneAndIsAccepted(user.getPhone())
                 .stream()
                 .filter(contact -> !conversationParticipantIds.contains(contact.getId()))
                 .collect(Collectors.toList());
@@ -178,6 +185,7 @@ public class ConversationService {
                 Timestamp deleteTimestamp = new Timestamp(System.currentTimeMillis());
                 if(foundConversation.get().getDeletedAt() == null){
                     foundConversation.get().setDeletedAt(deleteTimestamp);
+                    foundConversation.get().setUpdatedAt(deleteTimestamp);
                     this.conversationRepository.save(foundConversation.get());
                 }
             }
@@ -186,28 +194,26 @@ public class ConversationService {
             Timestamp deleteTimestamp = new Timestamp(System.currentTimeMillis());
             if(foundConversation.get().getDeletedAt() == null){
                 foundConversation.get().setDeletedAt(deleteTimestamp);
+                foundConversation.get().setUpdatedAt(deleteTimestamp);
                 this.conversationRepository.save(foundConversation.get());
             }
         }
     }
 
-    public void leaveConversation(Long conversationId, Long userId) throws NotFoundException {
-        Optional<Conversation> foundConversation = this.conversationRepository.findById(conversationId);
-        if(!foundConversation.isPresent()){
-            throw new NotFoundException("Conversation with ID: " + conversationId + " does not existed or has been deleted");
-        }
+    public void leaveConversation(Long conversationId, String userPhone) throws NotFoundException {
+        // Check exist or not
+        User user = this.checkUserExistenceByPhone(userPhone);
+        Conversation conversation = checkConversationExistenceById(conversationId);
 
-        Optional<User> foundUser = this.userService.findUserById(userId);
-        if(!foundUser.isPresent()){
-            throw new NotFoundException("User with ID: " + userId + " does not existed or has been deleted");
-        }
-
-        Optional<Participant> foundParticipant = this.participantService.findParticipantByUserIdAndConversationIdAndDeletedAtIsNull(conversationId, userId);
-        List<GetMessageDto> participantsMessages = this.messageService.getAllMessageByUserAndConversationAndDeletedAtIsNull(conversationId, userId);
+        Optional<Participant> foundParticipant = this.participantService.findParticipantByUserIdAndConversationIdAndDeletedAtIsNull(conversationId, user.getId());
+        List<GetMessageDto> participantsMessages = this.messageService.getAllMessageByUserAndConversationAndDeletedAtIsNull(conversationId, user.getId());
         if(foundParticipant.isPresent() && foundParticipant.get().getParticipantType() == ParticipantType.GROUP){
             if(!participantsMessages.isEmpty()){
-                foundParticipant.get().setDeletedAt(new Timestamp(System.currentTimeMillis()));
+                Timestamp leaveTime = new Timestamp(System.currentTimeMillis());
+                foundParticipant.get().setDeletedAt(leaveTime);
                 this.participantService.save(foundParticipant.get());
+                conversation.setUpdatedAt(leaveTime);
+                this.conversationRepository.save(conversation);
             }
             else{
                 this.participantService.deleteParticipant(foundParticipant.get());
@@ -220,18 +226,64 @@ public class ConversationService {
                 .sorted(
                         (e1, e2) -> {
                             if(e1.getLastMessage() == null && e2.getLastMessage() == null){
-                                return 0;
+                                return HelperUtil.toTimestamp(e1.getUpdatedAt())
+                                        .compareTo(HelperUtil.toTimestamp(e2.getUpdatedAt()));
                             }
                             else if (e1.getLastMessage() == null && e2.getLastMessage() != null){
-                                return -1;
+                                return HelperUtil.toTimestamp(e1.getUpdatedAt())
+                                        .compareTo(HelperUtil.toTimestamp(e2.getLastMessage().getCreatedAt()));
                             }
                             else if(e1.getLastMessage() != null && e2.getLastMessage() == null){
-                                return 1;
+                                return HelperUtil.toTimestamp(e1.getLastMessage().getCreatedAt())
+                                        .compareTo(HelperUtil.toTimestamp(e2.getUpdatedAt()));
                             }
                             return HelperUtil.toTimestamp(e1.getLastMessage().getCreatedAt())
                                     .compareTo(HelperUtil.toTimestamp(e2.getLastMessage().getCreatedAt()));
                         }
                 )
                 .collect(Collectors.toList());
+    }
+
+    public boolean checkFirstUserAndSecondUserHasSameConversation(String firstUserPhone, String secondUserPhone) throws NotFoundException, EmptyListException {
+        User foundFirstUser = this.checkUserExistenceByPhone(firstUserPhone);
+        User foundSecondUser = this.checkUserExistenceByPhone(secondUserPhone);
+
+        for(Conversation conversation : this.conversationRepository.findAllConversationByUserId(foundFirstUser.getId())){
+            if(conversation.getParticipants()
+                    .stream()
+                    .map(Participant::getUser)
+                    .collect(Collectors.toList())
+                    .stream()
+                    .map(User::getPhone)
+                    .collect(Collectors.toList())
+                    .contains(secondUserPhone)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Conversation checkConversationExistenceById(long conversationId) throws NotFoundException {
+        Optional<Conversation> foundConversation = this.conversationRepository.findById(conversationId);
+        if(!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null){
+            throw new NotFoundException("Conversation with ID: " + conversationId + " does not existed!");
+        }
+        return foundConversation.get();
+    }
+
+    private User checkUserExistenceByPhone(String userPhone) throws NotFoundException {
+        Optional<User> user = this.userService.findUserByPhone(userPhone);
+        if(userPhone.equals("") || !user.isPresent()){
+            throw new NotFoundException("User with phone number: "+userPhone+" does not existed!");
+        }
+        return user.get();
+    }
+
+    private Contact checkContactExistenceByPhone(String contactPhone) throws NotFoundException {
+        Optional<Contact> contact = this.contactService.findByPhone(contactPhone);
+        if(contactPhone.equals("") || !contact.isPresent()){
+            throw new NotFoundException("Contact with phone number: "+contactPhone+" does not existed!");
+        }
+        return contact.get();
     }
 }

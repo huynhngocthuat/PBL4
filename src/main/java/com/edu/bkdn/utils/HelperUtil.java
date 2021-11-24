@@ -1,7 +1,9 @@
 package com.edu.bkdn.utils;
 
 import com.edu.bkdn.models.BaseEntity;
+import com.edu.bkdn.models.User;
 import com.fasterxml.jackson.databind.ser.Serializers;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -53,5 +55,4 @@ public class HelperUtil {
             return null;
         }
     }
-
 }

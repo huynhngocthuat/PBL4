@@ -12,7 +12,9 @@ import javax.validation.constraints.NotNull;
 public class CreateUserContactDto {
 
     @NotNull
-    private Long userId;
+    private String userPhone;
     @NotNull
-    private Long contactId;
+    private String contactPhone;
+    @NotNull
+    private boolean isAccepted;
 }

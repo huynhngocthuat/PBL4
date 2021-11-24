@@ -11,10 +11,10 @@ import java.util.Optional;
 public interface UserContactRepository extends JpaRepository<UserContact, Long> {
 
     @Query(
-            value = "SELECT * FROM `user_contact` WHERE id_contact = ?1 AND id_user = ?2",
+            value = "SELECT * FROM `user_contact` WHERE id_user = ?1 AND id_contact = ?2",
             nativeQuery = true
     )
-    Optional<UserContact> findUserContactByUserEqualsAndContactEquals(Long contactId, Long userId);
+    Optional<UserContact> findUserContactByUserEqualsAndContactEquals(Long userId, Long contactId);
 
     List<UserContact> findAllByUserEquals(User user);
 }

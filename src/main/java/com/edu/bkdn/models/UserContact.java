@@ -22,4 +22,10 @@ public class UserContact extends BaseEntity implements Serializable {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Contact contact;
+
+    @Column(nullable = false, name = "id_request_sender")
+    private long requestSenderId;
+
+    @Column()
+    private Boolean isAccepted;
 }

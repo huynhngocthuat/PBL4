@@ -13,6 +13,10 @@ import javax.validation.constraints.NotNull;
 @Validated
 public class GetLastMessageDto {
 
+    @NotEmpty
+    private Long id;
+
+    @NotNull
     private String content;
 
     @NotEmpty

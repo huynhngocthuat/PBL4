@@ -3,9 +3,12 @@ package com.edu.bkdn.config;
 import com.edu.bkdn.dtos.Contact.CreateContactDto;
 import com.edu.bkdn.dtos.Participant.CreateParticipantDto;
 import com.edu.bkdn.dtos.User.CreateUserDto;
+import com.edu.bkdn.dtos.UserContact.CreateUserContactDto;
 import com.edu.bkdn.services.ContactService;
+import com.edu.bkdn.services.UserContactService;
 import com.edu.bkdn.services.UserService;
 import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
+import com.edu.bkdn.utils.httpResponse.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +25,8 @@ public class EntryUser {
     private UserService userService;
     @Autowired
     private ContactService contactService;
+    @Autowired
+    private UserContactService userContactService;
 
     @Bean
     @PostConstruct
@@ -116,6 +121,30 @@ public class EntryUser {
         }
         catch(Exception | DuplicateException dupError){
             log.error(dupError.getMessage());
+        }
+
+        CreateUserContactDto userContactDto1 = new CreateUserContactDto(
+            "0934908500", "0934908500", true
+        );
+        CreateUserContactDto userContactDto2 = new CreateUserContactDto(
+                "0869693721", "0869693721", true
+        );
+        CreateUserContactDto userContactDto3 = new CreateUserContactDto(
+                "0969643417", "0969643417", true
+        );
+        CreateUserContactDto userContactDto4 = new CreateUserContactDto(
+                "0987654322", "0987654322", true
+        );
+
+        try{
+            log.info("Creating entry user_contacts");
+            this.userContactService.createUserContact(userContactDto1);
+            this.userContactService.createUserContact(userContactDto2);
+            this.userContactService.createUserContact(userContactDto3);
+            this.userContactService.createUserContact(userContactDto4);
+        }
+        catch(Exception |DuplicateException | NotFoundException e){
+            log.error(e.getMessage());
         }
     }
 

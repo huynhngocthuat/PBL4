@@ -37,11 +37,11 @@ public class ConversationController {
     @GetMapping("")
     @ResponseBody
     public List<GetConversationDto> getUsersConversationList(Authentication authentication){
-        long userId = -1L;
+        String userPhone = "";
         if(authentication.getPrincipal() instanceof UserDetails) {
-            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
+            userPhone = ((ApplicationUser) authentication.getPrincipal()).getUser().getPhone();
         }
-        return this.conversationService.findAllUsersConversations(userId);
+        return this.conversationService.findAllUsersConversations(userPhone);
     }
 
     @SneakyThrows
@@ -57,11 +57,11 @@ public class ConversationController {
     @ResponseBody
     public List<GetContactDto> getConversationOutsiders(@PathVariable("id") Long conversationId,
                                                         Authentication authentication){
-        long userId = -1L;
+        String userPhone = "";
         if(authentication.getPrincipal() instanceof UserDetails) {
-            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
+            userPhone = ((ApplicationUser) authentication.getPrincipal()).getUser().getPhone();
         }
-        return this.conversationService.getAllConversationOutsider(conversationId, userId);
+        return this.conversationService.getAllConversationOutsider(conversationId, userPhone);
     }
 
     @SneakyThrows
@@ -107,8 +107,13 @@ public class ConversationController {
     @PutMapping("/{id}/add")
     @ResponseBody
     public String addParticipantToConversation(@PathVariable("id") Long conversationId,
-                                               @Valid @RequestBody List<CreateParticipantDto> createParticipantDtos){
-        this.participantService.addParticipantToConversation(conversationId, createParticipantDtos);
+                                               @Valid @RequestBody List<CreateParticipantDto> createParticipantDtos,
+                                               Authentication authentication){
+        String userPhone = "";
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userPhone = ((ApplicationUser) authentication.getPrincipal()).getUser().getPhone();
+        }
+        this.participantService.addParticipantToConversation(userPhone, conversationId, createParticipantDtos);
         return new Gson().toJson(new NoContentResponse());
     }
 
@@ -125,11 +130,11 @@ public class ConversationController {
     @ResponseBody
     public String leaveConversation(@PathVariable("id") Long conversationId,
                                     Authentication authentication){
-        long userId = -1L;
+        String userPhone = "";
         if(authentication.getPrincipal() instanceof UserDetails) {
-            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
+            userPhone = ((ApplicationUser) authentication.getPrincipal()).getUser().getPhone();
         }
-        this.conversationService.leaveConversation(conversationId, userId);
+        this.conversationService.leaveConversation(conversationId, userPhone);
         return new Gson().toJson(new NoContentResponse());
     }
 }
