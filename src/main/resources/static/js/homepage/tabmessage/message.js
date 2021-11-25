@@ -72,28 +72,22 @@ function messageConcatLiType2(msg) {
 }
 
 function loadMessage(msg) {
-
     let messageDiv;
     msg.createdAt = moment(msg.createdAt).format('DD/MM/YY, HH:mm:ss');
     let idUserLogin = dataLogin.getID();
 
     let chatBox = document.getElementById("chat-box");
     let lastChildChatBox = chatBox.lastElementChild;
-    console.log("---------------------------------------");
-    console.log(msg)
-    console.log(idUserLogin)
-    console.log(msg.userId)
 
     if (chatBox.innerHTML === "" || lastChildChatBox.getAttribute("idSender") != msg.userId) {
         if (msg.userId == idUserLogin) {
             messageDiv = messageNewElementType1(msg)
         }
         else {
-            let infoUserSendMsg = allUserInConversation.find((x) => x.userId === msg.userId)
-            console.log(infoUserSendMsg)
-            console.log("---------------------------------------");
+            let infoUserSendMsg = allUserInConversation.find((x) => x.userId === msg.userId);
             let name = infoUserSendMsg.userFirstName + infoUserSendMsg.userLastName;
             let urlAvatar = infoUserSendMsg.userUrlAvatar;
+
             messageDiv = messageNewElementType2(msg, name, urlAvatar);
         }
         chatBox.appendChild(messageDiv);

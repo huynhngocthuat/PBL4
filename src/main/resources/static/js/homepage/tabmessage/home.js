@@ -1,40 +1,40 @@
 let allConversation;
 let allUserInConversation;
+let allConversationSearch;
+
 function start() {
     fetchConversation();
     moment.locale("vi");
-    console.log(dataLogin.getID())
 }
+
 start();
 
 function fetchConversation() {
     fetchMethod("/conversations").then((data) => {
-        console.log(data)
-        allConversation = data.sort(function (a, b) {
-            let dateA = moment(a.lastMessage.createdAt);
-            let dateB = moment(b.lastMessage.createdAt);
-            let diff = dateB.diff(dateA);
-            return diff;
-        });
+        allConversation = data ;
+        allConversationSearch = data;
         renderConversation();
     });
 }
 
 function renderConversation() {
-    let listContacts = document.querySelector("#list-contacts");
-
+    allConversation = allConversation.sort(function (a, b) {
+        let dateA = moment(a.lastMessage.createdAt);
+        let dateB = moment(b.lastMessage.createdAt);
+        let diff = dateB.diff(dateA);
+        return diff;
+    });
+    let listConversations = document.querySelector("#list-conversations");
+    listConversations.innerHTML = ``;
     allConversation.map(function (data) {
         if (data.lastMessage !== null) {
-            var time = moment(data.lastMessage.createdAt).format(
-                "MMMM Do YYYY, h:mm:ss a"
-            );
-            var timeAgo = moment(time, "MMMM Do YYYY, h:mm:ss a").fromNow(true);
+            var timeAgo = moment(data.lastMessage.createdAt).fromNow(true);
         }
-        let contactDiv = document.createElement("div");
-        contactDiv.setAttribute("class", "contact");
-        contactDiv.setAttribute("contactID", `${data.id}`);
-        contactDiv.setAttribute("onclick", `showListMessage(${data.id})`);
-        contactDiv.innerHTML = `
+        let conversationElement = document.createElement("div");
+        conversationElement.setAttribute("class", "contact");
+        conversationElement.setAttribute("contactID", `${data.id}`);
+        conversationElement.setAttribute("onclick", `showListMessage(${data.id})`);
+        conversationElement.innerHTML = `
       <div class="contact__avatar">
         <img
         src="${data.urlAvatar}"
@@ -51,13 +51,11 @@ function renderConversation() {
         </div>
       </div>
       `;
-        listContacts.appendChild(contactDiv);
+        listConversations.appendChild(conversationElement);
     });
 }
 
 async function showListMessage(idConversation) {
-    console.log(idConversation)
-    console.log(2222)
     // HiddenIntro
     hiddenIntro(true);
     // Remove active contact
@@ -74,7 +72,7 @@ async function showListMessage(idConversation) {
         (data) => data.id === idConversation
     );
     allUserInConversation = conversationById.participants;
-    console.log(allUserInConversation)
+
     setInfoChat(
         conversationById.idConversation,
         conversationById.urlAvatar,
@@ -84,10 +82,12 @@ async function showListMessage(idConversation) {
     // Set list messages
     let chatBox = document.getElementById("chat-box");
     chatBox.innerHTML = "";
+
     let messages = await fetchMethod(`/conversations/${idConversation}`);
     messages.map(function (message) {
         loadMessage(message);
     });
+
     disconnect();
     connect(idConversation);
     var messageInput = document.querySelector("#input-message");
@@ -96,7 +96,7 @@ async function showListMessage(idConversation) {
 
 function setInfoChat(idConversation, urlAvatar, title) {
     // Set title and avatar
-    let infoChatBox = document.getElementById("main-top");
+    let infoChatBox = document.getElementById("message-tab-main-top");
     infoChatBox.setAttribute("idConversation", idConversation);
     let avatar = infoChatBox.querySelector("img");
     let nameConversation = infoChatBox.querySelector(".main-top__name p");
@@ -112,4 +112,20 @@ function hiddenIntro(isHidden) {
         let mainIntro = document.querySelector(".main-intro");
         mainIntro.classList.remove("main-intro-hidden");
     }
+}
+
+function searchConversations() {
+    let inputValue = this.event.target.value;
+    if (inputValue)
+    {
+        let reSearch = new RegExp(inputValue, 'ig');
+        allConversation = allConversationSearch.filter(function (e)
+        {
+            return e.title.search(reSearch) != -1
+        })
+    }
+    else {
+        allConversation = allConversationSearch
+    }
+    renderConversation();
 }
