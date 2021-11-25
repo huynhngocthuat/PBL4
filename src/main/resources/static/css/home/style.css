@@ -46,7 +46,6 @@ body {
     align-items: flex-end;
 }
 
-
 .tab i {
     font-size: 30px;
     color: var(--grey-color);
@@ -60,27 +59,35 @@ body {
     position: absolute;
     left: -2px;
     background-color: transparent;
-    border-right: solid 5px var(--blue-color);
+    border-right: solid 5px var(--ocean-blue-color);
     transition: all 2s ease-in-out;
     display: none;
 }
 
 .tab i:hover {
     cursor: pointer;
-    color: var(--blue-color);
+    color: var(--ocean-blue-color);
     transform: scale(140%);
 }
 
 .active i {
-    color: var(--blue-color);
+    color: var(--ocean-blue-color);
 }
 
 .side-bar .active::after {
     display: block;
 }
 
-/* left-bar  */
 
+/* main-container */
+.main-container {
+    /* display: flex; */
+    flex: 1;
+    display: none;
+}
+
+/* Tab message */
+/* left-bar  */
 .left-bar {
     background-color: var(--dark-color);
     width: 300px;
@@ -180,12 +187,12 @@ body {
 }
 
 .active-contact {
-    background-color: var(--blue-color);
+    background-color: var(--ocean-blue-color);
 }
 
 .contact:hover {
     cursor: pointer;
-    background-color: var(--blue-color);
+    background-color: var(--ocean-blue-color);
 }
 
 .contact__avatar {
@@ -259,8 +266,8 @@ body {
 
 .contact__message span {
     text-align: left;
-    width: 70px;
-    margin-left: 5px;
+    width: 60px;
+    margin-left: 10px;
     font-size: 14px;
     color: var(--grey-color);
     -webkit-line-clamp: 1;
@@ -382,6 +389,7 @@ body {
 .main-content .message-group {
     width: 100%;
     padding-top: 0px;
+    margin-top: 10px;
 }
 
 .main-content .your-chat {
@@ -437,7 +445,7 @@ body {
     width: 100%;
     height: 30px;
     box-sizing: border-box;
-    padding-top: 5px;
+    padding: 5px 0px;
     display: flex;
     flex-direction: row;
     align-items: flex-end;
@@ -537,13 +545,11 @@ body {
     flex-direction: row;
 }
 
-
-
 .input-chat input {
     flex: 1;
-    height: auto;
-    border: 0px;
-    outline: 0px;
+    height: 50px;
+    border: none;
+    outline: none;
     background-color: transparent;
     padding-left: 20px;
     box-sizing: border-box;
@@ -573,3 +579,4 @@ body {
     /* width: 400px; */
     height: 100%;
 }
+

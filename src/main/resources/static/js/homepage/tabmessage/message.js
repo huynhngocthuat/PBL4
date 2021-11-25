@@ -1,7 +1,7 @@
 function messageNewElementType1(msg) {
     const message = document.createElement("div");
     message.className = "message-group my-chat";
-    message.setAttribute("userID", msg.userId);
+    message.setAttribute("idSender", msg.userId);
     message.innerHTML = `
     <div class="list-messages">
       <ul>
@@ -34,20 +34,17 @@ function messageConcatLiType1(msg) {
     return message;
 }
 
-function messageNewElementType2(msg, title, url) {
-    let infoChatBox = document.getElementById("main-top");
-    let urlAvatar = infoChatBox.querySelector("img").getAttribute("src");
-    let nameConversation = infoChatBox.querySelector(".main-top__name p").textContent;
+function messageNewElementType2(msg, name, urlAvatar) {
     const message = document.createElement("div");
     message.className = "message-group your-chat";
-    message.setAttribute("userID", msg.userId);
+    message.setAttribute("idSender", msg.userId);
     message.innerHTML = ` 
       <div class="message_avatar">
         <img src=${urlAvatar} alt="avatar"/>
       </div>
       <div class="message-main">
         <div class="message__info">
-          <p class="message__name">${nameConversation}</p>
+          <p class="message__name">${name}</p>
         </div>
       <div class="list-messages" id="list-messages">
         <ul>
@@ -74,30 +71,32 @@ function messageConcatLiType2(msg) {
     return message;
 }
 
-function loadMessage(msg, title, url) {
-    var userID = dataLogin.getID();
-    var chatBox = document.getElementById("chat-box");
-    if (chatBox.innerHTML === "") {
-        let messageDiv =
-            msg.userId == userID ?
-                messageNewElementType1(msg) :
-                messageNewElementType2(msg, title, url);
+function loadMessage(msg) {
+    let messageDiv;
+    msg.createdAt = moment(msg.createdAt).format('DD/MM/YY, HH:mm:ss');
+    let idUserLogin = dataLogin.getID();
+
+    let chatBox = document.getElementById("chat-box");
+    let lastChildChatBox = chatBox.lastElementChild;
+
+    if (chatBox.innerHTML === "" || lastChildChatBox.getAttribute("idSender") != msg.userId) {
+        if (msg.userId == idUserLogin) {
+            messageDiv = messageNewElementType1(msg)
+        }
+        else {
+            let infoUserSendMsg = allUserInConversation.find((x) => x.userId === msg.userId);
+            let name = infoUserSendMsg.userFirstName + infoUserSendMsg.userLastName;
+            let urlAvatar = infoUserSendMsg.userUrlAvatar;
+
+            messageDiv = messageNewElementType2(msg, name, urlAvatar);
+        }
         chatBox.appendChild(messageDiv);
     } else {
-        let lastChildChatBox = chatBox.lastElementChild;
-        if (lastChildChatBox.getAttribute("userID") == msg.userId) {
-            var ulLastChild = lastChildChatBox.querySelector("ul");
-            let messageLi =
-                msg.userId == userID ?
-                    messageConcatLiType1(msg) :
-                    messageConcatLiType2(msg);
-            ulLastChild.appendChild(messageLi);
-        } else {
-            var messageDiv =
-                msg.userId == userID ?
-                    messageNewElementType1(msg) :
-                    messageNewElementType2(msg);
-            chatBox.appendChild(messageDiv);
-        }
+        let ulLastChild = lastChildChatBox.querySelector("ul");
+        let messageLi =
+            msg.userId == idUserLogin ?
+                messageConcatLiType1(msg) :
+                messageConcatLiType2(msg);
+        ulLastChild.appendChild(messageLi);
     }
 }

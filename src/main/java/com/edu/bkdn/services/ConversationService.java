@@ -67,8 +67,6 @@ public class ConversationService {
                 String title = otherParticipant.get().getUser().getFirstName() + " " + otherParticipant.get().getUser().getLastName();
                 getConversationDtos.get(i).setTitle(title);
                 getConversationDtos.get(i).setUrlAvatar(otherParticipant.get().getUser().getUrlAvatar());
-                getConversationDtos.get(i).getParticipants().get(0).setUserUrlAvatar("");
-                getConversationDtos.get(i).getParticipants().get(1).setUserUrlAvatar("");
             }
             else if(foundConversations.get(i).getParticipants().size() > 2){
                 // If conversation of a group and title is empty => set title = names
