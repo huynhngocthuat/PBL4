@@ -1,6 +1,7 @@
 package com.edu.bkdn.controllers;
 
 import com.edu.bkdn.dtos.Contact.GetContactDto;
+import com.edu.bkdn.dtos.Conversation.GetGroupConversationDto;
 import com.edu.bkdn.models.ApplicationUser;
 import com.edu.bkdn.services.ContactService;
 import com.edu.bkdn.utils.httpResponse.NoContentResponse;
@@ -25,97 +26,108 @@ public class ContactController {
     @SneakyThrows
     @GetMapping("")
     @ResponseBody
-    public List<GetContactDto> getAllUserContactsBy(Authentication authentication) throws EmptyListException {
-        String userPhone = "";
-        if(authentication.getPrincipal() instanceof UserDetails){
-            userPhone = ((ApplicationUser)authentication.getPrincipal()).getUser().getPhone();
+    public List<GetContactDto> getAllUserContacts(Authentication authentication) {
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        return this.contactService.getContactsByUserPhoneAndIsAccepted(userPhone);
+        return this.contactService.getContactsByUserIDAndIsAccepted(userId);
     }
 
     @SneakyThrows
-    @GetMapping("/{contactPhone}")
+    @GetMapping("/{contactId}")
     @ResponseBody
-    public GetContactDto getUserSingleContact(@PathVariable("contactPhone") String contactPhone,
+    public GetContactDto getUserSingleContact(@PathVariable("contactId") long contactId,
             Authentication authentication){
-        String userPhone = "";
-        if(authentication.getPrincipal() instanceof UserDetails){
-            userPhone = ((ApplicationUser)authentication.getPrincipal()).getUser().getPhone();
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        return this.contactService.getSingleContactByUserPhone(contactPhone, userPhone);
+        return this.contactService.getSingleContactByUserID(userId, contactId);
     }
 
     @SneakyThrows
     @GetMapping("/strangers")
     @ResponseBody
     public List<GetContactDto> getUserStrangerContact(Authentication authentication){
-        String userPhone = "";
-        if(authentication.getPrincipal() instanceof UserDetails){
-            userPhone = ((ApplicationUser)authentication.getPrincipal()).getUser().getPhone();
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        return this.contactService.getStrangerContactByUserPhone(userPhone);
+        return this.contactService.getStrangerContactByUserID(userId);
+    }
+
+    @SneakyThrows
+    @GetMapping("/groups")
+    @ResponseBody
+    public List<GetGroupConversationDto> getGroupConversation(Authentication authentication){
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
+        }
+        return this.contactService.getGroupConversations(userId)    ;
     }
 
     @SneakyThrows
     @GetMapping("/pending")
     @ResponseBody
     public List<GetContactDto> getAllPendingContact(Authentication authentication){
-        String userPhone = "";
-        if(authentication.getPrincipal() instanceof UserDetails){
-            userPhone = ((ApplicationUser)authentication.getPrincipal()).getUser().getPhone();
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        return this.contactService.getAllPendingContactByUserPhone(userPhone);
+        return this.contactService.getAllPendingContactByUserID(userId);
     }
 
     @SneakyThrows
-    @PostMapping("/invitation/{contactPhone}")
+    @PostMapping("/invitation/{contactId}")
     @ResponseBody
-    public String sentContactInvitation(@PathVariable("contactPhone") String contactPhone,
+    public String sentContactInvitation(@PathVariable("contactId") long contactId,
                                         Authentication authentication){
-        String userPhone = "";
-        if(authentication.getPrincipal() instanceof UserDetails){
-            userPhone = ((ApplicationUser)authentication.getPrincipal()).getUser().getPhone();
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        this.contactService.createContactInvitation(userPhone, contactPhone);
+        this.contactService.createContactInvitation(userId, contactId);
         return new Gson().toJson(new NoContentResponse());
     }
 
     @SneakyThrows
-    @PostMapping("/accept/{contactPhone}")
+    @PostMapping("/accept/{contactId}")
     @ResponseBody
-    public String acceptContactInvitation(@PathVariable("contactPhone") String contactPhone,
+    public String acceptContactInvitation(@PathVariable("contactId") long contactId,
                                           Authentication authentication){
-        String userPhone = "";
-        if(authentication.getPrincipal() instanceof UserDetails){
-            userPhone = ((ApplicationUser)authentication.getPrincipal()).getUser().getPhone();
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        this.contactService.acceptContactInvitation(userPhone, contactPhone);
+        this.contactService.acceptContactInvitation(userId, contactId);
         return new Gson().toJson(new NoContentResponse());
     }
 
     @SneakyThrows
-    @DeleteMapping("/decline/{contactPhone}")
+    @DeleteMapping("/decline/{contactId}")
     @ResponseBody
-    public String declineUserContact(@PathVariable("contactPhone") String contactPhone,
+    public String declineUserContact(@PathVariable("contactId") long contactId,
                                      Authentication authentication){
-        String userPhone = "";
-        if(authentication.getPrincipal() instanceof UserDetails){
-            userPhone = ((ApplicationUser)authentication.getPrincipal()).getUser().getPhone();
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        this.contactService.declineContactInvitation(userPhone, contactPhone);
+        this.contactService.declineContactInvitation(userId, contactId);
         return new Gson().toJson(new NoContentResponse());
     }
 
     @SneakyThrows
-    @DeleteMapping("/delete/{contactPhone}")
+    @DeleteMapping("/delete/{contactId}")
     @ResponseBody
-    public String deleteUserContact(@PathVariable("contactPhone") String contactPhone,
+    public String deleteUserContact(@PathVariable("contactId") long contactId,
                                 Authentication authentication){
-        String userPhone = "";
-        if(authentication.getPrincipal() instanceof UserDetails){
-            userPhone = ((ApplicationUser)authentication.getPrincipal()).getUser().getPhone();
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        this.contactService.deleteUserContact(userPhone, contactPhone);
+        this.contactService.deleteUserContact(userId, contactId);
         return new Gson().toJson(new NoContentResponse());
     }
 }
