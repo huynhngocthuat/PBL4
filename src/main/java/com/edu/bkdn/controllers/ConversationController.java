@@ -1,6 +1,7 @@
 package com.edu.bkdn.controllers;
 
 import com.edu.bkdn.dtos.Contact.GetContactDto;
+import com.edu.bkdn.dtos.Contact.GetConversationContactDto;
 import com.edu.bkdn.dtos.Conversation.GetConversationDto;
 import com.edu.bkdn.dtos.Conversation.UpdateConversationDto;
 import com.edu.bkdn.dtos.Message.GetMessageDto;
@@ -47,7 +48,7 @@ public class ConversationController {
     @SneakyThrows
     @GetMapping("/{id}")
     @ResponseBody
-    public List<GetMessageDto> getConversationsMessageList(@PathVariable("id") Long conversationId,
+    public List<GetMessageDto> getConversationsMessageList(@PathVariable("id") long conversationId,
                                                            Authentication authentication){
         return this.messageService.getAllMessageByConversationId(conversationId);
     }
@@ -55,13 +56,25 @@ public class ConversationController {
     @SneakyThrows
     @GetMapping("/{id}/outsider")
     @ResponseBody
-    public List<GetContactDto> getConversationOutsiders(@PathVariable("id") Long conversationId,
+    public List<GetContactDto> getConversationOutsiders(@PathVariable("id") long conversationId,
                                                         Authentication authentication){
         String userPhone = "";
         if(authentication.getPrincipal() instanceof UserDetails) {
             userPhone = ((ApplicationUser) authentication.getPrincipal()).getUser().getPhone();
         }
         return this.conversationService.getAllConversationOutsider(conversationId, userPhone);
+    }
+
+    @SneakyThrows
+    @GetMapping("/{id}/participants")
+    @ResponseBody
+    public List<GetConversationContactDto> getConversationParticipants(@PathVariable("id") long conversationId,
+                                                                       Authentication authentication){
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
+        }
+        return this.conversationService.getAllConversationParticipants(conversationId, userId);
     }
 
     @SneakyThrows
@@ -97,7 +110,7 @@ public class ConversationController {
     @SneakyThrows
     @PutMapping("/{id}")
     @ResponseBody
-    public String updateConversation(@PathVariable("id") Long conversationId,
+    public String updateConversation(@PathVariable("id") long conversationId,
                                      @Valid @RequestBody UpdateConversationDto updateConversationDto){
         this.conversationService.updateConversation(conversationId, updateConversationDto);
         return new Gson().toJson(new NoContentResponse());
@@ -106,7 +119,7 @@ public class ConversationController {
     @SneakyThrows
     @PutMapping("/{id}/add")
     @ResponseBody
-    public String addParticipantToConversation(@PathVariable("id") Long conversationId,
+    public String addParticipantToConversation(@PathVariable("id") long conversationId,
                                                @Valid @RequestBody List<CreateParticipantDto> createParticipantDtos,
                                                Authentication authentication){
         String userPhone = "";
@@ -120,7 +133,7 @@ public class ConversationController {
     @SneakyThrows
     @DeleteMapping("/{id}")
     @ResponseBody
-    public String deleteConversation(@PathVariable("id") Long conversationId){
+    public String deleteConversation(@PathVariable("id") long conversationId){
         this.conversationService.deleteConversation(conversationId);
         return new Gson().toJson(new NoContentResponse());
     }
@@ -128,7 +141,7 @@ public class ConversationController {
     @SneakyThrows
     @DeleteMapping("/{id}/leave")
     @ResponseBody
-    public String leaveConversation(@PathVariable("id") Long conversationId,
+    public String leaveConversation(@PathVariable("id") long conversationId,
                                     Authentication authentication){
         String userPhone = "";
         if(authentication.getPrincipal() instanceof UserDetails) {

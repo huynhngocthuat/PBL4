@@ -2,7 +2,11 @@ package com.edu.bkdn.services;
 
 import com.edu.bkdn.dtos.Contact.CreateContactDto;
 import com.edu.bkdn.dtos.Contact.GetContactDto;
+import com.edu.bkdn.dtos.Contact.GetConversationContactDto;
+import com.edu.bkdn.dtos.Conversation.GetConversationDto;
+import com.edu.bkdn.dtos.Conversation.GetGroupConversationDto;
 import com.edu.bkdn.models.Contact;
+import com.edu.bkdn.models.ParticipantType;
 import com.edu.bkdn.models.User;
 import com.edu.bkdn.models.UserContact;
 import com.edu.bkdn.repositories.ContactRepository;
@@ -14,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -39,9 +44,9 @@ public class ContactService {
         return this.contactRepository.findContactByPhone(phoneNumber);
     }
 
-    public List<GetContactDto> getContactsByUserPhoneAndIsAccepted(String userPhone) throws EmptyListException, NotFoundException {
+    public List<GetContactDto> getContactsByUserIDAndIsAccepted(long userId) throws EmptyListException, NotFoundException {
         // Check if user exist or not
-        User user = this.checkUserExistenceByPhone(userPhone);
+        User user = this.checkUserExistenceById(userId);
         // Find contacts by user ID
         List<Contact> foundContacts = this.contactRepository.findAllByUserIdAndIsAcceptedAndDeletedAtIsNull(user.getId());
         // If user have no contact
@@ -61,9 +66,32 @@ public class ContactService {
                 .collect(Collectors.toList());
     }
 
-    public List<GetContactDto> getAllPendingContactByUserPhone(String userPhone) throws NotFoundException {
+    public List<GetGroupConversationDto> getGroupConversations(long userId) throws NotFoundException, EmptyListException {
+        User foundUser = this.checkUserExistenceById(userId);
+
+        List<GetConversationDto> conversationDtos
+                = this.conversationService.findAllUsersConversations(foundUser.getPhone())
+                .stream()
+                .filter(conversation -> conversation.getParticipants().get(0).getParticipantType() == ParticipantType.GROUP)
+                .collect(Collectors.toList());
+        List<GetGroupConversationDto> groupConversationDtos = new ArrayList<>();
+        for(GetConversationDto conversation : conversationDtos){
+            GetGroupConversationDto groupConversationDto = new GetGroupConversationDto(
+                    conversation.getId(),
+                    conversation.getTitle(),
+                    conversation.getCreatorId(),
+                    conversation.getChannelId(),
+                    conversation.getUrlAvatar(),
+                    this.conversationService.getAllConversationParticipants(conversation.getId(), userId)
+            );
+            groupConversationDtos.add(groupConversationDto);
+        }
+        return groupConversationDtos;
+    }
+
+    public List<GetContactDto> getAllPendingContactByUserID(long userId) throws NotFoundException {
         // Check if user exist or not
-        User user = checkUserExistenceByPhone(userPhone);
+        User user = this.checkUserExistenceById(userId);
 
         List<Contact> foundPendingContacts = this.contactRepository.findAllByUserIdAndAcceptedIsFalseAndDeletedAtIsNull(user.getId());
         List<GetContactDto> pendingContactDtos = ObjectMapperUtils.mapAll(foundPendingContacts, GetContactDto.class);
@@ -78,11 +106,11 @@ public class ContactService {
         return pendingContactDtos;
     }
 
-    public List<GetContactDto> getStrangerContactByUserPhone(String userPhone) throws NotFoundException {
+    public List<GetContactDto> getStrangerContactByUserID(long userId) throws NotFoundException {
         // Check if user exist or not
-        User user = checkUserExistenceByPhone(userPhone);
+        User user = this.checkUserExistenceById(userId);
         // List of unaccepted contact's phone (pending friend request)
-        List<String> unAcceptedContactPhones = this.getAllPendingContactByUserPhone(user.getPhone())
+        List<String> unAcceptedContactPhones = this.getAllPendingContactByUserID(user.getId())
                 .stream()
                 .map(GetContactDto::getPhone)
                 .collect(Collectors.toList());
@@ -110,11 +138,11 @@ public class ContactService {
         return getStrangerContactDtos;
     }
 
-    public GetContactDto getSingleContactByUserPhone(String contactPhone, String userPhone) throws NotFoundException, EmptyListException {
-        User user = checkUserExistenceByPhone(userPhone);
-        Contact contact = checkContactExistenceByPhone(contactPhone);
+    public GetContactDto getSingleContactByUserID(long userId, long contactId) throws NotFoundException, EmptyListException {
+        User user = this.checkUserExistenceById(userId);
+        Contact contact = this.checkContactExistenceById(contactId);
 
-        Optional<GetContactDto> getContactDto = this.getContactsByUserPhoneAndIsAccepted(user.getPhone()).stream()
+        Optional<GetContactDto> getContactDto = this.getContactsByUserIDAndIsAccepted(user.getId()).stream()
                 .filter(contactDto -> contactDto.getPhone().equals(contact.getPhone()))
                 .findFirst();
         if(!getContactDto.isPresent()){
@@ -146,10 +174,10 @@ public class ContactService {
         foundContact.get().setIsActive(active);
         this.contactRepository.save(foundContact.get());
     }
-    public void createContactInvitation(String userPhone, String contactPhone) throws NotFoundException, DuplicateException {
+    public void createContactInvitation(long userId, long contactId) throws NotFoundException, DuplicateException {
         // Check exist
-        User firstUser = checkUserExistenceByPhone(userPhone);
-        Contact firstContact = checkContactExistenceByPhone(contactPhone);
+        User firstUser = this.checkUserExistenceById(userId);
+        Contact firstContact = this.checkContactExistenceById(contactId);
 
         Optional<UserContact> firstUserContact = this.userContactService.findByUserIdAndContactId(firstUser.getId(), firstContact.getId());
         if(firstUserContact.isPresent() && firstUserContact.get().getDeletedAt() == null){
@@ -194,15 +222,15 @@ public class ContactService {
         }
     }
 
-    public void acceptContactInvitation(String userPhone, String contactPhone) throws NotFoundException {
+    public void acceptContactInvitation(long userId, long contactId) throws NotFoundException {
         // Check exist
-        User firstUser = this.checkUserExistenceByPhone(userPhone);
-        Contact firstContact = this.checkContactExistenceByPhone(contactPhone);
+        User firstUser = this.checkUserExistenceById(userId);
+        Contact firstContact = this.checkContactExistenceById(contactId);
 
         Optional<UserContact> firstUserContact = this.userContactService.findByUserIdAndContactId(firstUser.getId(), firstContact.getId());
         if(!firstUserContact.isPresent()){
             throw new NotFoundException("User: " + firstUser.getPhone() +
-                    " have not sent a friend request to user: " + firstContact.getPhone());
+                    " did not sent any friend request to user: " + firstContact.getPhone());
         }
         firstUserContact.get().setIsAccepted(true);
         this.userContactService.save(firstUserContact.get());
@@ -215,16 +243,16 @@ public class ContactService {
                 = this.userContactService.findByUserIdAndContactId(secondUser.getId(), secondContact.getId());
         if(!secondUserContact.isPresent()){
             throw new NotFoundException("User: " + firstUser.getPhone() +
-                    " have not sent a friend request to user: " + firstContact.getPhone());
+                    " did not sent any friend request to user: " + firstContact.getPhone());
         }
         secondUserContact.get().setIsAccepted(true);
         this.userContactService.save(secondUserContact.get());
     }
 
-    public void declineContactInvitation(String userPhone, String contactPhone) throws NotFoundException, EmptyListException {
+    public void declineContactInvitation(long userId, long contactId) throws NotFoundException, EmptyListException {
         // Check exist
-        User firstUser = this.checkUserExistenceByPhone(userPhone);
-        Contact firstContact = this.checkContactExistenceByPhone(contactPhone);
+        User firstUser = this.checkUserExistenceById(userId);
+        Contact firstContact = this.checkContactExistenceById(contactId);
 
         Optional<UserContact> firstUserContact = this.userContactService.findByUserIdAndContactId(firstUser.getId(), firstContact.getId());
         if(!firstUserContact.isPresent()){
@@ -258,10 +286,10 @@ public class ContactService {
         }
     }
 
-    public void deleteUserContact(String userPhone, String contactPhone) throws NotFoundException {
+    public void deleteUserContact(long userId, long contactId) throws NotFoundException {
         // Check exist
-        User firstUser = this.checkUserExistenceByPhone(userPhone);
-        Contact firstContact = this.checkContactExistenceByPhone(contactPhone);
+        User firstUser = this.checkUserExistenceById(userId);
+        Contact firstContact = this.checkContactExistenceById(contactId);
 
         Optional<UserContact> firstUserContact
                 = this.userContactService.findByUserIdAndContactId(firstUser.getId(), firstContact.getId());
@@ -287,6 +315,22 @@ public class ContactService {
             secondUserContact.get().setDeletedAt(new Timestamp(System.currentTimeMillis()));
             this.userContactService.save(secondUserContact.get());
         }
+    }
+
+    private User checkUserExistenceById(long userId) throws NotFoundException {
+        Optional<User> user = this.userService.findUserById(userId);
+        if(userId == -1L || !user.isPresent()){
+            throw new NotFoundException("User with ID: "+userId+" does not existed!");
+        }
+        return user.get();
+    }
+
+    private Contact checkContactExistenceById(long contactId) throws NotFoundException {
+        Optional<Contact> contact = this.contactRepository.findById(contactId);
+        if(contactId == -1L || !contact.isPresent()){
+            throw new NotFoundException("Contact with ID: "+contactId+" does not existed!");
+        }
+        return contact.get();
     }
 
     private User checkUserExistenceByPhone(String userPhone) throws NotFoundException {

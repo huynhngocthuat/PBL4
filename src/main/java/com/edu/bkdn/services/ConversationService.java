@@ -1,6 +1,7 @@
 package com.edu.bkdn.services;
 
 import com.edu.bkdn.dtos.Contact.GetContactDto;
+import com.edu.bkdn.dtos.Contact.GetConversationContactDto;
 import com.edu.bkdn.dtos.Conversation.GetConversationDto;
 import com.edu.bkdn.dtos.Conversation.UpdateConversationDto;
 import com.edu.bkdn.dtos.Message.GetLastMessageDto;
@@ -32,6 +33,8 @@ public class ConversationService {
     private ContactService contactService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserContactService userContactService;
     @Autowired
     private MessageService messageService;
 
@@ -92,25 +95,27 @@ public class ConversationService {
         return getConversationDtos;
     }
 
-    public Optional<Conversation> findConversationById(Long id) {
+    public Optional<Conversation> findConversationById(long id) {
         return conversationRepository.findById(id);
     }
 
     // Method to create the default conversation between 2 user when they are friended of each other
-    public void createConversation(List<CreateParticipantDto> createParticipantDtos, Long creatorId) throws DuplicateException, NotFoundException {
+    public void createConversation(List<CreateParticipantDto> createParticipantDtos, long creatorId) throws DuplicateException, NotFoundException {
         // Single conversation
         if(createParticipantDtos.size() == 2){
-            long savedConversationId = newConversation("single-channel-", creatorId);
+            long savedConversationId = this.newConversation("single-channel-", creatorId);
             // Create participants
             for(CreateParticipantDto createParticipantDto : createParticipantDtos){
                 createParticipantDto.setConversationId(savedConversationId);
                 createParticipantDto.setParticipantType(ParticipantType.SINGLE);
                 this.participantService.createParticipant(createParticipantDto);
             }
+            // Create first message
+
         }
         // Group conversation
         else if(createParticipantDtos.size() > 2){
-            long savedConversationId = newConversation("group-channel-", creatorId);
+            long savedConversationId = this.newConversation("group-channel-", creatorId);
             // Create participants
             for(CreateParticipantDto createParticipantDto : createParticipantDtos){
                 createParticipantDto.setConversationId(savedConversationId);
@@ -120,7 +125,7 @@ public class ConversationService {
         }
     }
 
-    public void updateConversation(Long conversationId, UpdateConversationDto updateConversationDto) throws NotFoundException {
+    public void updateConversation(long conversationId, UpdateConversationDto updateConversationDto) throws NotFoundException {
         Optional<Conversation> foundConversation = this.conversationRepository.findById(conversationId);
         if(!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null){
             throw new NotFoundException("Conversation with ID: " + conversationId + " does not existed");
@@ -133,7 +138,7 @@ public class ConversationService {
         this.conversationRepository.save(foundConversation.get());
     }
 
-    public Long newConversation(String channelType, Long creatorId){
+    public Long newConversation(String channelType, long creatorId){
         Conversation newConversation = new Conversation();
         newConversation.setCreatorId(creatorId);
         newConversation.setChannelId("");
@@ -146,30 +151,50 @@ public class ConversationService {
         return savedConversationId;
     }
 
-    public List<GetContactDto> getAllConversationOutsider(Long conversationId, String userPhone) throws NotFoundException, EmptyListException {
+    public List<GetConversationContactDto> getAllConversationParticipants(long conversationId, long userId) throws NotFoundException, EmptyListException {
+        User foundUser = this.checkUserExistenceByID(userId);
+        Conversation foundConversation = this.checkConversationExistenceById(conversationId);
+
+        // Get list of user phone from list of user
+        List<String> conversationParticipantPhones = foundConversation.getParticipants()
+                .stream().map(Participant::getUser).collect(Collectors.toList())
+                .stream().map(User::getPhone).collect(Collectors.toList());;
+        // Get list of contact that in current conversation
+        List<GetConversationContactDto> conversationContactDtos = new ArrayList<>();
+        for(String phone : conversationParticipantPhones){
+            Contact foundContact = this.checkContactExistenceByPhone(phone);
+            GetConversationContactDto conversationContactDto = ObjectMapperUtils.map(foundContact, GetConversationContactDto.class);
+            // Check if user is friend with contact
+            if(this.userContactService.findByUserIdAndContactId(foundUser.getId(), foundContact.getId()).isPresent()){
+                conversationContactDto.setIsFriend(true);
+            }
+            else{
+                conversationContactDto.setIsFriend(false);
+            }
+            conversationContactDtos.add(conversationContactDto);
+        }
+        return conversationContactDtos;
+    }
+
+    public List<GetContactDto> getAllConversationOutsider(long conversationId, String userPhone) throws NotFoundException, EmptyListException {
         // Check exist or not
         User user = this.checkUserExistenceByPhone(userPhone);
         Conversation conversation = checkConversationExistenceById(conversationId);
 
-        // Get list of user in conversation
-        List<User> conversationParticipants = conversation.getParticipants()
-                .stream()
-                .map(Participant::getUser)
-                .collect(Collectors.toList());
-        // Get list of user ID from list of user
-        List<Long> conversationParticipantIds = conversationParticipants.stream()
-                .map(User::getId)
-                .collect(Collectors.toList());
+        // Get list of user phone from list of user
+        List<String> conversationParticipantPhones = conversation.getParticipants()
+                .stream().map(Participant::getUser).collect(Collectors.toList())
+                .stream().map(User::getPhone).collect(Collectors.toList());;
         // Get list of contact that not in current conversation
-        List<GetContactDto> conversationOutsiders = this.contactService.getContactsByUserPhoneAndIsAccepted(user.getPhone())
+        List<GetContactDto> conversationOutsiders = this.contactService.getContactsByUserIDAndIsAccepted(user.getId())
                 .stream()
-                .filter(contact -> !conversationParticipantIds.contains(contact.getId()))
+                .filter(contact -> !conversationParticipantPhones.contains(contact.getPhone()))
                 .collect(Collectors.toList());
 
         return conversationOutsiders;
     }
 
-    public void deleteConversation(Long conversationId) throws NotFoundException {
+    public void deleteConversation(long conversationId) throws NotFoundException {
         Optional<Conversation> foundConversation = this.conversationRepository.findById(conversationId);
         if(!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null){
             throw new NotFoundException("Conversation with ID: " + conversationId + " does not existed or has been deleted");
@@ -198,7 +223,7 @@ public class ConversationService {
         }
     }
 
-    public void leaveConversation(Long conversationId, String userPhone) throws NotFoundException {
+    public void leaveConversation(long conversationId, String userPhone) throws NotFoundException {
         // Check exist or not
         User user = this.checkUserExistenceByPhone(userPhone);
         Conversation conversation = checkConversationExistenceById(conversationId);
@@ -277,11 +302,27 @@ public class ConversationService {
         return user.get();
     }
 
+    private User checkUserExistenceByID(long userId) throws NotFoundException{
+        Optional<User> user = this.userService.findUserById(userId);
+        if(userId == -1L || !user.isPresent()){
+            throw new NotFoundException("User with ID: "+userId+" does not existed!");
+        }
+        return user.get();
+    }
+
     private Contact checkContactExistenceByPhone(String contactPhone) throws NotFoundException {
         Optional<Contact> contact = this.contactService.findByPhone(contactPhone);
         if(contactPhone.equals("") || !contact.isPresent()){
             throw new NotFoundException("Contact with phone number: "+contactPhone+" does not existed!");
         }
         return contact.get();
+    }
+
+    private UserContact checkUserContactExistence(long userId, long contactId) throws NotFoundException {
+        Optional<UserContact> userContact = this.userContactService.findByUserIdAndContactId(userId, contactId);
+        if(!userContact.isPresent()){
+            throw new NotFoundException("User with ID: "+userId+" isn't a friend of contact with ID: " + contactId + "!");
+        }
+        return userContact.get();
     }
 }
