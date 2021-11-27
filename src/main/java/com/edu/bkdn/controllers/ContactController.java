@@ -1,6 +1,7 @@
 package com.edu.bkdn.controllers;
 
 import com.edu.bkdn.dtos.Contact.GetContactDto;
+import com.edu.bkdn.dtos.Contact.SearchContactDto;
 import com.edu.bkdn.dtos.Conversation.GetGroupConversationDto;
 import com.edu.bkdn.models.ApplicationUser;
 import com.edu.bkdn.services.ContactService;
@@ -65,7 +66,7 @@ public class ContactController {
         if(authentication.getPrincipal() instanceof UserDetails) {
             userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        return this.contactService.getGroupConversations(userId)    ;
+        return this.contactService.getGroupConversations(userId);
     }
 
     @SneakyThrows
@@ -77,6 +78,18 @@ public class ContactController {
             userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
         return this.contactService.getAllPendingContactByUserID(userId);
+    }
+
+    @SneakyThrows
+    @GetMapping("/search/{contactPhone}")
+    @ResponseBody
+    public SearchContactDto searchContactByPhone(@PathVariable("contactPhone") String contactPhone,
+                                                 Authentication authentication){
+        long userId = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
+        }
+        return this.contactService.searchContactByPhone(contactPhone, userId);
     }
 
     @SneakyThrows
