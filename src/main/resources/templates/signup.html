@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGN UP</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/reset.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/base.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/signup/style.css}"/>
+</head>
+
+<body>
+    <div class="signup-wrapper">
+        <div class="signup-container">
+            <form th:action="@{/signup}" method="post" th:object="${user}">
+                <div class="signup-form">
+                    <h4 class="signup-form-title ">Sign up</h4>
+                    <div class="form-group form-group-50">
+                        <input th:field="*{firstName}" type="text" class="form-group-input" placeholder=" " id="firstNameTxt">
+                        <label class="form-group-label" for="firstNameTxt">First Name</label>
+                    </div>
+
+                    <div class="form-group form-group-50">
+                        <input th:field="*{lastName}" type="text" class="form-group-input" placeholder=" " id="lastNameTxt">
+                        <label class="form-group-label" for="lastNameTxt">Surname</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input th:field="*{phone}" type="text" class="form-group-input" placeholder=" " id="phoneNumberTxt">
+                        <label class="form-group-label" for="phoneNumberTxt">Phone Number</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input th:field="*{email}" type="text" class="form-group-input" placeholder=" " id="emailTxt">
+                        <label class="form-group-label" for="emailTxt">Email</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input th:field="*{urlAvatar}" type="text" class="form-group-input" placeholder=" " id="urlAvartaTxt">
+                        <label class="form-group-label" for="urlAvartaTxt">Url Avarta</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input th:field="*{password}" type="password" class="form-group-input" placeholder=" " id="passwordTxt">
+                        <label class="form-group-label" for="passwordTxt">Password</label>
+                    </div>
+                    
+                    <button class="signup-form-btn">Signup</button>
+                </div>
+            </form>
+            <div class="signup-logo">
+<!--                 <img src="../static/images/signup.jpg" alt="PBL4">-->
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
