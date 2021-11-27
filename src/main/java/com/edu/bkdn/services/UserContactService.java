@@ -39,6 +39,12 @@ public class UserContactService {
         return this.userContactRepository.findUserContactByUserEqualsAndContactEquals(userId, contactId);
     }
 
+    public Optional<UserContact> findByUserPhoneAndContactPhone(String userPhone, String contactPhone) throws NotFoundException {
+        User foundUser = this.checkUserExistenceByPhone(userPhone);
+        Contact foundCountact = this.checkContactExistenceByPhone(contactPhone);
+        return this.findByUserIdAndContactId(foundUser.getId(), foundCountact.getId());
+    }
+
     public void createUserContact(CreateUserContactDto createUserContactDto) throws DuplicateException, NotFoundException {
         User foundUser = this.checkUserExistenceByPhone(createUserContactDto.getUserPhone());
         Contact foundContact = this.checkContactExistenceByPhone(createUserContactDto.getContactPhone());
@@ -57,28 +63,13 @@ public class UserContactService {
                 foundUser,
                 foundContact,
                 foundUser.getId(),
-                createUserContactDto.isAccepted()
+                createUserContactDto.isAccepted(),
+                ""
                 ));
     }
 
     public void delete(UserContact userContact){
         this.userContactRepository.delete(userContact);
-    }
-
-    private User checkUserExistenceByPhone(String userPhone) throws NotFoundException {
-        Optional<User> user = this.userService.findUserByPhone(userPhone);
-        if(userPhone.equals("") || !user.isPresent()){
-            throw new NotFoundException("User with phone number: "+userPhone+" does not existed!");
-        }
-        return user.get();
-    }
-
-    private Contact checkContactExistenceByPhone(String contactPhone) throws NotFoundException {
-        Optional<Contact> contact = this.contactService.findByPhone(contactPhone);
-        if(contactPhone.equals("") || !contact.isPresent()){
-            throw new NotFoundException("Contact with phone number: "+contactPhone+" does not existed!");
-        }
-        return contact.get();
     }
 
     public void createUserContactRegister(Long userId) throws NotFoundException
@@ -101,5 +92,37 @@ public class UserContactService {
 
         //Save
         this.userContactRepository.save(newUserContact);
+    }
+
+    private User checkUserExistenceById(long userId) throws NotFoundException {
+        Optional<User> user = this.userService.findUserById(userId);
+        if(userId == -1L || !user.isPresent()){
+            throw new NotFoundException("User with ID: "+userId+" does not existed!");
+        }
+        return user.get();
+    }
+
+    private Contact checkContactExistenceById(long contactId) throws NotFoundException {
+        Optional<Contact> contact = this.contactService.findById(contactId);
+        if(contactId == -1L || !contact.isPresent()){
+            throw new NotFoundException("Contact with ID: "+contactId+" does not existed!");
+        }
+        return contact.get();
+    }
+
+    private User checkUserExistenceByPhone(String userPhone) throws NotFoundException {
+        Optional<User> user = this.userService.findUserByPhone(userPhone);
+        if(userPhone.equals("") || !user.isPresent()){
+            throw new NotFoundException("User with phone number: "+userPhone+" does not existed!");
+        }
+        return user.get();
+    }
+
+    private Contact checkContactExistenceByPhone(String contactPhone) throws NotFoundException {
+        Optional<Contact> contact = this.contactService.findByPhone(contactPhone);
+        if(contactPhone.equals("") || !contact.isPresent()){
+            throw new NotFoundException("Contact with phone number: "+contactPhone+" does not existed!");
+        }
+        return contact.get();
     }
 }
