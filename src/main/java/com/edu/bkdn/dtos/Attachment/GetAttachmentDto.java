@@ -1,4 +1,4 @@
-package com.edu.bkdn.dtos.Message;
+package com.edu.bkdn.dtos.Attachment;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,29 +7,30 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
-public class MessageDto {
+public class GetAttachmentDto {
 
     @NotEmpty
-    private Long messageId;
+    private Long id;
 
     @NotEmpty
-    private String content;
+    private byte[] data;
 
     @NotEmpty
-    private Timestamp createdAt;
+    private String fileName;
 
     @NotEmpty
-    private Timestamp updatedAt;
+    private String fileType;
 
     @NotEmpty
-    private Long senderId;
+    private String createAt;
+
+    private String updateAt;
 
     @NotEmpty
-    private Long conversationId;
+    private String messageId;
 }

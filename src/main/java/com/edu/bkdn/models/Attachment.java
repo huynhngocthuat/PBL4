@@ -12,13 +12,16 @@ import java.io.Serializable;
 @Table(name = "attachment")
 public class Attachment extends BaseEntity implements Serializable {
 
-    @Column(columnDefinition = "nvarchar(200)")
-    private String thumbUrl;
+    @Lob
+    private byte[] data;
 
     @Column(columnDefinition = "nvarchar(200)")
-    private String fileUrl;
+    private String fileName;
 
-    @ManyToOne
+    @Column(columnDefinition = "nvarchar(200)")
+    private String fileType;
+
+    @OneToOne
     @JoinColumn(name = "id_message")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

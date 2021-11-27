@@ -29,9 +29,4 @@ public class Message extends BaseEntity implements Serializable {
     @ToString.Exclude
     private Conversation conversation;
 
-    @OneToMany(mappedBy = "message", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private List<Attachment> attachments = new ArrayList<>();
-
 }

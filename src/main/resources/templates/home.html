@@ -96,7 +96,9 @@
                            name="input-message" id="input-message"
                            onkeydown="CheckEnterToSend()"
                     />
-                    <i class="fas fa-plus-square" onClick="handleReceivedMessage()"></i>
+                    <input type="file" id="uploadFiles" name="uploadFiles" hidden="hidden" multiple required/>
+                    <button class="fas fa-plus-square" onClick="sendAttachments()"></button>
+                    <!--                    <i class="fas fa-plus-square" onClick="handleReceivedMessage()"></i>-->
                     <i class="fas fa-paper-plane" onClick="send()"></i>
                 </div>
             </div>

@@ -4,32 +4,34 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
-public class MessageDto {
 
+public class CreateAttachmentMessageDto {
     @NotEmpty
-    private Long messageId;
+    private Long userId;
 
     @NotEmpty
     private String content;
 
     @NotEmpty
+    private Long conversationId;
+
+    @NotNull
     private Timestamp createdAt;
 
     @NotEmpty
-    private Timestamp updatedAt;
+    private Long attachmentId;
 
     @NotEmpty
-    private Long senderId;
+    private String fileName;
 
-    @NotEmpty
-    private Long conversationId;
 }

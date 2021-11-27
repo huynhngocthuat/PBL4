@@ -13,26 +13,37 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Validated
 public class GetUserContactDto {
+
     @NotNull
     private Long userId;
+
     @NotEmpty
     private Long userPhone;
+
     @NotEmpty
     private String userFirstName;
+
     @NotEmpty
     private String userLastName;
+
     @NotEmpty
     private String userUrlAvatar;
+
     @NotNull
     private Long contactId;
+
     @NotEmpty
     private Long contactPhone;
+
     @NotEmpty
     private String contactFirstName;
+
     @NotEmpty
     private String contactLastName;
+
     @NotEmpty
     private String contactUrlAvatar;
+
     @NotNull
     private boolean isAccepted;
 }

@@ -13,14 +13,19 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Validated
 public class ParticipantDto {
+
     @NotEmpty
     private Long participantId;
+
     @NotEmpty
     private Timestamp createdAt;
+
     @NotEmpty
     private Timestamp updatedAt;
+
     @NotEmpty
     private Long userId;
+
     @NotEmpty
     private Long conversationId;
 }
