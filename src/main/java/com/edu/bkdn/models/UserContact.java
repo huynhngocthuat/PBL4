@@ -28,4 +28,7 @@ public class UserContact extends BaseEntity implements Serializable {
 
     @Column()
     private Boolean isAccepted;
+
+    @Column()
+    private String invitationMessage;
 }

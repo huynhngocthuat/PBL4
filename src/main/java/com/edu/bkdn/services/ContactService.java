@@ -3,6 +3,7 @@ package com.edu.bkdn.services;
 import com.edu.bkdn.dtos.Contact.CreateContactDto;
 import com.edu.bkdn.dtos.Contact.GetContactDto;
 import com.edu.bkdn.dtos.Contact.GetConversationContactDto;
+import com.edu.bkdn.dtos.Contact.PendingContactDto;
 import com.edu.bkdn.dtos.Conversation.GetConversationDto;
 import com.edu.bkdn.dtos.Conversation.GetGroupConversationDto;
 import com.edu.bkdn.models.Contact;
@@ -89,20 +90,24 @@ public class ContactService {
         return groupConversationDtos;
     }
 
-    public List<GetContactDto> getAllPendingContactByUserID(long userId) throws NotFoundException {
+    public List<PendingContactDto> getAllPendingContactByUserID(long userId) throws NotFoundException {
         // Check if user exist or not
         User user = this.checkUserExistenceById(userId);
-
+        // Get all pending contacts
         List<Contact> foundPendingContacts = this.contactRepository.findAllByUserIdAndAcceptedIsFalseAndDeletedAtIsNull(user.getId());
-        List<GetContactDto> pendingContactDtos = ObjectMapperUtils.mapAll(foundPendingContacts, GetContactDto.class);
-        pendingContactDtos.forEach(
-                contact -> {
-                    contact.setIsAccepted(false);
-                    long senderId = this.userContactService.findByUserIdAndContactId(user.getId(), contact.getId())
-                            .get().getRequestSenderId();
-                    contact.setRequestSenderId(senderId);
-                }
-        );
+        // Map
+        List<PendingContactDto> pendingContactDtos = ObjectMapperUtils.mapAll(foundPendingContacts, PendingContactDto.class);
+        // Set properties
+        for(PendingContactDto pendingContactDto : pendingContactDtos){
+            Optional<UserContact> sender = this.userContactService
+                    .findByUserPhoneAndContactPhone(pendingContactDto.getPhone(), user.getPhone());
+            if(!sender.isPresent()){
+                throw new NotFoundException("User: " + user.getPhone() + " is not a friend with contact: " + pendingContactDto.getPhone() + "!");
+            }
+            pendingContactDto.setIsAccepted(false);
+            pendingContactDto.setRequestSenderId(sender.get().getContact().getId());
+            pendingContactDto.setInvitationMessage(sender.get().getInvitationMessage());
+        }
         return pendingContactDtos;
     }
 
@@ -112,7 +117,7 @@ public class ContactService {
         // List of unaccepted contact's phone (pending friend request)
         List<String> unAcceptedContactPhones = this.getAllPendingContactByUserID(user.getId())
                 .stream()
-                .map(GetContactDto::getPhone)
+                .map(PendingContactDto::getPhone)
                 .collect(Collectors.toList());
         // List of stranger contact (have not sent friend request)
         List<Contact> strangerContacts = this.contactRepository.findAllStrangerByUserIdAndIsNotAccepted(user.getId());
@@ -180,12 +185,28 @@ public class ContactService {
         Contact firstContact = this.checkContactExistenceById(contactId);
 
         Optional<UserContact> firstUserContact = this.userContactService.findByUserIdAndContactId(firstUser.getId(), firstContact.getId());
-        if(firstUserContact.isPresent() && firstUserContact.get().getDeletedAt() == null){
+        if(firstUserContact.isPresent()
+                && firstUserContact.get().getDeletedAt() == null
+                && firstUserContact.get().getIsAccepted()){
             throw new DuplicateException("User: " + firstUser.getPhone() + " already a friend with contact: " + firstContact.getPhone() + "!");
+        }
+        else if(firstUserContact.isPresent()
+                && firstUserContact.get().getDeletedAt() == null
+                && !firstUserContact.get().getIsAccepted()
+                && firstUserContact.get().getRequestSenderId() != firstUser.getId()){
+            throw new DuplicateException("Contact: " + firstContact.getPhone() + " already sent a friend request to you (" + firstUser.getPhone() + ")! Please accept or decline the request!");
+        }
+        else if(firstUserContact.isPresent()
+                && firstUserContact.get().getDeletedAt() == null
+                && !firstUserContact.get().getIsAccepted()
+                && firstUserContact.get().getRequestSenderId() == firstUser.getId()){
+            throw new DuplicateException("You( " + firstUser.getPhone() + " already sent a friend request to contact: " + firstContact.getPhone() + "!");
         }
         else if(firstUserContact.isPresent() && firstUserContact.get().getDeletedAt() != null){
             firstUserContact.get().setDeletedAt(null);
+            firstUserContact.get().setUpdatedAt(new Timestamp(System.currentTimeMillis()));
             firstUserContact.get().setRequestSenderId(firstUser.getId());
+            firstUserContact.get().setInvitationMessage("Hello I'm "+ firstUser.getLastName());
             this.userContactService.save(firstUserContact.get());
         }
         else if(!firstUserContact.isPresent()){
@@ -193,7 +214,8 @@ public class ContactService {
                     firstUser,
                     firstContact,
                     firstUser.getId(),
-                    false
+                    false,
+                    "Hello I'm " + firstUser.getLastName()
             );
             this.userContactService.save(newFirstUserContact);
         }
@@ -208,7 +230,9 @@ public class ContactService {
         }
         else if(secondUserContact.isPresent() && secondUserContact.get().getDeletedAt() != null){
             secondUserContact.get().setDeletedAt(null);
+            secondUserContact.get().setUpdatedAt(new Timestamp(System.currentTimeMillis()));
             secondUserContact.get().setRequestSenderId(firstUser.getId());
+            secondUserContact.get().setInvitationMessage("");
             this.userContactService.save(secondUserContact.get());
         }
         else if(!secondUserContact.isPresent()){
@@ -216,7 +240,8 @@ public class ContactService {
                     secondUser,
                     secondContact,
                     firstUser.getId(),
-                    false
+                    false,
+                    ""
             );
             this.userContactService.save(newSecondUserContact);
         }
@@ -233,6 +258,7 @@ public class ContactService {
                     " did not sent any friend request to user: " + firstContact.getPhone());
         }
         firstUserContact.get().setIsAccepted(true);
+        firstUserContact.get().setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         this.userContactService.save(firstUserContact.get());
 
         // Check exist
@@ -246,7 +272,10 @@ public class ContactService {
                     " did not sent any friend request to user: " + firstContact.getPhone());
         }
         secondUserContact.get().setIsAccepted(true);
+        secondUserContact.get().setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         this.userContactService.save(secondUserContact.get());
+
+
     }
 
     public void declineContactInvitation(long userId, long contactId) throws NotFoundException, EmptyListException {
@@ -297,8 +326,10 @@ public class ContactService {
             throw new NotFoundException("User: " + firstUser.getPhone() + " no longer a friend with contact: " + firstContact.getPhone() + "!");
         }
         else if(firstUserContact.get().getDeletedAt() == null){
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             firstUserContact.get().setIsAccepted(false);
-            firstUserContact.get().setDeletedAt(new Timestamp(System.currentTimeMillis()));
+            firstUserContact.get().setDeletedAt(currentTime);
+            firstUserContact.get().setUpdatedAt(currentTime);
             this.userContactService.save(firstUserContact.get());
         }
 
@@ -311,8 +342,10 @@ public class ContactService {
             throw new NotFoundException("User: " + firstUser.getPhone() + " no longer a friend with contact: " + firstContact.getPhone() + "!");
         }
         else if(secondUserContact.get().getDeletedAt() == null){
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             secondUserContact.get().setIsAccepted(false);
-            secondUserContact.get().setDeletedAt(new Timestamp(System.currentTimeMillis()));
+            secondUserContact.get().setDeletedAt(currentTime);
+            secondUserContact.get().setUpdatedAt(currentTime);
             this.userContactService.save(secondUserContact.get());
         }
     }

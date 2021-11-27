@@ -1,6 +1,7 @@
 package com.edu.bkdn.controllers;
 
 import com.edu.bkdn.dtos.Contact.GetContactDto;
+import com.edu.bkdn.dtos.Contact.PendingContactDto;
 import com.edu.bkdn.dtos.Conversation.GetGroupConversationDto;
 import com.edu.bkdn.models.ApplicationUser;
 import com.edu.bkdn.services.ContactService;
@@ -71,7 +72,7 @@ public class ContactController {
     @SneakyThrows
     @GetMapping("/pending")
     @ResponseBody
-    public List<GetContactDto> getAllPendingContact(Authentication authentication){
+    public List<PendingContactDto> getAllPendingContact(Authentication authentication){
         long userId = -1L;
         if(authentication.getPrincipal() instanceof UserDetails) {
             userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
