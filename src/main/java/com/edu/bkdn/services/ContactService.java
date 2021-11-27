@@ -3,8 +3,10 @@ package com.edu.bkdn.services;
 import com.edu.bkdn.dtos.Contact.CreateContactDto;
 import com.edu.bkdn.dtos.Contact.GetContactDto;
 import com.edu.bkdn.dtos.Contact.GetConversationContactDto;
+import com.edu.bkdn.dtos.Contact.SearchContactDto;
 import com.edu.bkdn.dtos.Conversation.GetConversationDto;
 import com.edu.bkdn.dtos.Conversation.GetGroupConversationDto;
+import com.edu.bkdn.dtos.Participant.CreateParticipantDto;
 import com.edu.bkdn.models.Contact;
 import com.edu.bkdn.models.ParticipantType;
 import com.edu.bkdn.models.User;
@@ -42,6 +44,18 @@ public class ContactService {
 
     public Optional<Contact> findByPhone(String phoneNumber){
         return this.contactRepository.findContactByPhone(phoneNumber);
+    }
+
+    public SearchContactDto searchContactByPhone(String phoneNumber, long userId) throws NotFoundException {
+        User foundUser = this.checkUserExistenceById(userId);
+        Contact foundContact = this.checkContactExistenceByPhone(phoneNumber);
+
+        SearchContactDto searchContactDto = ObjectMapperUtils.map(foundContact, SearchContactDto.class);
+        searchContactDto.setIsFriend(
+                this.userContactService
+                        .findByUserIdAndContactId(foundUser.getId(), foundContact.getId())
+                        .isPresent());
+        return searchContactDto;
     }
 
     public List<GetContactDto> getContactsByUserIDAndIsAccepted(long userId) throws EmptyListException, NotFoundException {
@@ -222,7 +236,7 @@ public class ContactService {
         }
     }
 
-    public void acceptContactInvitation(long userId, long contactId) throws NotFoundException {
+    public void acceptContactInvitation(long userId, long contactId) throws NotFoundException, DuplicateException {
         // Check exist
         User firstUser = this.checkUserExistenceById(userId);
         Contact firstContact = this.checkContactExistenceById(contactId);
@@ -247,6 +261,22 @@ public class ContactService {
         }
         secondUserContact.get().setIsAccepted(true);
         this.userContactService.save(secondUserContact.get());
+
+        // Create default conversation between 2 user
+        List<CreateParticipantDto> participantDtos = new ArrayList<>();
+        participantDtos.add(new CreateParticipantDto(
+                firstUser.getId(),
+                null,
+                null
+        ));
+        participantDtos.add(new CreateParticipantDto(
+                secondUser.getId(),
+                null,
+                null
+        ));
+        this.conversationService.createConversation(participantDtos, secondUser.getId());
+
+        // Set the default message
     }
 
     public void declineContactInvitation(long userId, long contactId) throws NotFoundException, EmptyListException {
