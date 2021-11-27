@@ -8,10 +8,7 @@ import com.edu.bkdn.dtos.Contact.PendingContactDto;
 import com.edu.bkdn.dtos.Conversation.GetConversationDto;
 import com.edu.bkdn.dtos.Conversation.GetGroupConversationDto;
 import com.edu.bkdn.dtos.Participant.CreateParticipantDto;
-import com.edu.bkdn.models.Contact;
-import com.edu.bkdn.models.ParticipantType;
-import com.edu.bkdn.models.User;
-import com.edu.bkdn.models.UserContact;
+import com.edu.bkdn.models.*;
 import com.edu.bkdn.repositories.ContactRepository;
 import com.edu.bkdn.utils.ObjectMapperUtils;
 import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
@@ -289,21 +286,32 @@ public class ContactService {
         secondUserContact.get().setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         this.userContactService.save(secondUserContact.get());
 
-        // Create default conversation between 2 user
-        List<CreateParticipantDto> participantDtos = new ArrayList<>();
-        participantDtos.add(new CreateParticipantDto(
-                firstUser.getId(),
-                null,
-                null
-        ));
-        participantDtos.add(new CreateParticipantDto(
-                secondUser.getId(),
-                null,
-                null
-        ));
-        this.conversationService.createConversation(participantDtos, secondUser.getId());
-
-        // Set the default message
+        // Check existed conversation before create
+        Optional<Conversation> foundConversation = this.conversationService
+                .findSingleConversationByUserIDs(firstUser.getId(), secondUser.getId());
+        if(foundConversation.isPresent() && foundConversation.get().getDeletedAt() != null){
+            foundConversation.get().setDeletedAt(null);
+            this.conversationService.save(foundConversation.get());
+        }
+        else if(foundConversation.isPresent() && foundConversation.get().getDeletedAt() == null){
+            throw new DuplicateException("Conversation between user: " + firstUser.getPhone()
+            + " and user: " + secondUser.getPhone() + " already existed!");
+        }
+        else{
+            // Create default conversation between 2 user
+            List<CreateParticipantDto> participantDtos = new ArrayList<>();
+            participantDtos.add(new CreateParticipantDto(
+                    firstUser.getId(),
+                    null,
+                    ParticipantType.SINGLE
+            ));
+            participantDtos.add(new CreateParticipantDto(
+                    secondUser.getId(),
+                    null,
+                    ParticipantType.SINGLE
+            ));
+            this.conversationService.createConversation(participantDtos, secondUser.getId());
+        }
 
     }
 

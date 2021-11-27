@@ -38,6 +38,10 @@ public class ConversationService {
     @Autowired
     private MessageService messageService;
 
+    public void save(Conversation conversation){
+        this.conversationRepository.save(conversation);
+    }
+
     public List<Conversation> findAll(){
         return this.conversationRepository.findAll();
     }
@@ -96,13 +100,17 @@ public class ConversationService {
     }
 
     public Optional<Conversation> findConversationById(long id) {
-        return conversationRepository.findById(id);
+        return this.conversationRepository.findById(id);
+    }
+
+    public Optional<Conversation> findSingleConversationByUserIDs(long firstUserId, long secondUserId){
+        return this.conversationRepository.findSingleConversationByUserIDs(firstUserId, secondUserId);
     }
 
     // Method to create the default conversation between 2 user when they are friended of each other
     public void createConversation(List<CreateParticipantDto> createParticipantDtos, long creatorId) throws DuplicateException, NotFoundException {
         // Single conversation
-        if(createParticipantDtos.size() == 2){
+        if(createParticipantDtos.get(0).getParticipantType() == ParticipantType.SINGLE){
             long savedConversationId = this.newConversation("single-channel-", creatorId);
             // Create participants
             for(CreateParticipantDto createParticipantDto : createParticipantDtos){
@@ -110,11 +118,9 @@ public class ConversationService {
                 createParticipantDto.setParticipantType(ParticipantType.SINGLE);
                 this.participantService.createParticipant(createParticipantDto);
             }
-            // Create first message
-
         }
         // Group conversation
-        else if(createParticipantDtos.size() > 2){
+        else if(createParticipantDtos.get(0).getParticipantType() == ParticipantType.GROUP){
             long savedConversationId = this.newConversation("group-channel-", creatorId);
             // Create participants
             for(CreateParticipantDto createParticipantDto : createParticipantDtos){

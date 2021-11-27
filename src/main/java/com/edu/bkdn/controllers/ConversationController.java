@@ -8,6 +8,7 @@ import com.edu.bkdn.dtos.Message.GetMessageDto;
 import com.edu.bkdn.dtos.Participant.CreateParticipantDto;
 import com.edu.bkdn.dtos.User.GetUserDto;
 import com.edu.bkdn.models.ApplicationUser;
+import com.edu.bkdn.models.ParticipantType;
 import com.edu.bkdn.services.ConversationService;
 import com.edu.bkdn.services.MessageService;
 import com.edu.bkdn.services.ParticipantService;
@@ -88,6 +89,7 @@ public class ConversationController {
         }
         CreateParticipantDto currentUser = new CreateParticipantDto(userId, null, null);
         createParticipantDtos.add(currentUser);
+        createParticipantDtos.forEach(participant -> participant.setParticipantType(ParticipantType.SINGLE));
         this.conversationService.createConversation(createParticipantDtos, 0L);
         return new Gson().toJson(new NoContentResponse());
     }
@@ -103,6 +105,7 @@ public class ConversationController {
         }
         CreateParticipantDto currentUser = new CreateParticipantDto(userId, null, null);
         createParticipantDtos.add(currentUser);
+        createParticipantDtos.forEach(participant -> participant.setParticipantType(ParticipantType.GROUP));
         this.conversationService.createConversation(createParticipantDtos, userId);
         return new Gson().toJson(new NoContentResponse());
     }
