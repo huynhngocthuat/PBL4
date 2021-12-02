@@ -1,6 +1,5 @@
 package com.edu.bkdn.services;
 
-import com.edu.bkdn.dtos.Message.CreateAttachmentMessageDto;
 import com.edu.bkdn.dtos.Message.CreateMessageDto;
 import com.edu.bkdn.dtos.Message.GetLastMessageDto;
 import com.edu.bkdn.dtos.Message.GetMessageDto;
@@ -70,29 +69,6 @@ public class MessageService {
 
         messageRepository.save(newMessage);
     }
-
-    public Long createAttachmentMessage(CreateAttachmentMessageDto createAttachmentMessageDto) throws NotFoundException
-    {
-        // Check existed user
-        Optional<User> foundUser = this.userRepository.findUserById(createAttachmentMessageDto.getUserId());
-        if (!foundUser.isPresent()) {
-            throw new UsernameNotFoundException("User with ID: " + createAttachmentMessageDto.getUserId() + " does not existed!!!");
-        }
-        // Check existed conversation
-        Optional<Conversation> foundConversation = this.conversationRepository.findById(createAttachmentMessageDto.getConversationId());
-        if (!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null) {
-            throw new NotFoundException("Conversation with ID: " + createAttachmentMessageDto.getConversationId() + " does not existed!!!");
-        }
-
-        Message newMessage = new Message();
-        newMessage.setUser(foundUser.get());
-        newMessage.setConversation(foundConversation.get());
-        newMessage.setCreatedAt(createAttachmentMessageDto.getCreatedAt());
-        newMessage.setContent(createAttachmentMessageDto.getContent());
-
-        return messageRepository.save(newMessage).getId();
-    }
-
     public List<GetMessageDto> getAllMessageByUserAndConversationAndDeletedAtIsNull(Long conversationId, Long userId)
     {
         return ObjectMapperUtils.mapAll(
@@ -104,9 +80,5 @@ public class MessageService {
     {
         Message lastMessage = Collections.max(messages, Comparator.comparing(Message::getCreatedAt));
         return ObjectMapperUtils.map(lastMessage, GetLastMessageDto.class);
-    }
-
-    public Optional<Message> findMessageById(Long messageId){
-        return messageRepository.findMessageById(messageId);
     }
 }

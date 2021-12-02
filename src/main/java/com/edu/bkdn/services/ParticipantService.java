@@ -88,7 +88,8 @@ public class ParticipantService {
                 Message newMessage = new Message(
                         foundUser.getLastName() + " just added " + participant.get().getLastName() + ".",
                         foundUser,
-                        foundConversation.get()
+                        foundConversation.get(),
+                        null
                 );
                 this.messageService.save(newMessage);
             }

@@ -17,11 +17,9 @@ public class AttachmentDto {
     @NotEmpty
     private Long attachmentId;
     @NotEmpty
-    private byte[] data;
+    private String thumbUrl;
     @NotEmpty
-    private String fileName;
-    @NotEmpty
-    private String fileType;
+    private String fileUrl;
     @NotEmpty
     private Timestamp createAt;
     @NotEmpty

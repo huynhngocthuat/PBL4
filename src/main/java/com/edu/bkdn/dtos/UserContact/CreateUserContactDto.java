@@ -13,10 +13,8 @@ public class CreateUserContactDto {
 
     @NotNull
     private String userPhone;
-
     @NotNull
     private String contactPhone;
-
     @NotNull
     private boolean isAccepted;
 }

@@ -11,18 +11,13 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 @Validated
 public class UpdateUserDto {
-
     @NotEmpty
     private String phone;
-
     @NotEmpty
     private String email;
-
     @NotEmpty
     private String firstName;
-
     @NotEmpty
     private String lastName;
-
     private String urlAvatar;
 }

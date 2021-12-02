@@ -41,6 +41,7 @@ function send() {
             userId: dataLogin.getID(),
             content: messageInput.value,
             conversationId: conversationId,
+            createdAt : null,
         };
         stompClient.send("/app/send", {}, JSON.stringify(createMessageDto));
         messageInput.value = '';
@@ -52,20 +53,4 @@ function disconnect() {
         this.stompClient.disconnect();
     }
     console.log('Disconnected!');
-}
-
-function sendAttachments(){
-    const realFileBtn = document.getElementById("uploadFiles");
-    realFileBtn.click();
-    realFileBtn.addEventListener("change", function (){
-        if(realFileBtn.value && stompClient){
-            // Lưu mảng file được select và trả về list createAttachmentMessageDto
-            // Tham số đầu vào Multipartfile, conversationId, userId
-            let listCreateAttachmentMessageDto = fetchMethod('/saveAttachment', method ='POST')
-            // Gửi list message qua websocket
-            for (let createAttachmentMessageDto in listCreateAttachmentMessageDto){
-                stompClient.send("/app/sendAttachments", {}, JSON.stringify(createAttachmentMessageDto));
-            }
-        }
-    });
 }

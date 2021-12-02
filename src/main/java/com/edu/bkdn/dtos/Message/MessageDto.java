@@ -14,22 +14,16 @@ import java.util.Date;
 @NoArgsConstructor
 @Validated
 public class MessageDto {
-
     @NotEmpty
     private Long messageId;
-
     @NotEmpty
     private String content;
-
     @NotEmpty
     private Timestamp createdAt;
-
     @NotEmpty
     private Timestamp updatedAt;
-
     @NotEmpty
     private Long senderId;
-
     @NotEmpty
     private Long conversationId;
 }
