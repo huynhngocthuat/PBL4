@@ -17,8 +17,7 @@ import java.sql.Timestamp;
 
 @Controller
 public class ChatController {
-    @Autowired
-    UserService userService;
+
     @Autowired
     MessageService messageService;
     @Autowired

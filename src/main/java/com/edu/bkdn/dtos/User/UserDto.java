@@ -13,24 +13,33 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Validated
 public class UserDto {
+
     @NotEmpty
     private Long id;
+
     @NotEmpty
     private String email;
+
     @NotEmpty
     private String phone;
+
     @NotEmpty
     private String password;
+
     @NotEmpty
     private String firstName;
+
     @NotEmpty
     private String lastName;
+
     @NotEmpty
     private Boolean isActive;
 
     private String urlAvatar;
+
     @NotEmpty
     private Timestamp createdAt;
+
     @NotEmpty
     private Timestamp updatedAt;
 }

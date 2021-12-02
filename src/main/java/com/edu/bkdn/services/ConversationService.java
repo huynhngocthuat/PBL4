@@ -15,10 +15,8 @@ import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
 import com.edu.bkdn.utils.httpResponse.exceptions.EmptyListException;
 import com.edu.bkdn.utils.httpResponse.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
