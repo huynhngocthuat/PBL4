@@ -2,6 +2,7 @@ package com.edu.bkdn.controllers;
 
 import com.edu.bkdn.dtos.Contact.GetContactDto;
 import com.edu.bkdn.dtos.Contact.GetConversationContactDto;
+import com.edu.bkdn.dtos.Conversation.CreateConversationDto;
 import com.edu.bkdn.dtos.Conversation.GetConversationDto;
 import com.edu.bkdn.dtos.Conversation.UpdateConversationDto;
 import com.edu.bkdn.dtos.Message.GetMessageDto;
@@ -81,7 +82,8 @@ public class ConversationController {
     @SneakyThrows
     @PostMapping("/default")
     @ResponseBody
-    public String createDefaultConversation(@Valid @RequestBody List<CreateParticipantDto> createParticipantDtos,
+    public String createDefaultConversation(@Valid @RequestBody CreateConversationDto createConversationDto,
+                                            @Valid @RequestBody List<CreateParticipantDto> createParticipantDtos,
                                             Authentication authentication){
         long userId = -1L;
         if(authentication.getPrincipal() instanceof UserDetails) {
@@ -90,14 +92,18 @@ public class ConversationController {
         CreateParticipantDto currentUser = new CreateParticipantDto(userId, null, null);
         createParticipantDtos.add(currentUser);
         createParticipantDtos.forEach(participant -> participant.setParticipantType(ParticipantType.SINGLE));
-        this.conversationService.createConversation(createParticipantDtos, 0L);
+
+        createConversationDto.setCreatorId(userId);
+
+        this.conversationService.createConversation(createConversationDto, createParticipantDtos);
         return new Gson().toJson(new NoContentResponse());
     }
 
     @SneakyThrows
     @PostMapping("")
     @ResponseBody
-    public String createConversation(@Valid @RequestBody List<CreateParticipantDto> createParticipantDtos,
+    public String createConversation(@Valid @RequestBody CreateConversationDto createConversationDto,
+                                    @Valid @RequestBody List<CreateParticipantDto> createParticipantDtos,
                                     Authentication authentication){
         long userId = -1L;
         if(authentication.getPrincipal() instanceof UserDetails) {
@@ -106,7 +112,9 @@ public class ConversationController {
         CreateParticipantDto currentUser = new CreateParticipantDto(userId, null, null);
         createParticipantDtos.add(currentUser);
         createParticipantDtos.forEach(participant -> participant.setParticipantType(ParticipantType.GROUP));
-        this.conversationService.createConversation(createParticipantDtos, userId);
+
+        createConversationDto.setCreatorId(userId);
+        this.conversationService.createConversation(createConversationDto, createParticipantDtos);
         return new Gson().toJson(new NoContentResponse());
     }
 
