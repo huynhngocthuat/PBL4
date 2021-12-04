@@ -13,11 +13,13 @@ import java.util.List;
 @Validated
 public class CreateConversationDto {
     @NotEmpty
+    private String title;
+
+    @NotEmpty
     private Long creatorId;
+
     @NotEmpty
     private String channelId;
 
     private String urlAvatar;
-
-    private List<CreateParticipantDto> participants;
 }

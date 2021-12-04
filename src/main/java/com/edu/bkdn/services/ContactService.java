@@ -5,6 +5,7 @@ import com.edu.bkdn.dtos.Contact.GetContactDto;
 import com.edu.bkdn.dtos.Contact.GetConversationContactDto;
 import com.edu.bkdn.dtos.Contact.SearchContactDto;
 import com.edu.bkdn.dtos.Contact.PendingContactDto;
+import com.edu.bkdn.dtos.Conversation.CreateConversationDto;
 import com.edu.bkdn.dtos.Conversation.GetConversationDto;
 import com.edu.bkdn.dtos.Conversation.GetGroupConversationDto;
 import com.edu.bkdn.dtos.Participant.CreateParticipantDto;
@@ -17,6 +18,7 @@ import com.edu.bkdn.utils.httpResponse.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -49,10 +51,10 @@ public class ContactService {
         Contact foundContact = this.checkContactExistenceByPhone(phoneNumber);
 
         SearchContactDto searchContactDto = ObjectMapperUtils.map(foundContact, SearchContactDto.class);
+        Optional<UserContact> foundUserContact = this.userContactService
+                .findByUserIdAndContactId(foundUser.getId(), foundContact.getId());
         searchContactDto.setIsFriend(
-                this.userContactService
-                        .findByUserIdAndContactId(foundUser.getId(), foundContact.getId())
-                        .isPresent());
+                foundUserContact.isPresent() && foundUserContact.get().getIsAccepted());
         return searchContactDto;
     }
 
@@ -293,11 +295,7 @@ public class ContactService {
             foundConversation.get().setDeletedAt(null);
             this.conversationService.save(foundConversation.get());
         }
-        else if(foundConversation.isPresent() && foundConversation.get().getDeletedAt() == null){
-            throw new DuplicateException("Conversation between user: " + firstUser.getPhone()
-            + " and user: " + secondUser.getPhone() + " already existed!");
-        }
-        else{
+        else if(!foundConversation.isPresent()){
             // Create default conversation between 2 user
             List<CreateParticipantDto> participantDtos = new ArrayList<>();
             participantDtos.add(new CreateParticipantDto(
@@ -310,7 +308,9 @@ public class ContactService {
                     null,
                     ParticipantType.SINGLE
             ));
-            this.conversationService.createConversation(participantDtos, secondUser.getId());
+            CreateConversationDto createConversationDto = new CreateConversationDto();
+            createConversationDto.setCreatorId(secondUser.getId());
+            this.conversationService.createConversation(createConversationDto, participantDtos);
         }
 
     }

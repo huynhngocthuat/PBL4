@@ -2,6 +2,7 @@ package com.edu.bkdn.services;
 
 import com.edu.bkdn.dtos.Contact.GetContactDto;
 import com.edu.bkdn.dtos.Contact.GetConversationContactDto;
+import com.edu.bkdn.dtos.Conversation.CreateConversationDto;
 import com.edu.bkdn.dtos.Conversation.GetConversationDto;
 import com.edu.bkdn.dtos.Conversation.UpdateConversationDto;
 import com.edu.bkdn.dtos.Message.GetLastMessageDto;
@@ -11,6 +12,7 @@ import com.edu.bkdn.models.*;
 import com.edu.bkdn.repositories.ConversationRepository;
 import com.edu.bkdn.utils.HelperUtil;
 import com.edu.bkdn.utils.ObjectMapperUtils;
+import com.edu.bkdn.utils.httpResponse.exceptions.BadRequestException;
 import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
 import com.edu.bkdn.utils.httpResponse.exceptions.EmptyListException;
 import com.edu.bkdn.utils.httpResponse.exceptions.NotFoundException;
@@ -62,6 +64,11 @@ public class ConversationService {
         if(foundConversations.isEmpty()){
             throw new EmptyListException("User: " + foundUser.getId() + " has no conversation!!!");
         }
+        // Remove deleted (leave) participants
+        for(Conversation conversation : foundConversations){
+            conversation.getParticipants()
+                    .removeIf(participant -> participant.getDeletedAt() != null);
+        }
         List<GetConversationDto> getConversationDtos = ObjectMapperUtils.mapAll(foundConversations, GetConversationDto.class);
         for(int i = 0; i < foundConversations.size(); i++){
             // Check for number of user in conversation
@@ -108,10 +115,12 @@ public class ConversationService {
     }
 
     // Method to create the default conversation between 2 user when they are friended of each other
-    public void createConversation(List<CreateParticipantDto> createParticipantDtos, long creatorId) throws DuplicateException, NotFoundException {
+    public void createConversation(CreateConversationDto createConversationDto,
+                                   List<CreateParticipantDto> createParticipantDtos) throws NotFoundException {
         // Single conversation
         if(createParticipantDtos.get(0).getParticipantType() == ParticipantType.SINGLE){
-            long savedConversationId = this.newConversation("single-channel-", creatorId);
+            createConversationDto.setChannelId("single-channel-");
+            long savedConversationId = this.newConversation(createConversationDto);
             // Create participants
             for(CreateParticipantDto createParticipantDto : createParticipantDtos){
                 createParticipantDto.setConversationId(savedConversationId);
@@ -121,7 +130,8 @@ public class ConversationService {
         }
         // Group conversation
         else if(createParticipantDtos.get(0).getParticipantType() == ParticipantType.GROUP){
-            long savedConversationId = this.newConversation("group-channel-", creatorId);
+            createConversationDto.setChannelId("group-channel-");
+            long savedConversationId = this.newConversation(createConversationDto);
             // Create participants
             for(CreateParticipantDto createParticipantDto : createParticipantDtos){
                 createParticipantDto.setConversationId(savedConversationId);
@@ -144,14 +154,15 @@ public class ConversationService {
         this.conversationRepository.save(foundConversation.get());
     }
 
-    public Long newConversation(String channelType, long creatorId){
+    public Long newConversation(CreateConversationDto createConversationDto){
         Conversation newConversation = new Conversation();
-        newConversation.setCreatorId(creatorId);
-        newConversation.setChannelId("");
-        newConversation.setTitle("");
+        newConversation.setCreatorId(createConversationDto.getCreatorId());
+        newConversation.setTitle(createConversationDto.getTitle());
+        newConversation.setUrlAvatar(createConversationDto.getUrlAvatar());
         long savedConversationId = this.conversationRepository.save(newConversation).getId();
+
         Optional<Conversation> savedConversation = this.conversationRepository.findById(savedConversationId);
-        savedConversation.get().setChannelId(channelType+savedConversationId);
+        savedConversation.get().setChannelId(createConversationDto.getChannelId()+savedConversationId);
         this.conversationRepository.save(savedConversation.get());
 
         return savedConversationId;
@@ -161,8 +172,9 @@ public class ConversationService {
         User foundUser = this.checkUserExistenceByID(userId);
         Conversation foundConversation = this.checkConversationExistenceById(conversationId);
 
-        // Get list of user phone from list of user
+        // Get list of user phone from list of user in conversation
         List<String> conversationParticipantPhones = foundConversation.getParticipants()
+                .stream().filter(participant -> participant.getDeletedAt() == null).collect(Collectors.toList())
                 .stream().map(Participant::getUser).collect(Collectors.toList())
                 .stream().map(User::getPhone).collect(Collectors.toList());;
         // Get list of contact that in current conversation
@@ -187,10 +199,11 @@ public class ConversationService {
         User user = this.checkUserExistenceByPhone(userPhone);
         Conversation conversation = checkConversationExistenceById(conversationId);
 
-        // Get list of user phone from list of user
+        // Get list of user phone from list of user in conversation
         List<String> conversationParticipantPhones = conversation.getParticipants()
+                .stream().filter(participant -> participant.getDeletedAt() == null).collect(Collectors.toList())
                 .stream().map(Participant::getUser).collect(Collectors.toList())
-                .stream().map(User::getPhone).collect(Collectors.toList());;
+                .stream().map(User::getPhone).collect(Collectors.toList());
         // Get list of contact that not in current conversation
         List<GetContactDto> conversationOutsiders = this.contactService.getContactsByUserIDAndIsAccepted(user.getId())
                 .stream()
@@ -229,18 +242,24 @@ public class ConversationService {
         }
     }
 
-    public void leaveConversation(long conversationId, String userPhone) throws NotFoundException {
+    public void leaveConversation(long conversationId, String userPhone) throws NotFoundException, BadRequestException {
         // Check exist or not
         User user = this.checkUserExistenceByPhone(userPhone);
         Conversation conversation = checkConversationExistenceById(conversationId);
 
-        Optional<Participant> foundParticipant = this.participantService.findParticipantByUserIdAndConversationIdAndDeletedAtIsNull(conversationId, user.getId());
+        Optional<Participant> foundParticipant = this.participantService
+                .findParticipantByUserIdAndConversationIdAndDeletedAtIsNull(conversationId, user.getId());
+        // Cant leave if in SINGLE conversation
+        if(foundParticipant.isPresent() && foundParticipant.get().getParticipantType().equals(ParticipantType.SINGLE)){
+            throw new BadRequestException("Cant leave single conversation!");
+        }
         List<GetMessageDto> participantsMessages = this.messageService.getAllMessageByUserAndConversationAndDeletedAtIsNull(conversationId, user.getId());
-        if(foundParticipant.isPresent() && foundParticipant.get().getParticipantType() == ParticipantType.GROUP){
+        if(foundParticipant.isPresent() && foundParticipant.get().getParticipantType().equals(ParticipantType.GROUP)){
             if(!participantsMessages.isEmpty()){
                 Timestamp leaveTime = new Timestamp(System.currentTimeMillis());
                 foundParticipant.get().setDeletedAt(leaveTime);
                 this.participantService.save(foundParticipant.get());
+                // Update conversation
                 conversation.setUpdatedAt(leaveTime);
                 this.conversationRepository.save(conversation);
             }
