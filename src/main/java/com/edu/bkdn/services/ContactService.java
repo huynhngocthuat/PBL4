@@ -138,6 +138,8 @@ public class ContactService {
         List<GetContactDto> getStrangerContactDtos = ObjectMapperUtils.mapAll(strangerContacts, GetContactDto.class);
         getStrangerContactDtos.forEach(
                 contact -> {
+                    // Cant see stranger status
+                    contact.setIsActive(null);
                     // Set false for unaccepted contacts
                     if(unAcceptedContactPhones.contains(contact.getPhone())){
                         contact.setIsAccepted(false);

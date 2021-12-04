@@ -101,6 +101,16 @@ public class ConversationService {
             else{
                 getConversationDtos.get(i).setLastMessage(null);
             }
+            // Set conversation status
+            getConversationDtos.get(i).setIsActive(false);
+            List<GetConversationContactDto> conversationContactDtos =
+                    this.getAllConversationParticipants(foundConversations.get(i).getId(), foundUser.getId());
+            for(GetConversationContactDto conversationContactDto : conversationContactDtos){
+                if(conversationContactDto.getIsActive() && !conversationContactDto.getPhone().equals(foundUser.getPhone())){
+                    getConversationDtos.get(i).setIsActive(true);
+                    break;
+                }
+            }
         }
         Collections.reverse(getConversationDtos = this.sortConversation(getConversationDtos));
         return getConversationDtos;
