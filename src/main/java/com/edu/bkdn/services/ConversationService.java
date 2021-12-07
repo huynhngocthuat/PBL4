@@ -169,6 +169,7 @@ public class ConversationService {
         newConversation.setCreatorId(createConversationDto.getCreatorId());
         newConversation.setTitle(createConversationDto.getTitle());
         newConversation.setUrlAvatar(createConversationDto.getUrlAvatar());
+        newConversation.setChannelId(createConversationDto.getChannelId());
         long savedConversationId = this.conversationRepository.save(newConversation).getId();
 
         Optional<Conversation> savedConversation = this.conversationRepository.findById(savedConversationId);

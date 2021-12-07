@@ -118,7 +118,7 @@ public class ContactService {
                 throw new NotFoundException("User: " + user.getPhone() + " is not a friend with contact: " + pendingContactDto.getPhone() + "!");
             }
             pendingContactDto.setIsAccepted(false);
-            pendingContactDto.setRequestSenderId(sender.get().getContact().getId());
+            pendingContactDto.setRequestSenderId(sender.get().getUser().getId());
             pendingContactDto.setInvitationMessage(sender.get().getInvitationMessage());
         }
         return pendingContactDtos;
