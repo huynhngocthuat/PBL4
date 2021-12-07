@@ -35,4 +35,7 @@ public class GetConversationDto {
     private List<GetParticipantDto> participants;
 
     private String updatedAt;
+
+    @NotNull
+    private Boolean isActive;
 }

@@ -33,6 +33,8 @@ public class UserService implements UserDetailsService{
     private UserRepository userRepository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private ContactService contactService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -109,8 +111,12 @@ public class UserService implements UserDetailsService{
     public void updateActive(Long id, boolean active) throws NotFoundException
     {
         Optional<User> foundUser = this.userRepository.findById(id);
-        foundUser.orElseThrow(() -> new NotFoundException("Not found user Id"));
+        foundUser.orElseThrow(() -> new NotFoundException("User with ID: " + id + " does not exist!"));
+        Optional<Contact> foundContact = this.contactService.findByPhone(foundUser.get().getPhone());
+        foundContact.orElseThrow(() ->
+                new NotFoundException("Contact with phone: " + foundUser.get().getPhone() + " does not exist!"));
 
+        this.contactService.updateActive(foundContact.get().getId(), true);
         foundUser.get().setIsActive(active);
         this.userRepository.save(foundUser.get());
     }

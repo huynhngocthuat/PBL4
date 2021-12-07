@@ -31,7 +31,6 @@ public class homeController {
 //        String strmap = gson.toJson(id);
 
         userService.updateActive(id, true);
-        contactService.updateActive(id, true);
         modelMap.addAttribute("idUserLogin", id);
         return "home";
     }

@@ -118,7 +118,7 @@ public class ContactService {
                 throw new NotFoundException("User: " + user.getPhone() + " is not a friend with contact: " + pendingContactDto.getPhone() + "!");
             }
             pendingContactDto.setIsAccepted(false);
-            pendingContactDto.setRequestSenderId(sender.get().getContact().getId());
+            pendingContactDto.setRequestSenderId(sender.get().getUser().getId());
             pendingContactDto.setInvitationMessage(sender.get().getInvitationMessage());
         }
         return pendingContactDtos;
@@ -138,6 +138,8 @@ public class ContactService {
         List<GetContactDto> getStrangerContactDtos = ObjectMapperUtils.mapAll(strangerContacts, GetContactDto.class);
         getStrangerContactDtos.forEach(
                 contact -> {
+                    // Cant see stranger status
+                    contact.setIsActive(null);
                     // Set false for unaccepted contacts
                     if(unAcceptedContactPhones.contains(contact.getPhone())){
                         contact.setIsAccepted(false);

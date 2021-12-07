@@ -35,4 +35,7 @@ public class GetConversationContactDto {
 
     @NotNull
     private Boolean isFriend;
+
+    @NotNull
+    private Boolean isActive;
 }
