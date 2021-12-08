@@ -105,17 +105,79 @@
     color: #fff;
     margin-bottom: 10px;
     transition: all 0.5s ease;
-}
-
-.left-bar__list-contacts .contact-item:hover {
-    background-color: var(--ocean-blue-color);
-    cursor: pointer;
+    position: inherit;
 }
 
 .contact-item__avatar {
     width: 40px;
     height: 40px;
     margin: 10px;
+}
+
+.contact-item__action {
+    position: absolute;
+}
+
+.contact-item__action .dropbtn {
+    position: absolute;
+    top: 50%;
+    left: calc(300px - 30px);
+    transform: translateY(-50%);
+    opacity: 0;
+    visibility: hidden;
+    color: #fff;
+    cursor: pointer;
+}
+
+.left-bar__list-contacts .contact-item:hover {
+    background-color: var(--ocean-blue-color);
+}
+
+.left-bar__list-contacts .contact-item:hover>.contact-item__action .dropbtn {
+    opacity: 1;
+    visibility: visible;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #4F545C;
+    width: 150px;
+    box-shadow: var(--box-shadow);
+    border-radius: 4px;
+    padding: 4px 0px;
+    z-index: 1;
+    top: 10px;
+    left: calc(300px - 30px);
+    transition: all 0.5s ease;
+}
+
+.dropdown-content::after {
+    content: '';
+    background-color: transparent;
+    position: absolute;
+    top: -10px;
+    width: 100%;
+    height: 10px;
+}
+
+.dropdown-content p {
+    color: #fff;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: all 0.5s ease;
+}
+
+.dropdown-content p:hover {
+    background-color: #72767D;
+    cursor: pointer;
+}
+
+.dropbtn:hover+.dropdown-content,
+.dropdown-content:hover {
+    display: block;
 }
 
 /* main top */
@@ -234,6 +296,18 @@
     align-items: center;
     padding: 20px;
     margin: 20px;
+    position: relative;
+    cursor: pointer;
+}
+
+.group-item:after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
 }
 
 .group-item__avatar {
@@ -252,9 +326,7 @@
 .group-item__info {
     margin-top: 10px;
     font-size: 16px;
-    cursor: pointer;
 }
-
 
 /* main-overlay */
 .main-overlay {
@@ -267,6 +339,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 99;
     display: none;
 }
 
@@ -338,7 +411,6 @@
 .add-friend-input:focus {
     border: solid 1px var(--ocean-blue-color);
 }
-
 
 /* Result find phone number */
 .add-friend__result {
@@ -464,7 +536,6 @@
     width: 100%;
     box-sizing: border-box;
     padding: 20px 40px;
-    margin: 10px 0px;
     display: flex;
     flex-direction: column;
 }
@@ -549,6 +620,7 @@
 .create-group__list-item.with-scroll {
     width: calc(100% - 20px);
 }
+
 .item__checkbox {
     width: 40px;
 }

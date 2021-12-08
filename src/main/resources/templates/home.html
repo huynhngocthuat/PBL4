@@ -1,34 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homepage</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/reset.css}"/>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/base.css}"/>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/home/style.css}"/>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/home/tabcontact.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/reset.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/base.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/home/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/home/tabcontact.css}" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
-            integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
+          integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="/js/lib/moment.min.js"></script>
     <script src="/js/lib/moment-with-locales.js"></script>
-    <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js">
     </script>
-    <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js">
     </script>
     <script src="/js/config.js"></script>
 </head>
+
 <body>
 <div class="app">
     <!-- 1 ==========SIDE BAR========== -->
@@ -45,9 +41,9 @@
         <div class="tab" tab-name="tab-notifications" onclick="switchTab()">
             <i class="fas fa-bell"></i>
         </div>
-        <div class="tab">
+        <a class="tab" href="/logout">
             <i class="fas fa-sign-out-alt"></i>
-        </div>
+        </a>
     </div>
     <!-- 1   ==========SIDE BAR========== -->
 
@@ -64,7 +60,7 @@
             <h1>My Messages</h1>
             <div class="left-bar__search">
                 <i class="fas fa-search"></i>
-                <input type="text" placeholder="Tìm kiếm" onkeyup="searchConversations()"/>
+                <input type="text" placeholder="Tìm kiếm" onkeyup="searchConversations()" />
             </div>
             <div class="left-bar__chat" id="list-conversations">
 
@@ -92,10 +88,8 @@
             </div>
             <div class="main-chat">
                 <div class="input-chat">
-                    <input type="text" placeholder="Message here"
-                           name="input-message" id="input-message"
-                           onkeydown="CheckEnterToSend()"
-                    />
+                    <input type="text" placeholder="Message here" name="input-message" id="input-message"
+                           onkeydown="CheckEnterToSend()" />
                     <i class="fas fa-plus-square" onClick="handleReceivedMessage()"></i>
                     <i class="fas fa-paper-plane" onClick="send()"></i>
                 </div>
@@ -139,15 +133,8 @@
                 </div>
             </div>
 
-            <div class="left-bar__list-contacts ">
-                <div class="contact-item">
-                    <img class="contact-item__avatar"
-                         src="https://images.unsplash.com/photo-1637580981009-c13f27517703?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
-                         alt="avatar">
-                    <span class="contact-item__name">
-                            Nguyễn Văn A
-                        </span>
-                </div>
+            <div class="left-bar__list-contacts" id="list-contacts">
+
             </div>
         </div>
         <!-- 2.3.1 LEFT BAR -->
@@ -168,28 +155,7 @@
                 </div>
 
                 <div class="main-content" id="list-friend-requests">
-                    <div class="friend-request-item">
-                        <div class="friend-request-item__avatar">
-                            <img src="https://images.unsplash.com/photo-1637580981009-c13f27517703?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
-                                 alt="avatar">
-                        </div>
-                        <div class="friend-request-item__info">
-                                <span class="friend-request-item__name">
-                                    Nguyễn Văn B
-                                </span>
-                            <span class="friend-request-item__message">
-                                    Nguyễn Văn B chào b
-                                </span>
-                        </div>
-                        <div class="friend-request-item__action">
-                            <div class="btn btn-secondary">
-                                Bỏ qua
-                            </div>
-                            <div class="btn btn-primary">
-                                Đồng ý
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
             <!-- 2.3.2.1 MAIN - FRIEND REQUEST LIST -->
@@ -234,30 +200,16 @@
                     <div class="add-friend__input">
                         <i class="fas fa-phone-alt"></i>
                         <input type="number" placeholder="Nhập số điện thoại" class="add-friend-input"
-                               onchange="inputPhoneNumber()">
+                               id="add-friend-input" onchange="inputPhoneNumber()">
                     </div>
 
-                    <div class="add-friend__result">
+                    <div class="add-friend__result" id="add-friend-result">
                         Gợi ý kết bạn: coming soon
-                        <!-- <img
-                        src="https://images.unsplash.com/photo-1637580981009-c13f27517703?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
-                        class="add-friend__avatar" alt="avatar">
-
-                      <p class="add-friend__name">Nguyễn Văn A</p>
-                      <div class="add-friend__info-group">
-                        <span>Giới tính:</span>
-                        <span class="add-friend__gender">Nam</span>
-                      </div>
-
-                      <div class="add-friend__info-group">
-                        <span>Ngày sinh:</span>
-                        <span class="add-friend__dob">01/01/2001</span>
-                      </div> -->
                     </div>
 
                     <div class="add-friend__action">
                         <div class="btn btn-secondary">Hủy bỏ</div>
-                        <div class="btn btn-primary">Kết bạn</div>
+                        <div class="btn btn-primary" id="btn-send-request-friend">Kết bạn</div>
                     </div>
                 </div>
             </div>
@@ -272,24 +224,8 @@
                     <div class="main-overlay__title">
                         Danh sách thành viên
                     </div>
-                    <div class="list-members">
-                        <div class="list-members-item">
-                            <img src="https://images.unsplash.com/photo-1637580981009-c13f27517703?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
-                                 alt="avatar" class="list-members-item__avatar">
-                            <span class="list-members-item__name">
-                                    Nguyễn Văn A
-                                </span>
-                            <span class="list-members-item__role">
-                                    Quản trị viên
-                                </span>
-                        </div>
-                        <div class="list-members-item">
-                            <img src="https://images.unsplash.com/photo-1637580981009-c13f27517703?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
-                                 alt="avatar" class="list-members-item__avatar">
-                            <span class="list-members-item__name">
-                                    Nguyễn Văn A
-                                </span>
-                        </div>
+                    <div class="list-members" id="list-members">
+
                     </div>
                 </div>
             </div>
@@ -360,9 +296,6 @@
 </div>
 </body>
 <script th:inline="javascript">
-
-    var idUserLogin = /*[[${idUserLogin}]]*/ "Test";
-
     const dataLogin = (function () {
         /*<![CDATA[*/
         const idUser = /*[[${idUserLogin}]]*/ "idUser";
@@ -372,13 +305,11 @@
                 return idUser;
             }
         }
-
     })();
-
 </script>
 <script src="/js/homepage/sidebar.js"></script>
 <script src="/js/homepage/tabmessage/home.js"></script>
 <script src="/js/homepage/tabmessage/message.js"></script>
 <script src="/js/homepage/tabmessage/sendMessage.js"></script>
-<script src="/js/homepage/tabcontact/main.js"></script>
+<script src="/js/homepage/tabcontact/tabContact.js"></script>
 </html>

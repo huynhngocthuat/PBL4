@@ -312,6 +312,7 @@ public class ContactService {
             ));
             CreateConversationDto createConversationDto = new CreateConversationDto();
             createConversationDto.setCreatorId(secondUser.getId());
+            createConversationDto.setTitle("");
             this.conversationService.createConversation(createConversationDto, participantDtos);
         }
 

@@ -122,7 +122,7 @@ public class ContactController {
     @SneakyThrows
     @DeleteMapping("/decline/{contactId}")
     @ResponseBody
-    public String declineUserContact(@PathVariable("contactId") long contactId,
+    public String declineContactInvitation(@PathVariable("contactId") long contactId,
                                      Authentication authentication){
         long userId = -1L;
         if(authentication.getPrincipal() instanceof UserDetails) {

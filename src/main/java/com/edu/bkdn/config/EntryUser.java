@@ -38,7 +38,7 @@ public class EntryUser {
                 "Huong Le",
                 "Nguyen",
                 false,
-                ""
+                "https://images.unsplash.com/photo-1592994202124-75c12df162cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=667&q=80"
         );
         CreateUserDto entryApplicationUser2 = new CreateUserDto(
                 "huynhthuat852@gmail.com",
@@ -47,7 +47,7 @@ public class EntryUser {
                 "Huynh Ngoc",
                 "Thuat",
                 false,
-                ""
+                "https://images.unsplash.com/photo-1519058082700-08a0b56da9b4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
         );
         CreateUserDto entryApplicationUser3 = new CreateUserDto(
                 "doantanty92@gmail.com",
@@ -56,7 +56,7 @@ public class EntryUser {
                 "Doan Tan",
                 "Ty",
                 false,
-                ""
+                "https://images.unsplash.com/photo-1499051284390-7dbd87e5fbdb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1174&q=80"
         );
         CreateUserDto entryApplicationUser4 = new CreateUserDto(
                 "hoangdat@gmail.com",
@@ -65,7 +65,7 @@ public class EntryUser {
                 "Dinh Hoang",
                 "Dat",
                 false,
-                ""
+                "https://images.unsplash.com/photo-1514794749374-fb67509dbb7f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
         );
 
         try{
@@ -85,7 +85,7 @@ public class EntryUser {
                 "Huong Le",
                 "Nguyen",
                 false,
-                ""
+                "https://images.unsplash.com/photo-1592994202124-75c12df162cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=667&q=80"
         );
         CreateContactDto entryContact2 = new CreateContactDto(
                 "huynhthuat852@gmail.com",
@@ -93,7 +93,8 @@ public class EntryUser {
                 "Huynh Ngoc",
                 "Thuat",
                 false,
-                ""
+                "https://images.unsplash.com/photo-1519058082700-08a0b56da9b4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
+
         );
         CreateContactDto entryContact3 = new CreateContactDto(
                 "doantanty92@gmail.com",
@@ -101,7 +102,7 @@ public class EntryUser {
                 "Doan Tan",
                 "Ty",
                 false,
-                ""
+                "https://images.unsplash.com/photo-1499051284390-7dbd87e5fbdb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1174&q=80"
         );
         CreateContactDto entryContact4 = new CreateContactDto(
                 "hoangdat@gmail.com",
@@ -109,7 +110,7 @@ public class EntryUser {
                 "Dinh Hoang",
                 "Dat",
                 false,
-                ""
+                "https://images.unsplash.com/photo-1514794749374-fb67509dbb7f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
         );
 
         try{

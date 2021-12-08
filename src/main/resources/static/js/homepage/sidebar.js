@@ -12,5 +12,16 @@ function switchTab () {
         tabCLicked.classList.add("active");
         tabElementActive.classList.remove("active-flex");
         tabElementWithTabClickedName.classList.add("active-flex");
+
+        switch (tabClickedName) {
+            case "tab-contact": {
+                startTabContact();
+                break;
+            }
+            case "tab-message": {
+                startTabMessage();
+                break;
+            }
+        }
     }
 }
