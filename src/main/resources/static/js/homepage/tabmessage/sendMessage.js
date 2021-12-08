@@ -10,8 +10,7 @@ function connect(idConversation) {
             let message = JSON.parse(createMessageDto.body); // Đối tượng Json
             loadMessage(message)
             message.createdAt = moment(message.createdAt, "DD/MM/YY, HH:mm:ss").format("YYYY-MM-DD HH:mm:ss.0")
-            console.log(message.createdAt)
-            listConversations = document.querySelector("#list-conversations");
+            let listConversations = document.querySelector("#list-conversations");
             listConversations.innerHTML = ``;
             let conversationContainMsg = allConversation.find(
                 (data) => data.id === message.conversationId
