@@ -84,7 +84,7 @@ public class ContactController {
     @SneakyThrows
     @GetMapping("/search/{contactPhone}")
     @ResponseBody
-    public SearchContactDto searchContactByPhone(@PathVariable("contactPhone") String contactPhone,
+    public GetContactDto searchContactByPhone(@PathVariable("contactPhone") String contactPhone,
                                                  Authentication authentication){
         long userId = -1L;
         if(authentication.getPrincipal() instanceof UserDetails) {
@@ -97,12 +97,13 @@ public class ContactController {
     @PostMapping("/invitation/{contactId}")
     @ResponseBody
     public String sentContactInvitation(@PathVariable("contactId") long contactId,
+                                        @RequestBody String invitationMessage,
                                         Authentication authentication){
         long userId = -1L;
         if(authentication.getPrincipal() instanceof UserDetails) {
             userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        this.contactService.createContactInvitation(userId, contactId);
+        this.contactService.createContactInvitation(userId, contactId, invitationMessage);
         return new Gson().toJson(new NoContentResponse());
     }
 
