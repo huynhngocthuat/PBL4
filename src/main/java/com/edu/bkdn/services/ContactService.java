@@ -46,15 +46,18 @@ public class ContactService {
         return this.contactRepository.findContactByPhone(phoneNumber);
     }
 
-    public SearchContactDto searchContactByPhone(String phoneNumber, long userId) throws NotFoundException {
+    public GetContactDto searchContactByPhone(String phoneNumber, long userId) throws NotFoundException {
         User foundUser = this.checkUserExistenceById(userId);
         Contact foundContact = this.checkContactExistenceByPhone(phoneNumber);
 
-        SearchContactDto searchContactDto = ObjectMapperUtils.map(foundContact, SearchContactDto.class);
+        GetContactDto searchContactDto = ObjectMapperUtils.map(foundContact, GetContactDto.class);
         Optional<UserContact> foundUserContact = this.userContactService
                 .findByUserIdAndContactId(foundUser.getId(), foundContact.getId());
-        searchContactDto.setIsFriend(
-                foundUserContact.isPresent() && foundUserContact.get().getIsAccepted());
+        if(!foundUserContact.isPresent()){
+            throw new NotFoundException("User " + foundUser.getPhone() + " does not have any contact with " + foundContact.getPhone());
+        }
+        searchContactDto.setIsAccepted(foundUserContact.get().getIsAccepted());
+        searchContactDto.setRequestSenderId(foundUserContact.get().getRequestSenderId());
         return searchContactDto;
     }
 
@@ -194,7 +197,7 @@ public class ContactService {
         foundContact.get().setIsActive(active);
         this.contactRepository.save(foundContact.get());
     }
-    public void createContactInvitation(long userId, long contactId) throws NotFoundException, DuplicateException {
+    public void createContactInvitation(long userId, long contactId, String invitationMessage) throws NotFoundException, DuplicateException {
         // Check exist
         User firstUser = this.checkUserExistenceById(userId);
         Contact firstContact = this.checkContactExistenceById(contactId);
@@ -230,7 +233,7 @@ public class ContactService {
                     firstContact,
                     firstUser.getId(),
                     false,
-                    "Hello I'm " + firstUser.getLastName()
+                    invitationMessage
             );
             this.userContactService.save(newFirstUserContact);
         }
