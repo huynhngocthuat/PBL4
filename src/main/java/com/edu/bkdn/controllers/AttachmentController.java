@@ -3,6 +3,8 @@ package com.edu.bkdn.controllers;
 import com.edu.bkdn.dtos.Attachment.CreateAttachmentDto;
 import com.edu.bkdn.dtos.Attachment.GetAttachmentDto;
 import com.edu.bkdn.dtos.Message.CreateAttachmentMessageDto;
+import com.edu.bkdn.dtos.Message.CreateMessageDto;
+import com.edu.bkdn.models.ApplicationUser;
 import com.edu.bkdn.services.AttachmentService;
 import com.edu.bkdn.services.MessageService;
 import com.google.gson.Gson;
@@ -15,12 +17,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class AttachmentController {
@@ -33,7 +39,17 @@ public class AttachmentController {
 
     @SneakyThrows
     @PostMapping("/saveAttachment")
-    public ArrayList<CreateAttachmentMessageDto> saveAttachments(MultipartFile[] uploadFiles, Long conversationId, Long userId){
+    @ResponseBody
+    public void saveAttachments(@RequestParam("uploadFiles") MultipartFile[] uploadFiles,
+                                @RequestParam("conversationId") Long conversationId,
+                                Authentication authentication){
+
+//        long conversationId = 1;
+        long idSender = -1L;
+        if(authentication.getPrincipal() instanceof UserDetails) {
+            idSender = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
+        }
+
         ArrayList<CreateAttachmentMessageDto> listAttachmentMessage = new ArrayList<CreateAttachmentMessageDto>();
 
         for (MultipartFile file: uploadFiles) {
@@ -41,7 +57,7 @@ public class AttachmentController {
             CreateAttachmentMessageDto createAttachmentMessageDto = new CreateAttachmentMessageDto();
             createAttachmentMessageDto.setContent("file");
             createAttachmentMessageDto.setConversationId(conversationId);
-            createAttachmentMessageDto.setUserId(userId);
+            createAttachmentMessageDto.setUserId(idSender);
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             createAttachmentMessageDto.setCreatedAt(currentTime);
             Long messageId = messageService.createAttachmentMessage(createAttachmentMessageDto);
@@ -58,17 +74,27 @@ public class AttachmentController {
             createAttachmentMessageDto.setAttachmentId(attachmentId);
             createAttachmentMessageDto.setFileName(file.getOriginalFilename());
             listAttachmentMessage.add(createAttachmentMessageDto);
+
+            CreateMessageDto createMessageDto = new CreateMessageDto(idSender,"Send file", conversationId, currentTime);
+            Gson gson = new Gson();
+            simpMessagingTemplate.convertAndSend("/topic/public/"+ createMessageDto.getConversationId(), gson.toJson(createMessageDto));
+
+            //Send attachment
+            //        Gson gson = new Gson();
+            //        CreateAttachmentMessageDto createAttachmentMessageDto = new CreateAttachmentMessageDto();
+            //        simpMessagingTemplate.convertAndSend("/topic/public/"+ createAttachmentMessageDto.getConversationId(), gson.toJson(createAttachmentMessageDto));
+
         }
-        return listAttachmentMessage;
-    }
-
-    @SneakyThrows
-    @MessageMapping("/sendAttachments")
-    public void sendAttachments(@Payload CreateAttachmentMessageDto createAttachmentMessageDto) {
-        Gson gson = new Gson();
-        simpMessagingTemplate.convertAndSend("/topic/public/"+ createAttachmentMessageDto.getConversationId(), gson.toJson(createAttachmentMessageDto));
 
     }
+
+//    @SneakyThrows
+//    @MessageMapping("/sendAttachments")
+//    public void sendAttachments(@Payload CreateAttachmentMessageDto createAttachmentMessageDto) {
+//        Gson gson = new Gson();
+//        simpMessagingTemplate.convertAndSend("/topic/public/"+ createAttachmentMessageDto.getConversationId(), gson.toJson(createAttachmentMessageDto));
+//
+//    }
 
     // download theo id attachment trong database
     @SneakyThrows

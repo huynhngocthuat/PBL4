@@ -37,7 +37,7 @@ function send() {
     let conversationId = messageInput.getAttribute("idConversation");
     if (messageContent && stompClient) {
         let createMessageDto = {
-            userId: dataLogin.getID(),
+            // userId: dataLogin.getID(),
             content: messageInput.value,
             conversationId: conversationId,
             createdAt : null,
@@ -54,11 +54,7 @@ function sendAttachments(){
         if(realFileBtn.value && stompClient){
             // Lưu mảng file được select và trả về list createAttachmentMessageDto
             // Tham số đầu vào Multipartfile, conversationId, userId
-            let listCreateAttachmentMessageDto = fetchMethod('/saveAttachment', method ='POST')
-            // Gửi list message qua websocket
-            for (let createAttachmentMessageDto in listCreateAttachmentMessageDto){
-                stompClient.send("/app/sendAttachments", {}, JSON.stringify(createAttachmentMessageDto));
-            }
+            fetchMethod('/saveAttachment', method ='POST')
         }
     });
 }
