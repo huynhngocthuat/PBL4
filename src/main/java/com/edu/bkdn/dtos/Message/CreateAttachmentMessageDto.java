@@ -32,6 +32,5 @@ public class CreateAttachmentMessageDto {
     private Long attachmentId;
 
     @NotEmpty
-    private String fileName;
-
+    private String fileType;
 }

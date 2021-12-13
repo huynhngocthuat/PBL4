@@ -50,8 +50,6 @@ public class AttachmentController {
             idSender = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
 
-        ArrayList<CreateAttachmentMessageDto> listAttachmentMessage = new ArrayList<CreateAttachmentMessageDto>();
-
         for (MultipartFile file: uploadFiles) {
 
             //Create new attachment
@@ -71,13 +69,10 @@ public class AttachmentController {
             createAttachmentMessageDto.setCreatedAt(currentTime);
             messageService.createAttachmentMessage(createAttachmentMessageDto);
 
-            //Response server websocket
-            createAttachmentMessageDto.setAttachmentId(attachmentId);
-            createAttachmentMessageDto.setFileName(file.getOriginalFilename());
-            listAttachmentMessage.add(createAttachmentMessageDto);
-
+            //Response websocket
+            createAttachmentMessageDto.setFileType(file.getContentType());
             Gson gson = new Gson();
-            simpMessagingTemplate.convertAndSend("/topic/public/"+ createAttachmentMessageDto.getConversationId(), gson.toJson(createAttachmentDto));
+            simpMessagingTemplate.convertAndSend("/topic/public/"+ createAttachmentMessageDto.getConversationId(), gson.toJson(createAttachmentMessageDto));
 
         }
 
