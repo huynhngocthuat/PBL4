@@ -23,6 +23,4 @@ public class CreateAttachmentDto {
     @NotEmpty
     private String fileType;
 
-    @NotEmpty
-    private Long messageId;
 }

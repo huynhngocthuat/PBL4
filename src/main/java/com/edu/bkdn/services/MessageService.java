@@ -4,10 +4,8 @@ import com.edu.bkdn.dtos.Message.CreateAttachmentMessageDto;
 import com.edu.bkdn.dtos.Message.CreateMessageDto;
 import com.edu.bkdn.dtos.Message.GetLastMessageDto;
 import com.edu.bkdn.dtos.Message.GetMessageDto;
-import com.edu.bkdn.models.BaseEntity;
-import com.edu.bkdn.models.Conversation;
-import com.edu.bkdn.models.Message;
-import com.edu.bkdn.models.User;
+import com.edu.bkdn.models.*;
+import com.edu.bkdn.repositories.AttachmentRepository;
 import com.edu.bkdn.repositories.ConversationRepository;
 import com.edu.bkdn.repositories.MessageRepository;
 import com.edu.bkdn.repositories.UserRepository;
@@ -20,6 +18,7 @@ import java.sql.Timestamp;
 import java.util.*;
 @Service
 public class MessageService {
+
     @Autowired
     private MessageRepository messageRepository;
     @Autowired
@@ -28,6 +27,9 @@ public class MessageService {
     private UserRepository userRepository;
     @Autowired
     private ConversationRepository conversationRepository;
+    @Autowired
+    private AttachmentService attachmentService;
+
     public List<Message> findAll(){
         return messageRepository.findAll();
     }
@@ -75,12 +77,18 @@ public class MessageService {
         if (!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null) {
             throw new NotFoundException("Conversation with ID: " + createAttachmentMessageDto.getConversationId() + " does not existed!!!");
         }
+        //Check existed attachment
+        Optional<Attachment> foundAttachment = attachmentService.findAttachmentById(createAttachmentMessageDto.getAttachmentId());
+        if(!foundAttachment.isPresent()){
+            throw new NotFoundException("Attachment with ID: " + createAttachmentMessageDto.getAttachmentId() + " does not existed!!!");
+        }
 
         Message newMessage = new Message();
         newMessage.setUser(foundUser.get());
         newMessage.setConversation(foundConversation.get());
         newMessage.setCreatedAt(createAttachmentMessageDto.getCreatedAt());
         newMessage.setContent(createAttachmentMessageDto.getContent());
+        newMessage.setAttachment(foundAttachment.get());
 
         return messageRepository.save(newMessage).getId();
     }

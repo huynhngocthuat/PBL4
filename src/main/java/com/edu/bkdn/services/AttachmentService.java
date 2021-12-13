@@ -37,17 +37,16 @@ public class AttachmentService {
     }
 
     public Long createAttachment(CreateAttachmentDto createAttachmentDto) throws NotFoundException{
-        Optional<Message> foundMessage = messageService.findMessageById(createAttachmentDto.getMessageId());
-        if(!foundMessage.isPresent()){
-            throw new NotFoundException("Message with ID: " + createAttachmentDto.getMessageId() + " does not existed!!!");
-        }
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
         Attachment attachment = new Attachment();
         attachment.setCreatedAt(currentTime);
         attachment.setData(createAttachmentDto.getData());
         attachment.setFileName(createAttachmentDto.getFileName());
         attachment.setFileType(createAttachmentDto.getFileType());
-        attachment.setMessage(foundMessage.get());
         return attachmentRepository.save(attachment).getId();
+    }
+
+    public Optional<Attachment> findAttachmentById(Long attachmentId){
+        return attachmentRepository.findAttachmentById(attachmentId);
     }
 }

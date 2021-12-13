@@ -18,9 +18,4 @@ public class Attachment extends BaseEntity implements Serializable {
     @Column(columnDefinition = "nvarchar(200)")
     private String fileType;
 
-    @OneToOne
-    @JoinColumn(name = "id_message")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Message message;
 }

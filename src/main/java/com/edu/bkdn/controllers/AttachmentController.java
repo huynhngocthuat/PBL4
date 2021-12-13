@@ -53,34 +53,30 @@ public class AttachmentController {
         ArrayList<CreateAttachmentMessageDto> listAttachmentMessage = new ArrayList<CreateAttachmentMessageDto>();
 
         for (MultipartFile file: uploadFiles) {
-            //Create new message
-            CreateAttachmentMessageDto createAttachmentMessageDto = new CreateAttachmentMessageDto();
-            createAttachmentMessageDto.setContent("file");
-            createAttachmentMessageDto.setConversationId(conversationId);
-            createAttachmentMessageDto.setUserId(idSender);
-            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            createAttachmentMessageDto.setCreatedAt(currentTime);
-            Long messageId = messageService.createAttachmentMessage(createAttachmentMessageDto);
 
             //Create new attachment
             CreateAttachmentDto createAttachmentDto = new CreateAttachmentDto();
             createAttachmentDto.setData(file.getBytes());
             createAttachmentDto.setFileName(file.getOriginalFilename());
             createAttachmentDto.setFileType(file.getContentType());
-            createAttachmentDto.setMessageId(messageId);
             Long attachmentId = attachmentService.createAttachment(createAttachmentDto);
+
+            //Create new message
+            CreateAttachmentMessageDto createAttachmentMessageDto = new CreateAttachmentMessageDto();
+            createAttachmentMessageDto.setContent(file.getOriginalFilename());
+            createAttachmentMessageDto.setConversationId(conversationId);
+            createAttachmentMessageDto.setUserId(idSender);
+            createAttachmentMessageDto.setAttachmentId(attachmentId);
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            createAttachmentMessageDto.setCreatedAt(currentTime);
+            messageService.createAttachmentMessage(createAttachmentMessageDto);
 
             //Response server websocket
             createAttachmentMessageDto.setAttachmentId(attachmentId);
             createAttachmentMessageDto.setFileName(file.getOriginalFilename());
             listAttachmentMessage.add(createAttachmentMessageDto);
 
-//            CreateMessageDto createMessageDto = new CreateMessageDto(idSender,"Send file", conversationId, currentTime);
-//            Gson gson = new Gson();
-//            simpMessagingTemplate.convertAndSend("/topic/public/"+ createMessageDto.getConversationId(), gson.toJson(createMessageDto));
-
             Gson gson = new Gson();
-//            CreateAttachmentMessageDto createAttachmentMessageDto = new CreateAttachmentMessageDto();
             simpMessagingTemplate.convertAndSend("/topic/public/"+ createAttachmentMessageDto.getConversationId(), gson.toJson(createAttachmentDto));
 
         }
@@ -88,8 +84,18 @@ public class AttachmentController {
     }
 
     @SneakyThrows
-    @GetMapping("/downloadAttachments/{id}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("id") Long attachmentId){
+    @GetMapping("/downloadAttachment/{id}")
+    public ResponseEntity<ByteArrayResource> downloadAttachment(@PathVariable("id") Long attachmentId){
+        GetAttachmentDto getAttachmentDto = attachmentService.getAttachmentDtoById(attachmentId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(getAttachmentDto.getFileType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION,"attachment:filename=\""+getAttachmentDto.getFileName()+"\"")
+                .body(new ByteArrayResource(getAttachmentDto.getData()));
+    }
+
+    @SneakyThrows
+    @GetMapping("/getAttachment/{id}")
+    public ResponseEntity<ByteArrayResource> getAttachment(@PathVariable("id") Long attachmentId){
         GetAttachmentDto getAttachmentDto = attachmentService.getAttachmentDtoById(attachmentId);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(getAttachmentDto.getFileType()))

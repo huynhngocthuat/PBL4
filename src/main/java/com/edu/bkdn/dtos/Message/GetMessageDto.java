@@ -26,6 +26,10 @@ public class GetMessageDto {
     @NotEmpty
     private Long conversationId;
 
+    private Long attachmentId;
+
+    private String attachmentFileType;
+
     @NotNull
     private String createdAt;
 
@@ -33,5 +37,6 @@ public class GetMessageDto {
     private String updatedAt;
 
     private String deletedAt;
+
 
 }

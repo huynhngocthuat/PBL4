@@ -31,6 +31,4 @@ public class GetAttachmentDto {
 
     private String updateAt;
 
-    @NotEmpty
-    private String messageId;
 }

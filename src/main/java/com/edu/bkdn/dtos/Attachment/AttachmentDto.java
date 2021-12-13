@@ -23,6 +23,4 @@ public class AttachmentDto {
     private Timestamp createAt;
     @NotEmpty
     private Timestamp updateAt;
-    @NotEmpty
-    private String messageId;
 }

@@ -25,4 +25,9 @@ public class Message extends BaseEntity implements Serializable {
     @ToString.Exclude
     private Conversation conversation;
 
+    @OneToOne
+    @JoinColumn(name = "id_attachment")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Attachment attachment;
 }

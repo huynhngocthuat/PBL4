@@ -50,8 +50,7 @@ public class ConversationController {
     @SneakyThrows
     @GetMapping("/{id}")
     @ResponseBody
-    public List<GetMessageDto> getConversationsMessageList(@PathVariable("id") long conversationId,
-                                                           Authentication authentication){
+    public List<GetMessageDto> getConversationsMessageList(@PathVariable("id") long conversationId){
         return this.messageService.getAllMessageByConversationId(conversationId);
     }
 
