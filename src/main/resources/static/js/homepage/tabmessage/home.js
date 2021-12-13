@@ -1,6 +1,7 @@
 let allConversation;
 let allUserInConversation;
 let allConversationSearch;
+let ConversationIdCurrent;
 
 function startTabMessage() {
     fetchConversation();
@@ -61,6 +62,8 @@ function renderConversation() {
 }
 
 async function showListMessage(idConversation) {
+    ConversationIdCurrent = idConversation;
+
     // HiddenIntro
     hiddenIntro(true);
     // Remove active contact
@@ -75,9 +78,10 @@ async function showListMessage(idConversation) {
     let conversationById = allConversation.find(
         (data) => data.id === idConversation
     );
+
     allUserInConversation = conversationById.participants;
     setInfoChat(
-        conversationById.idConversation,
+        conversationById.id,
         conversationById.urlAvatar,
         conversationById.title
     );
@@ -133,3 +137,4 @@ function searchConversations() {
     }
     renderConversation();
 }
+

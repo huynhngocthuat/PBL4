@@ -267,7 +267,7 @@ body {
 }
 
 .contact__message span {
-    width: 50px;
+    width: 60px;
     margin-left: 5px;
     font-size: 14px;
     color: var(--grey-color);

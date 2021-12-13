@@ -33,4 +33,5 @@ public class GetMessageDto {
     private String updatedAt;
 
     private String deletedAt;
+
 }
