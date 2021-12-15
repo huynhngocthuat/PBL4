@@ -16,4 +16,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             nativeQuery = true
     )
     List<Message> findAllByConversationAndUserAndDeletedAtIsNull(Long conversationId, Long userId);
+
+    Optional<Message> findMessageById(Long messageId);
 }

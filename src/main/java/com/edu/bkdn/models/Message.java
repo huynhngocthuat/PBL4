@@ -1,19 +1,15 @@
 package com.edu.bkdn.models;
-
 import lombok.*;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "message")
 public class Message extends BaseEntity implements Serializable {
-
     @Column(columnDefinition = "nvarchar(200) not null")
     private String content;
 
@@ -29,9 +25,9 @@ public class Message extends BaseEntity implements Serializable {
     @ToString.Exclude
     private Conversation conversation;
 
-    @OneToMany(mappedBy = "message", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "id_attachment")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private List<Attachment> attachments = new ArrayList<>();
-
+    private Attachment attachment;
 }

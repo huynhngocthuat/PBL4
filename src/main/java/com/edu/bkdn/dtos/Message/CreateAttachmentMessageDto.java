@@ -1,9 +1,11 @@
 package com.edu.bkdn.dtos.Message;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
@@ -12,31 +14,23 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
-public class GetMessageDto {
 
-    @NotEmpty
-    private Long id;
-
-    @NotNull
-    private String content;
-
+public class CreateAttachmentMessageDto {
     @NotEmpty
     private Long userId;
 
     @NotEmpty
+    private String content;
+
+    @NotEmpty
     private Long conversationId;
 
+    @NotNull
+    private Timestamp createdAt;
+
+    @NotEmpty
     private Long attachmentId;
 
-    private String attachmentFileType;
-
-    @NotNull
-    private String createdAt;
-
-    @NotNull
-    private String updatedAt;
-
-    private String deletedAt;
-
-
+    @NotEmpty
+    private String fileType;
 }

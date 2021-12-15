@@ -7,7 +7,9 @@ function connect(idConversation) {
     stompClient.connect({}, function () {
         // onConnected func
         stompClient.subscribe('/topic/public/' + idConversation, function (createMessageDto) {
+
             let message = JSON.parse(createMessageDto.body); // Đối tượng Json
+            console.log(message);
             loadMessage(message)
             message.createdAt = moment(message.createdAt, "DD/MM/YY, HH:mm:ss").format("YYYY-MM-DD HH:mm:ss.0")
             let listConversations = document.querySelector("#list-conversations");
@@ -34,17 +36,45 @@ function CheckEnterToSend() {
 function send() {
     let messageInput = document.querySelector("#input-message");
     let messageContent = messageInput.value.trim();
-    let conversationId = messageInput.getAttribute("idConversation");
+
     if (messageContent && stompClient) {
         let createMessageDto = {
-            userId: dataLogin.getID(),
             content: messageInput.value,
-            conversationId: conversationId,
+            conversationId: ConversationIdCurrent,
             createdAt : null,
         };
         stompClient.send("/app/send", {}, JSON.stringify(createMessageDto));
         messageInput.value = '';
     }
+}
+
+function sendAttachments(){
+    const realFileBtn = document.getElementById("uploadFiles");
+    realFileBtn.click();
+    realFileBtn.addEventListener("change", function (event){
+        if(realFileBtn.value && stompClient){
+            const file = event.target.files;
+            console.log(file.size)
+            if (file.size < 524288)
+            {
+                console.log("File duowis 512")
+            }
+            else {
+                console.log("file tren 512")
+            }
+            let formData = new FormData(); // Currently empty
+            formData.append("conversationId", ConversationIdCurrent);
+            formData.append("uploadFiles", file);
+
+            let listCreateAttachmentMessageDto =
+                fetchMethodFormData('/saveAttachment', formData, 'POST');
+            console.log(listCreateAttachmentMessageDto);
+            // Gửi list message qua websocket
+            // for (let createAttachmentMessageDto in listCreateAttachmentMessageDto){
+            //     stompClient.send("/app/sendAttachments", {}, JSON.stringify(createAttachmentMessageDto));
+            // }
+        }
+    });
 }
 
 function disconnect() {
