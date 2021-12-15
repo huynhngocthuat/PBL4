@@ -214,15 +214,26 @@ body {
     outline: none;
 }
 
-.contact__avatar .online {
+.contact__avatar .status {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: #31a24c;
     top: 55px;
     left: 60px;
-    border: solid 1px white;
+    border: solid 2px var(--dark-grey-color);
     position: absolute;
+}
+
+.contact__avatar .status.online {
+    background-color: #31a24c;
+}
+
+.contact__avatar .status.offline {
+    background-color: #ef6e6e;
+}
+
+.active-contact .status {
+    border-color: var(--ocean-blue-color);
 }
 
 .contact__description {
@@ -422,8 +433,6 @@ body {
     display: none;
 }
 
-
-
 .message_avatar {
     width: 40px;
 }
@@ -467,7 +476,8 @@ body {
     flex-direction: row-reverse;
 }
 
-.list-messages li p {
+.list-messages li p,
+.list-messages li a {
     color: #fff;
     display: inline;
     font-size: 16px;
@@ -479,6 +489,13 @@ body {
     word-break: break-word;
     line-height: 1.4;
     background-color: var(--dark-grey-color);
+}
+
+.list-messages li img {
+    height: 200px;
+    border-radius: 0px;
+    cursor: pointer;
+    border-radius: 0px 4px 4px 4px;
 }
 
 .message-sent-time {
@@ -512,16 +529,19 @@ body {
 
 }
 
-.list-messages li img {
-    height: 200px;
-}
-
-.my-chat .list-messages p {
+.my-chat .list-messages li p,
+.my-chat .list-messages li a {
     background-color: var(--ocean-blue-color);
     border-radius: 4px 0px 4px 4px;
 }
 
-.list-messages li p:hover+.message-sent-time {
+.my-chat .list-messages li img {
+    border-radius: 4px 0px 4px 4px;
+}
+
+.list-messages li a:hover+.message-sent-time,
+.list-messages li p:hover+.message-sent-time,
+.list-messages li img:hover+.message-sent-time {
     opacity: 1;
 }
 
@@ -558,7 +578,7 @@ body {
 .input-chat i {
     color: var(--grey-color);
     font-size: 24px;
-    width: 40px;
+    width: 20px;
     height: 40px;
     display: flex;
     justify-content: center;
@@ -576,4 +596,3 @@ body {
     /* width: 400px; */
     height: 100%;
 }
-

@@ -45,7 +45,7 @@ function renderConversation() {
         <img
         src="${data.urlAvatar}"
         alt="Avatar" />
-        <div class="online"></div>
+        <div class='status ${data.isActive === true ? "online" : "offline"}'></div>
       </div>
       <div class="contact__description">
         <div class="contact__name">
@@ -133,7 +133,7 @@ function searchConversations() {
             return e.title.search(reSearch) != -1
         })
     } else {
-        allConversation = allConversationSearch
+        allConversation = allConversationSearch;
     }
     renderConversation();
 }

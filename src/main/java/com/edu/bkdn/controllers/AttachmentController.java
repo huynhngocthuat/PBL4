@@ -70,7 +70,7 @@ public class AttachmentController {
             messageService.createAttachmentMessage(createAttachmentMessageDto);
 
             //Response websocket
-            createAttachmentMessageDto.setFileType(file.getContentType());
+            createAttachmentMessageDto.setAttachmentFileType(file.getContentType());
             Gson gson = new Gson();
             simpMessagingTemplate.convertAndSend("/topic/public/"+ createAttachmentMessageDto.getConversationId(), gson.toJson(createAttachmentMessageDto));
 

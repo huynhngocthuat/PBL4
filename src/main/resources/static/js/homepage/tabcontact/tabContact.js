@@ -1,4 +1,5 @@
 let allContacts;
+let allContactsSearch;
 let allFriendRequests;
 let allGroupConversations;
 
@@ -12,6 +13,7 @@ function fetchContacts() {
     fetchMethod("/contacts")
         .then((res) => {
             allContacts = res;
+            allContactsSearch = res;
             renderContacts(allContacts);
         })
         .catch((err) => {
@@ -290,7 +292,7 @@ function openAddFriend() {
     let overlayElement = document.querySelector("#overlay-add-friend");
     overlayElement.classList.add("active-flex");
     let btnSkip = overlayElement.querySelector(".btn.btn-secondary");
-    let btnSendRequestFriend = overlayElement.querySelector(".btn.btn-primary");
+    let btnSendRequestFriend = document.querySelector("#btn-send-request-friend");
 
     btnSkip.onclick = function () {
         overlayElement.classList.remove("active-flex");
@@ -301,7 +303,8 @@ function openAddFriend() {
     };
 
     btnSendRequestFriend.onclick = function () {
-        if (idContactFriendRequest == -1) {
+        console.log(idContactFriendRequest);
+        if (idContactFriendRequest === -1) {
             return false;
         } else {
             fetchMethod(`/contacts/invitation/${idContactFriendRequest}`, {}, "POST")
@@ -351,6 +354,7 @@ function inputPhoneNumber() {
 }
 
 function renderUserInAddFriend(user) {
+    console.log(user);
     let result = document.querySelector("#add-friend-result");
     if (user) {
         result.innerHTML = `
@@ -366,11 +370,25 @@ function renderUserInAddFriend(user) {
        </div> 
        `;
 
-        if (user.isFriend === false) {
+        if (user.isAccepted === false) {
             idContactFriendRequest = user.id;
         }
     } else {
         result.innerHTML = "Không tìm thấy người dùng";
         idContactFriendRequest = -1;
     }
+}
+
+function searchContacts() {
+    let inputValue = this.event.target.value;
+    if (inputValue) {
+        let reSearch = new RegExp(inputValue, 'ig');
+        allContacts = allContactsSearch.filter(function (e) {
+            name = e.firstName + " " + e.lastName;
+            return name.search(reSearch) != -1
+        })
+    } else {
+        allContacts = allContactsSearch;
+    }
+    renderContacts(allContacts);
 }

@@ -23,33 +23,12 @@ async function fetchMethod(route, data = {}, method = "get") {
 
 async function fetchMethodFormData(route, data = {}, method = "get") {
     if (ALLOWED_METHODS.includes(method.toLowerCase())) {
-        let requestData = {
+        let requestFormData = {
             method: method,
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
             body: data,
         }
         if (method === "get")
-            delete requestData.body;
-        return (await fetch((BASE_URL + route), requestData)).json();
-    }
-}
-
-async function fetchMethod1(route, data = {}, method = "get") {
-    if (ALLOWED_METHODS.includes(method.toLowerCase())) {
-        let requestData = {
-            method: method,
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }
-
-        if (method === "get")
-            delete requestData.body;
-
-        return (await fetch((BASE_URL + route), requestData));
+            delete requestFormData.body;
+        return (await fetch((BASE_URL + route), requestFormData));
     }
 }
