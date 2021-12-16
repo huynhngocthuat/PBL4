@@ -65,7 +65,7 @@ function sendAttachments() {
                 console.error(`${files[i].name} vượt quá kích thước cho phép`);
             }
         }
-        formData.append("conversationId", ConversationIdCurrent);
+        formData.append("conversationId", ConversationIdCurrent );
         if (sendOk === true) {
             fetchMethodFormData('/sendAttachment', formData, 'post')
                 .then(res => {})
