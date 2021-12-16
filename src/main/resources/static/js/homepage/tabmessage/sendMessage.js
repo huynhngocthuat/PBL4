@@ -2,7 +2,7 @@ let stompClient = null;
 let phoneNumber = null;
 
 function connect(idConversation) {
-    let socket = new SockJS('https://pbl4-production-e5e1.up.railway.app/gkz-stomp-endpoint');
+    let socket = new SockJS('/gkz-stomp-endpoint');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function () {
         // onConnected func
