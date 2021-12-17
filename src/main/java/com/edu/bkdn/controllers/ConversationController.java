@@ -9,6 +9,7 @@ import com.edu.bkdn.dtos.Message.GetMessageDto;
 import com.edu.bkdn.dtos.Participant.CreateParticipantDto;
 import com.edu.bkdn.dtos.User.GetUserDto;
 import com.edu.bkdn.models.ApplicationUser;
+import com.edu.bkdn.models.Conversation;
 import com.edu.bkdn.models.ParticipantType;
 import com.edu.bkdn.services.ConversationService;
 import com.edu.bkdn.services.MessageService;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -81,39 +83,47 @@ public class ConversationController {
     @SneakyThrows
     @PostMapping("/default")
     @ResponseBody
-    public String createDefaultConversation(@Valid @RequestBody CreateConversationDto createConversationDto,
-                                            @Valid @RequestBody List<CreateParticipantDto> createParticipantDtos,
+    public String createDefaultConversation(@RequestParam Long secondUserID,
                                             Authentication authentication){
         long userId = -1L;
         if(authentication.getPrincipal() instanceof UserDetails) {
             userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        CreateParticipantDto currentUser = new CreateParticipantDto(userId, null, null);
-        createParticipantDtos.add(currentUser);
-        createParticipantDtos.forEach(participant -> participant.setParticipantType(ParticipantType.SINGLE));
+        List<Long> participantIDs = new ArrayList<>();
+        participantIDs.add(userId);
+        participantIDs.add(secondUserID);
 
-        createConversationDto.setCreatorId(userId);
-
-        this.conversationService.createConversation(createConversationDto, createParticipantDtos);
+        Conversation conversation = new Conversation();
+        conversation.setTitle("");
+        conversation.setCreatorId(secondUserID);
+        conversation.setUrlAvatar("");
+        this.conversationService.createConversation(conversation, participantIDs, ParticipantType.SINGLE);
         return new Gson().toJson(new NoContentResponse());
     }
 
     @SneakyThrows
     @PostMapping("")
     @ResponseBody
-    public String createConversation(@Valid @RequestBody CreateConversationDto createConversationDto,
-                                    @Valid @RequestBody List<CreateParticipantDto> createParticipantDtos,
+    public String createConversation(@RequestParam String conversationTitle,
+                                    @RequestParam String conversationAvatar,
+                                    @RequestParam List<Long> participantIDs,
                                     Authentication authentication){
         long userId = -1L;
         if(authentication.getPrincipal() instanceof UserDetails) {
             userId = ((ApplicationUser) authentication.getPrincipal()).getUser().getId();
         }
-        CreateParticipantDto currentUser = new CreateParticipantDto(userId, null, null);
-        createParticipantDtos.add(currentUser);
-        createParticipantDtos.forEach(participant -> participant.setParticipantType(ParticipantType.GROUP));
 
-        createConversationDto.setCreatorId(userId);
-        this.conversationService.createConversation(createConversationDto, createParticipantDtos);
+        Conversation conversation = new Conversation();
+        if(conversationTitle == null){
+            conversationTitle = "";
+        }
+        if(conversationAvatar == null){
+            conversationAvatar = "";
+        }
+        conversation.setTitle(conversationTitle);
+        conversation.setUrlAvatar(conversationAvatar);
+        conversation.setCreatorId(userId);
+        this.conversationService.createConversation(conversation, participantIDs, ParticipantType.GROUP);
         return new Gson().toJson(new NoContentResponse());
     }
 
@@ -130,13 +140,13 @@ public class ConversationController {
     @PutMapping("/{id}/add")
     @ResponseBody
     public String addParticipantToConversation(@PathVariable("id") long conversationId,
-                                               @Valid @RequestBody List<CreateParticipantDto> createParticipantDtos,
+                                               @Valid @RequestBody List<Long> participantIDs,
                                                Authentication authentication){
         String userPhone = "";
         if(authentication.getPrincipal() instanceof UserDetails) {
             userPhone = ((ApplicationUser) authentication.getPrincipal()).getUser().getPhone();
         }
-        this.participantService.addParticipantToConversation(userPhone, conversationId, createParticipantDtos);
+        this.participantService.addParticipantToConversation(userPhone, conversationId, participantIDs);
         return new Gson().toJson(new NoContentResponse());
     }
 
