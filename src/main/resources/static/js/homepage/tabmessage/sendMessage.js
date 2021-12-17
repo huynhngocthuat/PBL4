@@ -78,6 +78,5 @@ function disconnect(idConversation) {
     if (this.stompClient != null) {
         this.stompClient.disconnect();
     }
-    this.stompClient.unsubscribe('/topic/public/' + idConversation);
     console.log('Disconnected!');
 }

@@ -99,7 +99,7 @@ async function showListMessage(idConversation) {
     messages.map(function (message) {
         loadMessage(message);
     });
-    disconnect(ConversationIdCurrent);
+    disconnect();
     connect(idConversation);
     let messageInput = document.querySelector("#input-message");
     messageInput.setAttribute("idConversation", idConversation);
