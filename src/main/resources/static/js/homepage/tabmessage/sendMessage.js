@@ -76,7 +76,7 @@ function sendAttachments() {
 
 function disconnect(idConversation) {
     if (this.stompClient != null) {
-        this.stompClient = null;
+        this.stompClient.disconnect();
     }
     console.log('Disconnected!');
 }
