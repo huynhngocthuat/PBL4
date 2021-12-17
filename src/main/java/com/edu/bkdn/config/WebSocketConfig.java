@@ -10,11 +10,10 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-@CrossOrigin("*")
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/gkz-stomp-endpoint").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/gkz-stomp-endpoint").withSockJS();
     }
 
     @Override
