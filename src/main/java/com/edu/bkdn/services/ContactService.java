@@ -54,10 +54,13 @@ public class ContactService {
         Optional<UserContact> foundUserContact = this.userContactService
                 .findByUserIdAndContactId(foundUser.getId(), foundContact.getId());
         if(!foundUserContact.isPresent()){
-            throw new NotFoundException("User " + foundUser.getPhone() + " does not have any contact with " + foundContact.getPhone());
+            searchContactDto.setIsAccepted(false);
+            searchContactDto.setRequestSenderId(0L);
         }
-        searchContactDto.setIsAccepted(foundUserContact.get().getIsAccepted());
-        searchContactDto.setRequestSenderId(foundUserContact.get().getRequestSenderId());
+        else{
+            searchContactDto.setIsAccepted(foundUserContact.get().getIsAccepted());
+            searchContactDto.setRequestSenderId(foundUserContact.get().getRequestSenderId());
+        }
         return searchContactDto;
     }
 
