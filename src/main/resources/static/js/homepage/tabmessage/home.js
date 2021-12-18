@@ -103,6 +103,9 @@ async function showListMessage(idConversation) {
     connect(idConversation);
     let messageInput = document.querySelector("#input-message");
     messageInput.setAttribute("idConversation", idConversation);
+
+    let mainChatBox = document.getElementById("chat-box");
+    mainChatBox.scrollBy(0, mainChatBox.scrollHeight);
 }
 
 function setInfoChat(idConversation, urlAvatar, title) {
