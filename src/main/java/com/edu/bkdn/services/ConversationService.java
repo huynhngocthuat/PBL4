@@ -125,25 +125,30 @@ public class ConversationService {
     }
 
     // Method to create the default conversation between 2 user when they are friended of each other
-    public void createConversation(CreateConversationDto createConversationDto,
-                                   List<CreateParticipantDto> createParticipantDtos) throws NotFoundException {
+    public void createConversation(Conversation newConversation,
+                                   List<Long> participantsIDs,
+                                   ParticipantType participantType) throws NotFoundException {
         // Single conversation
-        if(createParticipantDtos.get(0).getParticipantType() == ParticipantType.SINGLE){
-            createConversationDto.setChannelId("single-channel-");
-            long savedConversationId = this.newConversation(createConversationDto);
+        if(participantType == ParticipantType.SINGLE){
+            newConversation.setChannelId("single-channel-");
+            long savedConversationId = this.newConversation(newConversation);
             // Create participants
-            for(CreateParticipantDto createParticipantDto : createParticipantDtos){
+            for(Long participantID : participantsIDs){
+                CreateParticipantDto createParticipantDto = new CreateParticipantDto();
+                createParticipantDto.setUserId(participantID);
                 createParticipantDto.setConversationId(savedConversationId);
                 createParticipantDto.setParticipantType(ParticipantType.SINGLE);
                 this.participantService.createParticipant(createParticipantDto);
             }
         }
         // Group conversation
-        else if(createParticipantDtos.get(0).getParticipantType() == ParticipantType.GROUP){
-            createConversationDto.setChannelId("group-channel-");
-            long savedConversationId = this.newConversation(createConversationDto);
+        else if(participantType == ParticipantType.GROUP){
+            newConversation.setChannelId("group-channel-");
+            long savedConversationId = this.newConversation(newConversation);
             // Create participants
-            for(CreateParticipantDto createParticipantDto : createParticipantDtos){
+            for(Long participantID : participantsIDs){
+                CreateParticipantDto createParticipantDto = new CreateParticipantDto();
+                createParticipantDto.setUserId(participantID);
                 createParticipantDto.setConversationId(savedConversationId);
                 createParticipantDto.setParticipantType(ParticipantType.GROUP);
                 this.participantService.createParticipant(createParticipantDto);
@@ -164,16 +169,13 @@ public class ConversationService {
         this.conversationRepository.save(foundConversation.get());
     }
 
-    public Long newConversation(CreateConversationDto createConversationDto){
-        Conversation newConversation = new Conversation();
-        newConversation.setCreatorId(createConversationDto.getCreatorId());
-        newConversation.setTitle(createConversationDto.getTitle());
-        newConversation.setUrlAvatar(createConversationDto.getUrlAvatar());
-        newConversation.setChannelId(createConversationDto.getChannelId());
+    public Long newConversation(Conversation newConversation){
+        newConversation.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        newConversation.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         long savedConversationId = this.conversationRepository.save(newConversation).getId();
 
         Optional<Conversation> savedConversation = this.conversationRepository.findById(savedConversationId);
-        savedConversation.get().setChannelId(createConversationDto.getChannelId()+savedConversationId);
+        savedConversation.get().setChannelId(newConversation.getChannelId()+savedConversationId);
         this.conversationRepository.save(savedConversation.get());
 
         return savedConversationId;

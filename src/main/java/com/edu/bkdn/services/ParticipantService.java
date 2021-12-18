@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +58,10 @@ public class ParticipantService {
         if(!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null){
             throw new NotFoundException("Conversation with ID: " + createParticipantDto.getConversationId() + " does not existed!!!");
         }
+
+        // Set current time
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
         // Check user have already joined conversation or not
         Optional<Participant> foundParticipant =
                 this.findParticipantByUserIdAndConversationIdAndDeletedAtIsNull(
@@ -67,20 +72,24 @@ public class ParticipantService {
             newParticipant.setConversation(foundConversation.get());
             newParticipant.setUser(foundUser.get());
             newParticipant.setParticipantType(createParticipantDto.getParticipantType());
+            newParticipant.setCreatedAt(currentTime);
+            newParticipant.setUpdatedAt(currentTime);
             this.participantRepository.save(newParticipant);
         }
     }
 
 
-    public void addParticipantToConversation(String adderPhone, Long conversationId, List<CreateParticipantDto> createParticipantDtos) throws NotFoundException, DuplicateException {
-        if(!createParticipantDtos.isEmpty()){
+    public void addParticipantToConversation(String adderPhone, Long conversationId, List<Long> participantIDs) throws NotFoundException {
+        if(!participantIDs.isEmpty()){
             Optional<Conversation> foundConversation = this.conversationService.findById(conversationId);
             if(!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null){
                 throw new NotFoundException("Conversation with ID: " + conversationId + " does not existed");
             }
             User foundUser = this.checkUserExistenceByPhone(adderPhone);
 
-            for(CreateParticipantDto createParticipantDto : createParticipantDtos){
+            for(Long participantID : participantIDs){
+                CreateParticipantDto createParticipantDto = new CreateParticipantDto();
+                createParticipantDto.setUserId(participantID);
                 createParticipantDto.setConversationId(conversationId);
                 createParticipantDto.setParticipantType(ParticipantType.GROUP);
                 this.createParticipant(createParticipantDto);
