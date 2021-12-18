@@ -14,17 +14,16 @@ function messageNewElementType1(msg, type) {
     `;
     return message;
 }
-
-function messageConcatLiType1(msg, type) {
+function messageConcatLi(msg, type) {
     let message = document.createElement("li");
     switch (type) {
         case "image": {
             message.innerHTML = `
             <img 
               src="${BASE_URL}/getAttachment/${msg.attachmentId}"
-              ondblclick="openImage('${BASE_URL}/downloadAttachment/${msg.attachmentId}')"
+              ondblclick="openImage('${BASE_URL}/downloadAttachment/${msg.content}?attachmentId=${msg.attachmentId}')"
             > 
-          `
+            `
             break;
         }
         case "message": {
@@ -35,17 +34,22 @@ function messageConcatLiType1(msg, type) {
         }
         case "file": {
             message.innerHTML = `
-            <a 
-            href="${BASE_URL}/downloadAttachment/${msg.attachmentId}"
-            target="_blank"
-            rel="bookmark"
+            <a
+            href="${BASE_URL}/downloadAttachment/${msg.content}?attachmentId=${msg.attachmentId}"
             > ${msg.content} </a>
           `
             break;
         }
     }
+    return message;
+}
+
+function messageConcatLiType1(msg, type) {
+    let message = messageConcatLi(msg, type);
     message.innerHTML += `
-    <div class="message-sent-time">${msg.createdAt}</div>
+    <div class="message-sent-time">
+        ${msg.createdAt}
+    </div>
     <div class="message-status">
       <i class="far fa-check-circle"></i>
     </div>
@@ -79,39 +83,14 @@ function messageNewElementType2(msg, name, urlAvatar, type) {
 }
 
 function messageConcatLiType2(msg, type) {
-    let message = document.createElement("li");
-    switch (type) {
-        case "image": {
-            message.innerHTML = `
-            <img 
-              src="${BASE_URL}/getAttachment/${msg.attachmentId}"
-              ondblclick="openImage('${BASE_URL}/downloadAttachment/${msg.attachmentId}')"
-            > 
-            `
-            break;
-        }
-        case "message": {
-            message.innerHTML = `
-            <p> ${msg.content} </p>
-          `
-            break;
-        }
-        case "file": {
-            message.innerHTML = `
-            <a 
-            href="${BASE_URL}/downloadAttachment/${msg.attachmentId}"
-            target="_blank"
-            rel="bookmark"
-            > ${msg.content} </a>
-          `
-            break;
-        }
-    }
+    let message = messageConcatLi(msg, type);
     message.innerHTML += `
     <div class="message-sent-time">${msg.createdAt}</div>
   `
     return message;
 }
+
+
 
 function openImage(link) {
     window.open(link, '_blank');
