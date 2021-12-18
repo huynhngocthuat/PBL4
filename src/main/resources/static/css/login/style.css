@@ -8,11 +8,11 @@
     padding: 15px;
     background-color: #f0f0f0;
     font-family: 'Roboto', sans-serif;
-    background:linear-gradient( rgba(0, 0, 0, 0.5) 100%, rgba(0, 0, 0, 0.5)100%), url(../../images/dut.jpg);
+    background: linear-gradient(rgba(0, 0, 0, 0.5) 100%, rgba(0, 0, 0, 0.5)100%), url(../../images/dut.jpg);
     background-position: center center;
     background-size: cover;
-    
 }
+
 .login-container {
     background: #fff;
     border-radius: 4px;
@@ -20,6 +20,7 @@
     justify-content: space-between;
     box-shadow: 1.95px 1.95px 2.6px rgba(0, 0, 0, 0.15);
 }
+
 .login-container .login-form {
     width: 400px;
     height: 500px;
@@ -31,14 +32,17 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
+    position: relative;
 }
+
 .login-container .login-form-title {
     color: var(--blue-color);
     font-size: 30px;
     font-weight: 500;
     margin-bottom: 20px;
 }
- .login-form .form-group {
+
+.login-form .form-group {
     width: 300px;
     display: flex;
     justify-content: flex-start;
@@ -47,7 +51,8 @@
     margin-bottom: 10px;
     position: relative;
 }
- .login-form .form-group-label {
+
+.login-form .form-group-label {
     width: 100%;
     height: 50px;
     display: flex;
@@ -59,6 +64,7 @@
     cursor: pointer;
     color: var(--blue-color);
 }
+
 .login-form .form-group-error {
     width: 100%;
     color: #ef6e6e;
@@ -68,7 +74,7 @@
     text-align: center;
 }
 
- .login-form .form-group-input {
+.login-form .form-group-input {
     width: 100%;
     height: 40px;
     border: 0;
@@ -81,9 +87,11 @@
 .login-form .form-group-input:focus {
     border-bottom: solid 1px #262f44;
 }
+
 .login-form .form-group-input::placeholder {
     color: var(--grey-color);
 }
+
 .login-form .form-group i {
     color: #262f44;
     font-size: 18px;
@@ -92,22 +100,25 @@
     bottom: 10px;
     cursor: pointer;
 }
+
 .login-form .login-form-error {
     width: 100%;
-    height: 30px;
+    height: 20px;
     color: #ef6e6e;
     font-size: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .login-container .login-form-btn {
     width: 100%;
     height: 50px;
     border: solid 1px var(--ocean-blue-color);
     border-radius: 4px;
     outline: 0;
-    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-top: 10px;
     font-size: 20px;
     font-weight: 500;
     color: var(--ocean-blue-color);
@@ -118,11 +129,34 @@
     position: relative;
     transition: background-position 0.5s ease;
 }
+
 .login-container .login-form-btn:hover {
     color: #fff;
     background-position: left bottom;
     cursor: pointer;
 }
+
+.login-form .signup-btn-wrapper {
+    position: absolute;
+    bottom: 40px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+}
+
+.login-form .signup-btn-wrapper a {
+    text-decoration: none;
+    color: var(--ocean-blue-color);
+    font-size: 16px;
+    transition: all 0.5s ease;
+}
+
+.login-form .signup-btn-wrapper a:hover {
+    text-decoration: underline;
+    color: var(--blue-color);
+}
+
 .login-wrapper .login-container .login-logo {
     width: 400px;
     height: 500px;
@@ -132,6 +166,7 @@
     justify-content: center;
     align-items: center;
 }
+
 .login-wrapper .login-container .login-logo img {
     width: 100%;
     border-radius: inherit;

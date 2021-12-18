@@ -16,20 +16,20 @@
         <div class="signup-container">
             <form th:action="@{/signup}" method="post" th:object="${user}">
                 <div class="signup-form">
-                    <h4 class="signup-form-title ">Sign up</h4>
+                    <h4 class="signup-form-title ">Đăng ký</h4>
                     <div class="form-group form-group-50">
                         <input th:field="*{firstName}" type="text" class="form-group-input" placeholder=" " id="firstNameTxt">
-                        <label class="form-group-label" for="firstNameTxt">First Name</label>
+                        <label class="form-group-label" for="firstNameTxt">Họ</label>
                     </div>
 
                     <div class="form-group form-group-50">
                         <input th:field="*{lastName}" type="text" class="form-group-input" placeholder=" " id="lastNameTxt">
-                        <label class="form-group-label" for="lastNameTxt">Surname</label>
+                        <label class="form-group-label" for="lastNameTxt">Tên</label>
                     </div>
 
                     <div class="form-group">
                         <input th:field="*{phone}" type="text" class="form-group-input" placeholder=" " id="phoneNumberTxt">
-                        <label class="form-group-label" for="phoneNumberTxt">Phone Number</label>
+                        <label class="form-group-label" for="phoneNumberTxt">Số điện thoại</label>
                     </div>
 
                     <div class="form-group">
@@ -39,19 +39,28 @@
 
                     <div class="form-group">
                         <input th:field="*{urlAvatar}" type="text" class="form-group-input" placeholder=" " id="urlAvartaTxt">
-                        <label class="form-group-label" for="urlAvartaTxt">Url Avarta</label>
+                        <label class="form-group-label" for="urlAvartaTxt">Đường dẫn avatar</label>
                     </div>
 
                     <div class="form-group">
                         <input th:field="*{password}" type="password" class="form-group-input" placeholder=" " id="passwordTxt">
-                        <label class="form-group-label" for="passwordTxt">Password</label>
+                        <label class="form-group-label" for="passwordTxt">Mật khẩu</label>
                     </div>
-                    
-                    <button class="signup-form-btn">Signup</button>
+
+                    <div class="form-group">
+                        <input th:field="*{password}" type="password" class="form-group-input" placeholder=" " id="confirmPasswordTxt">
+                        <label class="form-group-label" for="confirmPasswordTxt">Xác nhận mật khẩu</label>
+                    </div>
+
+                    <button class="signup-form-btn">Đăng ký</button>
+
+                    <div class="login-btn-wrapper">
+                        <a class="" href="/login">Đăng nhập</a>
+                    </div>
                 </div>
             </form>
             <div class="signup-logo">
-<!--                 <img src="../static/images/signup.jpg" alt="PBL4">-->
+                <img src="/images/LOGO - LOGIN.png" alt="PBL4">
             </div>
         </div>
     </div>

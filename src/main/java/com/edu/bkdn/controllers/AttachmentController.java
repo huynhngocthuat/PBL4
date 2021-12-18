@@ -79,8 +79,8 @@ public class AttachmentController {
     }
 
     @SneakyThrows
-    @GetMapping("/downloadAttachment/{id}")
-    public ResponseEntity<ByteArrayResource> downloadAttachment(@PathVariable("id") Long attachmentId){
+    @GetMapping("/downloadAttachment/*")
+    public ResponseEntity<ByteArrayResource> downloadAttachment(@RequestParam("attachmentId") Long attachmentId){
         GetAttachmentDto getAttachmentDto = attachmentService.getAttachmentDtoById(attachmentId);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(getAttachmentDto.getFileType()))
