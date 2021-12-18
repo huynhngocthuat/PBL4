@@ -90,8 +90,6 @@ function messageConcatLiType2(msg, type) {
     return message;
 }
 
-
-
 function openImage(link) {
     window.open(link, '_blank');
 }

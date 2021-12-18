@@ -17,6 +17,8 @@ function connect(idConversation) {
             )
             conversationContainMsg.lastMessage = message;
             renderConversation();
+            let mainChatBox = document.getElementById("chat-box");
+            mainChatBox.scrollBy(0, mainChatBox.scrollHeight);
         });
     }, onError);
 }

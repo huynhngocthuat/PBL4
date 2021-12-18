@@ -566,6 +566,11 @@
     background-color: #303339;
 }
 
+.create-group-wrapper .form-group input:hover,
+.create-group-wrapper .form-group input:focus {
+    border: solid 1px var(--blue-color);
+}
+
 .create-group-wrapper .form-group input::placeholder {
     font-size: 16px;
 }
