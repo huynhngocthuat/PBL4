@@ -49,6 +49,9 @@ public class UserContactService {
         User foundUser = this.checkUserExistenceByPhone(createUserContactDto.getUserPhone());
         Contact foundContact = this.checkContactExistenceByPhone(createUserContactDto.getContactPhone());
 
+        //Set current time
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
         Optional<UserContact> foundUserContact =
                 this.findByUserIdAndContactId(
                                 foundUser.getId(),
@@ -58,14 +61,16 @@ public class UserContactService {
             throw new DuplicateException("Duplicate user contact, user phone: " + createUserContactDto.getUserPhone()
             + ", contact phone: " + createUserContactDto.getContactPhone());
         }
-
-        this.userContactRepository.save(new UserContact(
+        UserContact newUserContact = new UserContact(
                 foundUser,
                 foundContact,
                 foundUser.getId(),
                 createUserContactDto.isAccepted(),
                 ""
-                ));
+        );
+        newUserContact.setCreatedAt(currentTime);
+        newUserContact.setUpdatedAt(currentTime);
+        this.userContactRepository.save(newUserContact);
     }
 
     public void delete(UserContact userContact){

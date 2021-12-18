@@ -205,6 +205,12 @@ public class ContactService {
         User firstUser = this.checkUserExistenceById(userId);
         Contact firstContact = this.checkContactExistenceById(contactId);
 
+        // Set current time
+        Timestamp currentTime  = new Timestamp(System.currentTimeMillis());
+
+        if(invitationMessage.equals("")){
+            invitationMessage = "Hello I'm " + firstUser.getLastName();
+        }
         Optional<UserContact> firstUserContact = this.userContactService.findByUserIdAndContactId(firstUser.getId(), firstContact.getId());
         if(firstUserContact.isPresent()
                 && firstUserContact.get().getDeletedAt() == null
@@ -238,6 +244,8 @@ public class ContactService {
                     false,
                     invitationMessage
             );
+            newFirstUserContact.setCreatedAt(currentTime);
+            newFirstUserContact.setUpdatedAt(currentTime);
             this.userContactService.save(newFirstUserContact);
         }
 
@@ -264,6 +272,8 @@ public class ContactService {
                     false,
                     ""
             );
+            newSecondUserContact.setCreatedAt(currentTime);
+            newSecondUserContact.setUpdatedAt(currentTime);
             this.userContactService.save(newSecondUserContact);
         }
     }
@@ -312,6 +322,7 @@ public class ContactService {
             Conversation newConversation = new Conversation();
             newConversation.setTitle("");
             newConversation.setCreatorId(secondUser.getId());
+            newConversation.setUrlAvatar("");
             this.conversationService.createConversation(newConversation, participantIDs, ParticipantType.SINGLE);
         }
 

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +58,10 @@ public class ParticipantService {
         if(!foundConversation.isPresent() || foundConversation.get().getDeletedAt() != null){
             throw new NotFoundException("Conversation with ID: " + createParticipantDto.getConversationId() + " does not existed!!!");
         }
+
+        // Set current time
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
         // Check user have already joined conversation or not
         Optional<Participant> foundParticipant =
                 this.findParticipantByUserIdAndConversationIdAndDeletedAtIsNull(
@@ -67,6 +72,8 @@ public class ParticipantService {
             newParticipant.setConversation(foundConversation.get());
             newParticipant.setUser(foundUser.get());
             newParticipant.setParticipantType(createParticipantDto.getParticipantType());
+            newParticipant.setCreatedAt(currentTime);
+            newParticipant.setUpdatedAt(currentTime);
             this.participantRepository.save(newParticipant);
         }
     }

@@ -170,6 +170,8 @@ public class ConversationService {
     }
 
     public Long newConversation(Conversation newConversation){
+        newConversation.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        newConversation.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         long savedConversationId = this.conversationRepository.save(newConversation).getId();
 
         Optional<Conversation> savedConversation = this.conversationRepository.findById(savedConversationId);
