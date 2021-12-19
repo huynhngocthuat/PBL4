@@ -286,11 +286,8 @@ function openCreateGroup() {
 }
 
 function renderContactInCreateGroup(contacts) {
-    let contactsWithOutUserLogin = contacts.filter(
-        (data) => data.id !== dataLogin.getID()
-    )
     let createGroupList = document.querySelector("#create-group-list");
-    contactsWithOutUserLogin.map((contact, index) => {
+    contacts.map((contact, index) => {
         let itemElement = document.createElement("div");
         itemElement.setAttribute("class", "create-group__list-item");
         itemElement.innerHTML = `
@@ -298,7 +295,8 @@ function renderContactInCreateGroup(contacts) {
                 <input type="checkbox" 
                         id="create-group-id-user-${index+1}" 
                         class="checkbox-input"
-                        value="${contact.id}" name="user" />
+                        value="${contact.id}" 
+                        ${contact.id === dataLogin.getID() ? "disabled checked = true name='userLogin'"  : "name='user'"} >
                 <label for='create-group-id-user-${index+1}' class="checkbox-label">
                     <i class="fa fa-check"></i>
                 </label>
@@ -311,7 +309,13 @@ function renderContactInCreateGroup(contacts) {
                 </p>
             </div>
         `;
-        createGroupList.appendChild(itemElement);
+        if (contact.id === dataLogin.getID())
+        {
+            createGroupList.prepend(itemElement);
+        }
+        else {
+            createGroupList.appendChild(itemElement);
+        }
     })
 }
 
@@ -329,17 +333,20 @@ function createConversation() {
         alert("Tên nhóm trống");
         return;
     }
-    else {
-        if (urlAvatar === "")
-        {
-            alert("Url avatar trống");
-            return;
-        }
-        else if (listIdUser.length === 0)
-        {
-            alert("Hãy chọn người bạn muốn thêm vào nhóm chat");
-            return;
-        }
+    if (urlAvatar === "")
+    {
+        alert("Url avatar trống");
+        return;
+    }
+    if (listIdUser.length === 0)
+    {
+        alert("Hãy chọn người bạn muốn thêm vào nhóm chat");
+        return;
+    }
+    if (listIdUser.length < 2)
+    {
+        alert("Chọn tối thiểu 3 người");
+        return;
     }
 
     let formdata = new FormData();
@@ -356,11 +363,14 @@ function createConversation() {
                 btnSkip.click();
                 fetchGroupConversations();
             }
+            if (res.status === 500)
+            {
+                alert("Tạo nhóm không thành công");
+            }
         })
         .catch(err => {
             console.log(err);
         })
-
 }
 
 // Send request friend

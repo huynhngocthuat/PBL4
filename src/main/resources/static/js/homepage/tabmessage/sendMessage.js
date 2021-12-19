@@ -1,24 +1,24 @@
 let stompClient = null;
-let phoneNumber = null;
-
 function connect(idConversation) {
     let socket = new SockJS('/gkz-stomp-endpoint');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function () {
-        // onConnected func
         stompClient.subscribe('/topic/public/' + idConversation, function (createMessageDto) {
             let message = JSON.parse(createMessageDto.body); // Đối tượng Json
-            loadMessage(message);
-            message.createdAt = moment(message.createdAt, "DD/MM/YY, HH:mm:ss").format("YYYY-MM-DD HH:mm:ss.0")
-            let listConversations = document.querySelector("#list-conversations");
-            listConversations.innerHTML = ``;
+            let dateFormat = moment(message.createdAt).format("YYYY-MM-DD HH:mm:ss.0");
+
+            if (message.conversationId === ConversationIdCurrent)
+            {
+                loadMessage(message);
+                let mainChatBox = document.getElementById("chat-box");
+                mainChatBox.scrollBy(0, mainChatBox.scrollHeight);
+            }
+            message.createdAt = dateFormat;
             let conversationContainMsg = allConversation.find(
                 (data) => data.id === message.conversationId
             )
             conversationContainMsg.lastMessage = message;
             renderConversation();
-            let mainChatBox = document.getElementById("chat-box");
-            mainChatBox.scrollBy(0, mainChatBox.scrollHeight);
         });
     }, onError);
 }

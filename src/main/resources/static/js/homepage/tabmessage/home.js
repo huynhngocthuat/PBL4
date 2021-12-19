@@ -1,7 +1,7 @@
 let allConversation;
 let allUserInConversation;
 let allConversationSearch;
-let ConversationIdCurrent;
+let ConversationIdCurrent = -1;
 
 function startTabMessage() {
     fetchConversation();
@@ -32,6 +32,7 @@ function renderConversation() {
     });
     let listConversations = document.querySelector("#list-conversations");
     listConversations.innerHTML = ``;
+
     allConversation.map(function (data) {
         if (data.lastMessage !== null) {
             var timeAgo = moment(data.lastMessage.createdAt).fromNow(true);
@@ -59,6 +60,7 @@ function renderConversation() {
       `;
         listConversations.appendChild(conversationElement);
     });
+    setActiveConversaTion(ConversationIdCurrent);
 }
 
 async function showListMessage(idConversation) {
@@ -66,14 +68,7 @@ async function showListMessage(idConversation) {
 
     // HiddenIntro
     hiddenIntro(true);
-    // Remove active contact
-    let activeContact = document.querySelector(".active-contact");
-    if (activeContact !== null) {
-        activeContact.classList.remove("active-contact");
-    }
-    // Add active contact
-    let eventTarget = document.querySelector(`[contactID="${idConversation}"`);
-    eventTarget.classList.add("active-contact");
+    setActiveConversaTion(idConversation);
     // Set info Chat
     let conversationById = allConversation.find(
         (data) => data.id === idConversation
@@ -106,6 +101,20 @@ async function showListMessage(idConversation) {
 
     let mainChatBox = document.getElementById("chat-box");
     mainChatBox.scrollBy(0, mainChatBox.scrollHeight);
+}
+
+function setActiveConversaTion(idConversation) {
+    // Remove active contact
+    let activeContact = document.querySelector(".active-contact");
+    if (activeContact !== null) {
+        activeContact.classList.remove("active-contact");
+    }
+    // Add active contact
+    if (idConversation !== -1)
+    {
+        let eventTarget = document.querySelector(`[contactID="${idConversation}"`);
+        eventTarget.classList.add("active-contact");
+    }
 }
 
 function setInfoChat(idConversation, urlAvatar, title) {
