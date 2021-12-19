@@ -41,9 +41,17 @@ public class UserController {
 
     @SneakyThrows
     @PostMapping("/signup")
-    public ModelAndView saveOrUpdate(ModelMap model, @Valid @ModelAttribute("user") CreateUserDto createUserDto, BindingResult result) {
+    public ModelAndView signup(ModelMap model,
+                               @RequestParam(name = "confirmPasswordTxt", required = true) String confirmPassword,
+                               @Valid @ModelAttribute("user") CreateUserDto createUserDto, BindingResult result) {
         //Check validation
         if (result.hasErrors()) {
+            model.addAttribute("message", "Sai định dạng !");
+            return new ModelAndView("signup");
+        }
+        //Check the similarity of passwords
+        if(!confirmPassword.equals(createUserDto.getPassword())){
+            model.addAttribute("message", "Mật khẩu không khớp !");
             return new ModelAndView("signup");
         }
         //Add new user
@@ -56,7 +64,7 @@ public class UserController {
         GetUserDto getUserDto = userService.getUserDtoByPhoneNumber(createUserDto.getPhone());
         userContactService.createUserContactRegister(getUserDto.getId());
 
-//        model.addAttribute("message", "User successfully created!");
+        model.addAttribute("message", "Tạo tài khoản thành công !");
         return new ModelAndView("login");
     }
 
