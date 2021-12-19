@@ -106,7 +106,9 @@ public class ConversationService {
             List<GetConversationContactDto> conversationContactDtos =
                     this.getAllConversationParticipants(foundConversations.get(i).getId(), foundUser.getId());
             for(GetConversationContactDto conversationContactDto : conversationContactDtos){
-                if(conversationContactDto.getIsActive() && !conversationContactDto.getPhone().equals(foundUser.getPhone())){
+                if(conversationContactDto.getIsActive()
+                        && !conversationContactDto.getPhone().equals(foundUser.getPhone())
+                        && this.contactService.checkIsFriend(foundUser.getPhone(), conversationContactDto.getPhone())){
                     getConversationDtos.get(i).setIsActive(true);
                     break;
                 }
