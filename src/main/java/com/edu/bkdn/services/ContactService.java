@@ -47,6 +47,16 @@ public class ContactService {
         return this.contactRepository.findContactByPhone(phoneNumber);
     }
 
+    public boolean checkIsFriend(String userPhone, String contactPhone) throws NotFoundException {
+        User foundUser = this.checkUserExistenceByPhone(userPhone);
+        Contact foundContact = this.checkContactExistenceByPhone(contactPhone);
+
+        Optional<UserContact> foundUserContact =
+                this.userContactService.findByUserPhoneAndContactPhone(foundUser.getPhone(), foundContact.getPhone());
+
+        return foundUserContact.isPresent();
+    }
+
     public GetContactDto searchContactByPhone(String phoneNumber, long userId) throws NotFoundException {
         User foundUser = this.checkUserExistenceById(userId);
         Contact foundContact = this.checkContactExistenceByPhone(phoneNumber);
@@ -381,6 +391,7 @@ public class ContactService {
             firstUserContact.get().setIsAccepted(false);
             firstUserContact.get().setDeletedAt(currentTime);
             firstUserContact.get().setUpdatedAt(currentTime);
+            firstUserContact.get().setRequestSenderId(0);
             this.userContactService.save(firstUserContact.get());
         }
 
@@ -397,6 +408,7 @@ public class ContactService {
             secondUserContact.get().setIsAccepted(false);
             secondUserContact.get().setDeletedAt(currentTime);
             secondUserContact.get().setUpdatedAt(currentTime);
+            secondUserContact.get().setRequestSenderId(0);
             this.userContactService.save(secondUserContact.get());
         }
     }
