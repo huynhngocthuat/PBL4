@@ -126,14 +126,22 @@ public class ConversationService {
 
     // Method to create the default conversation between 2 user when they are friended of each other
     public void createConversation(Conversation newConversation,
-                                   List<Long> participantsIDs,
-                                   ParticipantType participantType) throws NotFoundException {
+                                   List<Long> participantIDs,
+                                   ParticipantType participantType) throws NotFoundException, BadRequestException {
+        // Check if creator is in list create participant
+        if(!participantIDs.contains(newConversation.getCreatorId())){
+            participantIDs.add(newConversation.getCreatorId());
+        }
+        // Check if new conversation has less than 3 participants
+        if(participantIDs.size() < 3){
+            throw new BadRequestException("Can not create conversation that has less than 3 participants");
+        }
         // Single conversation
         if(participantType == ParticipantType.SINGLE){
             newConversation.setChannelId("single-channel-");
             long savedConversationId = this.newConversation(newConversation);
             // Create participants
-            for(Long participantID : participantsIDs){
+            for(Long participantID : participantIDs){
                 CreateParticipantDto createParticipantDto = new CreateParticipantDto();
                 createParticipantDto.setUserId(participantID);
                 createParticipantDto.setConversationId(savedConversationId);
@@ -146,7 +154,7 @@ public class ConversationService {
             newConversation.setChannelId("group-channel-");
             long savedConversationId = this.newConversation(newConversation);
             // Create participants
-            for(Long participantID : participantsIDs){
+            for(Long participantID : participantIDs){
                 CreateParticipantDto createParticipantDto = new CreateParticipantDto();
                 createParticipantDto.setUserId(participantID);
                 createParticipantDto.setConversationId(savedConversationId);

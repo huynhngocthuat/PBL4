@@ -12,6 +12,7 @@ import com.edu.bkdn.dtos.Participant.CreateParticipantDto;
 import com.edu.bkdn.models.*;
 import com.edu.bkdn.repositories.ContactRepository;
 import com.edu.bkdn.utils.ObjectMapperUtils;
+import com.edu.bkdn.utils.httpResponse.exceptions.BadRequestException;
 import com.edu.bkdn.utils.httpResponse.exceptions.DuplicateException;
 import com.edu.bkdn.utils.httpResponse.exceptions.EmptyListException;
 import com.edu.bkdn.utils.httpResponse.exceptions.NotFoundException;
@@ -278,7 +279,7 @@ public class ContactService {
         }
     }
 
-    public void acceptContactInvitation(long userId, long contactId) throws NotFoundException, DuplicateException {
+    public void acceptContactInvitation(long userId, long contactId) throws NotFoundException, DuplicateException, BadRequestException {
         // Check exist
         User firstUser = this.checkUserExistenceById(userId);
         Contact firstContact = this.checkContactExistenceById(contactId);
