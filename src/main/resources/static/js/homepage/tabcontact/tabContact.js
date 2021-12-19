@@ -272,22 +272,109 @@ function membersInGroup(idConversations) {
         overlayElement.classList.remove("active-flex");
     };
 }
-
 function openCreateGroup() {
     let overlayElement = document.querySelector("#overlay-create-group");
     overlayElement.classList.add("active-flex");
     let btnSkip = overlayElement.querySelector(".btn.btn-secondary");
-    let btnDone = overlayElement.querySelector(".btn.btn-primary");
+    renderContactInCreateGroup(allContacts);
 
     btnSkip.onclick = function () {
+        let createGroupList = document.querySelector("#create-group-list");
+        createGroupList.innerHTML = "";
         overlayElement.classList.remove("active-flex");
     };
 }
 
+function renderContactInCreateGroup(contacts) {
+    let createGroupList = document.querySelector("#create-group-list");
+    contacts.map((contact, index) => {
+        let itemElement = document.createElement("div");
+        itemElement.setAttribute("class", "create-group__list-item");
+        itemElement.innerHTML = `
+            <div class="item__checkbox">
+                <input type="checkbox" 
+                        id="create-group-id-user-${index+1}" 
+                        class="checkbox-input"
+                        value="${contact.id}" 
+                        ${contact.id === dataLogin.getID() ? "disabled checked = true name='userLogin'"  : "name='user'"} >
+                <label for='create-group-id-user-${index+1}' class="checkbox-label">
+                    <i class="fa fa-check"></i>
+                </label>
+            </div>
+            <div class="item__info">
+                <img src="${contact.urlAvatar}"
+                     alt="avatar" class="item__avatar">
+                <p class="item__name">
+                    ${contact.firstName + " " + contact.lastName}
+                </p>
+            </div>
+        `;
+        if (contact.id === dataLogin.getID())
+        {
+            createGroupList.prepend(itemElement);
+        }
+        else {
+            createGroupList.appendChild(itemElement);
+        }
+    })
+}
+
+function createConversation() {
+    let nameConversation = document.querySelector("#name-group-create").value;
+    let urlAvatar = document.querySelector("#url-avatar-group-create").value;
+    let createGroupList = document.querySelector("#create-group-list");
+    let listInputChecked = createGroupList.querySelectorAll('input[name="user"]:checked');
+    let listIdUser = [];
+    listInputChecked.forEach((item) => {
+        listIdUser.push(item.value);
+    });
+    if (nameConversation === "")
+    {
+        alert("Tên nhóm trống");
+        return;
+    }
+    if (urlAvatar === "")
+    {
+        alert("Url avatar trống");
+        return;
+    }
+    if (listIdUser.length === 0)
+    {
+        alert("Hãy chọn người bạn muốn thêm vào nhóm chat");
+        return;
+    }
+    if (listIdUser.length < 2)
+    {
+        alert("Chọn tối thiểu 3 người");
+        return;
+    }
+
+    let formdata = new FormData();
+    formdata.append("conversationTitle", nameConversation);
+    formdata.append("conversationAvatar", urlAvatar);
+    formdata.append("participantIDs", listIdUser);
+
+    fetchMethodFormData("/conversations/create", formdata, "post")
+        .then(res => {
+            if (res.status === 200)
+            {
+                alert("Tạo nhóm thành công");
+                let btnSkip = document.querySelector(".create-group__action .btn.btn-secondary");
+                btnSkip.click();
+                fetchGroupConversations();
+            }
+            if (res.status === 500)
+            {
+                alert("Tạo nhóm không thành công");
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        })
+}
 
 // Send request friend
 let idContactFriendRequest = -1;
-
 function openAddFriend() {
     let overlayElement = document.querySelector("#overlay-add-friend");
     overlayElement.classList.add("active-flex");
@@ -303,14 +390,15 @@ function openAddFriend() {
     };
 
     btnSendRequestFriend.onclick = function () {
-        console.log(idContactFriendRequest);
         if (idContactFriendRequest === -1) {
+            alert("Gửi không thành công");
             return false;
         } else {
             fetchMethod(`/contacts/invitation/${idContactFriendRequest}`, {}, "POST")
                 .then((res) => {
                     if (res.status === 204) {
                         alert("Kết bạn thành công");
+                        btnSkip.click();
                     }
                 })
                 .catch((err) => {
@@ -354,7 +442,6 @@ function inputPhoneNumber() {
 }
 
 function renderUserInAddFriend(user) {
-    console.log(user);
     let result = document.querySelector("#add-friend-result");
     if (user) {
         result.innerHTML = `
@@ -370,8 +457,11 @@ function renderUserInAddFriend(user) {
        </div> 
        `;
 
-        if (user.isAccepted === false) {
+        if (user.isAccepted === false && user.requestSenderId === 0) {
             idContactFriendRequest = user.id;
+        }
+        else {
+            idContactFriendRequest = -1;
         }
     } else {
         result.innerHTML = "Không tìm thấy người dùng";

@@ -102,7 +102,7 @@ public class ConversationController {
     }
 
     @SneakyThrows
-    @PostMapping("")
+    @PostMapping("/create")
     @ResponseBody
     public String createConversation(@RequestParam String conversationTitle,
                                     @RequestParam String conversationAvatar,
@@ -123,6 +123,7 @@ public class ConversationController {
         conversation.setTitle(conversationTitle);
         conversation.setUrlAvatar(conversationAvatar);
         conversation.setCreatorId(userId);
+        participantIDs.add(userId);
         this.conversationService.createConversation(conversation, participantIDs, ParticipantType.GROUP);
         return new Gson().toJson(new NoContentResponse());
     }

@@ -90,15 +90,13 @@ function messageConcatLiType2(msg, type) {
     return message;
 }
 
-
-
 function openImage(link) {
     window.open(link, '_blank');
 }
 
 function loadMessage(msg) {
     let messageDiv;
-    msg.createdAt = moment(msg.createdAt).format('DD/MM/YY, HH:mm:ss');
+    msg.createdAt = moment(msg.createdAt).format('YYYY-MM-DD HH:mm:ss.0');
     let idUserLogin = dataLogin.getID();
 
     let chatBox = document.getElementById("chat-box");
