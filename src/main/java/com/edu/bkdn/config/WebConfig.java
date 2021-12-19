@@ -32,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void init(){
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
     }
-    
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/login").setViewName("login");
