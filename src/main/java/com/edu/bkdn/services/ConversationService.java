@@ -132,12 +132,11 @@ public class ConversationService {
         if(!participantIDs.contains(newConversation.getCreatorId())){
             participantIDs.add(newConversation.getCreatorId());
         }
-        // Check if new conversation has less than 3 participants
-        if(participantIDs.size() < 3){
-            throw new BadRequestException("Can not create conversation that has less than 3 participants");
-        }
         // Single conversation
         if(participantType == ParticipantType.SINGLE){
+            if(participantIDs.size() < 2){
+                throw new BadRequestException("Can not create default conversation that has less than 2 participants");
+            }
             newConversation.setChannelId("single-channel-");
             long savedConversationId = this.newConversation(newConversation);
             // Create participants
@@ -151,6 +150,10 @@ public class ConversationService {
         }
         // Group conversation
         else if(participantType == ParticipantType.GROUP){
+            // Check if new conversation has less than 3 participants
+            if(participantIDs.size() < 3){
+                throw new BadRequestException("Can not create conversation that has less than 3 participants");
+            }
             newConversation.setChannelId("group-channel-");
             long savedConversationId = this.newConversation(newConversation);
             // Create participants
