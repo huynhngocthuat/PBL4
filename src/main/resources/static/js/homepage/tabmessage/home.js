@@ -6,6 +6,7 @@ let ConversationIdCurrent = -1;
 function startTabMessage() {
     fetchConversation();
     moment.locale("vi");
+    connect(0);
 }
 startTabMessage();
 
