@@ -1,22 +1,26 @@
 let stompClient = null;
+
 function connect(idConversation) {
     let socket = new SockJS('/gkz-stomp-endpoint');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function () {
         stompClient.subscribe('/topic/public/' + idConversation, function (createMessageDto) {
             let message = JSON.parse(createMessageDto.body); // Đối tượng Json
-            let dateFormat = moment(message.createdAt).format("YYYY-MM-DD HH:mm:ss.0");
-
             if (message.conversationId === ConversationIdCurrent)
             {
                 loadMessage(message);
                 let mainChatBox = document.getElementById("chat-box");
                 mainChatBox.scrollBy(0, mainChatBox.scrollHeight);
             }
+        });
+
+        stompClient.subscribe('/topic/public/global', function (lastMessage) {
+            let message = JSON.parse(lastMessage.body); // Đối tượng Json
+            let dateFormat = moment(message.createdAt).format("YYYY-MM-DD HH:mm:ss.0");
             message.createdAt = dateFormat;
             let conversationContainMsg = allConversation.find(
                 (data) => data.id === message.conversationId
-            )
+            );
             conversationContainMsg.lastMessage = message;
             renderConversation();
         });
@@ -78,8 +82,8 @@ function sendAttachments() {
 
 
 function disconnect() {
-    if (this.stompClient != null) {
-        this.stompClient.disconnect();
+    if (stompClient !== null) {
+        stompClient.disconnect();
+        console.log('Disconnected!');
     }
-    console.log('Disconnected!');
 }

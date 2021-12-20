@@ -42,7 +42,8 @@ public class ChatController {
 
         messageService.createMessage(createMessageDto);
         Gson gson = new Gson();
-        simpMessagingTemplate.convertAndSend("/topic/public/"+ createMessageDto.getConversationId(), gson.toJson(createMessageDto));
 
+        simpMessagingTemplate.convertAndSend("/topic/public/"+ createMessageDto.getConversationId(), gson.toJson(createMessageDto));
+        simpMessagingTemplate.convertAndSend("/topic/public/global", gson.toJson(createMessageDto));
     }
 }
