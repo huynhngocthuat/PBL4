@@ -1,18 +1,20 @@
 let stompClient = null;
-
-function connect(idConversation) {
+function connectSocket(idConversation) {
     let socket = new SockJS('/gkz-stomp-endpoint');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function () {
-        stompClient.subscribe('/topic/public/' + idConversation, function (createMessageDto) {
-            let message = JSON.parse(createMessageDto.body); // Đối tượng Json
-            if (message.conversationId === ConversationIdCurrent)
-            {
-                loadMessage(message);
-                let mainChatBox = document.getElementById("chat-box");
-                mainChatBox.scrollBy(0, mainChatBox.scrollHeight);
-            }
-        });
+        if (idConversation !== 0)
+        {
+            stompClient.subscribe('/topic/public/' + idConversation, function (createMessageDto) {
+                let message = JSON.parse(createMessageDto.body); // Đối tượng Json
+                if (message.conversationId === ConversationIdCurrent)
+                {
+                    loadMessage(message);
+                    let mainChatBox = document.getElementById("chat-box");
+                    mainChatBox.scrollBy(0, mainChatBox.scrollHeight);
+                }
+            });
+        }
 
         stompClient.subscribe('/topic/public/global', function (lastMessage) {
             let message = JSON.parse(lastMessage.body); // Đối tượng Json
