@@ -6,7 +6,7 @@ let ConversationIdCurrent = -1;
 function startTabMessage() {
     fetchConversation();
     moment.locale("vi");
-    connect(0);
+    connectSocket(0);
 }
 startTabMessage();
 
@@ -96,7 +96,7 @@ async function showListMessage(idConversation) {
         loadMessage(message);
     });
     disconnect();
-    connect(idConversation);
+    connectSocket(idConversation);
     let messageInput = document.querySelector("#input-message");
     messageInput.setAttribute("idConversation", idConversation);
 

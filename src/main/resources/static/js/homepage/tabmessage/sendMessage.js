@@ -1,5 +1,5 @@
 let stompClient = null;
-function connect(idConversation) {
+function connectSocket(idConversation) {
     let socket = new SockJS('/gkz-stomp-endpoint');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function () {
